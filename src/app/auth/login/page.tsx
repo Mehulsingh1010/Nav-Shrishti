@@ -17,8 +17,8 @@ import { useToast } from "@/hooks/use-toast"
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
-  captchaVerified: z.boolean().refine((val) => val === true, {
-    message: "Please verify you are not a robot",
+  captchaVerified: z.literal(true, {
+    errorMap: () => ({ message: "Please verify you are not a robot" }),
   }),
 })
 
@@ -65,16 +65,26 @@ export default function LoginPage() {
 
     try {
       // Validate form data
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const validatedData = loginSchema.parse(formData)
 
       // Submit to API
-      // This is where you would integrate with your Drizzle ORM and PostgreSQL
-      // For now, we'll simulate a successful login
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(validatedData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Login failed")
+      }
 
       toast({
         title: "Login Successful",
-        description: "Welcome back to Nav Srishti Srijan Seva Sansthan.",
+        description: `Welcome back, ${data.user.name}!`,
       })
 
       // Redirect to dashboard after successful login
@@ -93,7 +103,7 @@ export default function LoginPage() {
       } else {
         toast({
           title: "Login Failed",
-          description: "Invalid email or password. Please try again.",
+          description: error instanceof Error ? error.message : "Invalid email or password. Please try again.",
           variant: "destructive",
         })
       }
@@ -104,7 +114,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#f9f3e9] py-12">
-      <div className="container mx-auto px-4">
+      <div className="container mt-10 mx-auto px-4">
         <div className="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
           <div className="bg-[#c14d14] p-6 text-center">
             <h1 className="text-2xl font-bold text-white">सदस्य लॉगिन</h1>
@@ -174,7 +184,7 @@ export default function LoginPage() {
 
             <div className="text-center mt-4">
               <p className="text-sm text-gray-600">
-                Don&apos;t have an account?{" "}
+                Don't have an account?{" "}
                 <Link href="/auth/register" className="text-[#c14d14] hover:underline">
                   Register here
                 </Link>

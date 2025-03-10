@@ -28,11 +28,11 @@ const registerSchema = z.object({
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
   pincode: z.string().min(6, "Pincode must be 6 digits"),
-  termsAccepted: z.boolean().refine((val) => val === true, {
-    message: "You must accept the terms and conditions",
+  termsAccepted: z.literal(true, {
+    errorMap: () => ({ message: "You must accept the terms and conditions" }),
   }),
-  captchaVerified: z.boolean().refine((val) => val === true, {
-    message: "Please verify you are not a robot",
+  captchaVerified: z.literal(true, {
+    errorMap: () => ({ message: "Please verify you are not a robot" }),
   }),
 })
 
@@ -101,19 +101,27 @@ export default function RegisterPage() {
 
     try {
       // Validate form data
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const validatedData = registerSchema.parse(formData)
 
-      // Generate a random 6-digit reference ID
-      const referenceId = Math.floor(100000 + Math.random() * 900000).toString()
-
       // Submit to API
-      // This is where you would integrate with your Drizzle ORM and PostgreSQL
-      // For now, we'll simulate a successful registration
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(validatedData),
+      })
 
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Registration failed")
+      }
+
+      // Show success message with reference ID
       toast({
         title: "Registration Successful",
-        description: `Your reference ID is ${referenceId}. Please keep it safe for future reference.`,
+        description: `Your reference ID is ${data.referenceId}. Please keep it safe for future reference.`,
       })
 
       // Redirect to login page after successful registration
@@ -132,7 +140,7 @@ export default function RegisterPage() {
       } else {
         toast({
           title: "Registration Failed",
-          description: "An unexpected error occurred. Please try again.",
+          description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again.",
           variant: "destructive",
         })
       }
@@ -143,7 +151,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-[#f9f3e9] py-12">
-      <div className="container mx-auto px-4">
+      <div className="container mt-10 mx-auto px-4">
         <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
           <div className="bg-[#c14d14] p-6 text-center">
             <h1 className="text-2xl font-bold text-white">नया सदस्य पंजीकरण</h1>
@@ -154,7 +162,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="title">Title</Label>
-                <Select name="title" onValueChange={(value: string) => handleSelectChange("title", value)}>
+                <Select name="title" onValueChange={(value) => handleSelectChange("title", value)}>
                   <SelectTrigger id="title" className="w-full">
                     <SelectValue placeholder="Select title" />
                   </SelectTrigger>

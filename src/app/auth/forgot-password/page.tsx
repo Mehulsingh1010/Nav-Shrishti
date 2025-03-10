@@ -14,8 +14,8 @@ import { useToast } from "@/hooks/use-toast"
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
-  captchaVerified: z.boolean().refine((val) => val === true, {
-    message: "Please verify you are not a robot",
+  captchaVerified: z.literal(true, {
+    errorMap: () => ({ message: "Please verify you are not a robot" }),
   }),
 })
 
@@ -61,14 +61,19 @@ export default function ForgotPasswordPage() {
 
     try {
       // Validate form data
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const validatedData = forgotPasswordSchema.parse(formData)
 
       // Submit to API
-      // This is where you would integrate with your Drizzle ORM and PostgreSQL
-      // For now, we'll simulate a successful password reset request
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: validatedData.email }),
+      })
 
-      // Set submitted state to show success message
+      // Even if the email doesn't exist, we don't want to reveal that for security reasons
+      // So we show success message regardless
       setIsSubmitted(true)
 
       toast({
@@ -85,10 +90,11 @@ export default function ForgotPasswordPage() {
         })
         setErrors(newErrors)
       } else {
+        // Don't reveal if the email exists or not
+        setIsSubmitted(true)
         toast({
-          title: "Request Failed",
-          description: "An unexpected error occurred. Please try again.",
-          variant: "destructive",
+          title: "Reset Link Sent",
+          description: "If an account exists with this email, you will receive a password reset link.",
         })
       }
     } finally {
@@ -169,7 +175,7 @@ export default function ForgotPasswordPage() {
                 </div>
                 <h2 className="text-xl font-semibold mb-2">Check Your Email</h2>
                 <p className="text-gray-600 mb-6">
-                  We&apos;ve sent a password reset link to your email address. Please check your inbox and follow the
+                  We've sent a password reset link to your email address. Please check your inbox and follow the
                   instructions.
                 </p>
                 <div className="flex justify-center">
