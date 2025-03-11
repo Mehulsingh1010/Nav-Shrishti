@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
-import { hash } from "bcrypt
-"
+import { hash } from "bcrypt"
 import { db } from "../../../../../configs/db"
 import { users } from "../../../../../configs/schema"
 

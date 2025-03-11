@@ -17,8 +17,8 @@ import { useToast } from "@/hooks/use-toast"
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
-  captchaVerified: z.literal(true, {
-    errorMap: () => ({ message: "Please verify you are not a robot" }),
+  captchaVerified: z.boolean().refine((val) => val === true, {
+    message: "Please verify you are not a robot",
   }),
 })
 
@@ -184,7 +184,7 @@ export default function LoginPage() {
 
             <div className="text-center mt-4">
               <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
+                Don&#39;t have an account?
                 <Link href="/auth/register" className="text-[#c14d14] hover:underline">
                   Register here
                 </Link>

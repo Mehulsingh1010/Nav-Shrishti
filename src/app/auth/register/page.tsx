@@ -31,8 +31,8 @@ const registerSchema = z.object({
   termsAccepted: z.literal(true, {
     errorMap: () => ({ message: "You must accept the terms and conditions" }),
   }),
-  captchaVerified: z.literal(true, {
-    errorMap: () => ({ message: "Please verify you are not a robot" }),
+  captchaVerified: z.boolean().refine((val) => val === true, {
+    message: "Please verify you are not a robot",
   }),
 })
 
@@ -60,7 +60,7 @@ export default function RegisterPage() {
   }
 
   const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, termsAccepted: checked }))
+    setFormData((prev) => ({ ...prev, termsAccepted: checked as true }))
     if (errors.termsAccepted && checked) {
       setErrors((prev) => {
         const newErrors = { ...prev }

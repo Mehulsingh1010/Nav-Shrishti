@@ -14,8 +14,8 @@ import { useToast } from "@/hooks/use-toast"
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
-  captchaVerified: z.literal(true, {
-    errorMap: () => ({ message: "Please verify you are not a robot" }),
+  captchaVerified: z.boolean().refine(val => val === true, {
+    message: "Please verify you are not a robot",
   }),
 })
 
@@ -64,6 +64,7 @@ export default function ForgotPasswordPage() {
       const validatedData = forgotPasswordSchema.parse(formData)
 
       // Submit to API
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: {
@@ -175,7 +176,7 @@ export default function ForgotPasswordPage() {
                 </div>
                 <h2 className="text-xl font-semibold mb-2">Check Your Email</h2>
                 <p className="text-gray-600 mb-6">
-                  We've sent a password reset link to your email address. Please check your inbox and follow the
+                  We&#39;ve sent a password reset link to your email address. Please check your inbox and follow the
                   instructions.
                 </p>
                 <div className="flex justify-center">
