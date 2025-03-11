@@ -27,7 +27,7 @@ export default function CulturalSection() {
             className="space-y-6"
           >
             <div className="relative h-96 rounded-lg overflow-hidden shadow-xl">
-              <Image src="/cultural-activities.jpg" alt="सांस्कृतिक गतिविधियां" fill className="object-cover" />
+              <Image src="/11.jpg" alt="सांस्कृतिक गतिविधियां" fill className="object-cover" />
             </div>
           </motion.div>
 

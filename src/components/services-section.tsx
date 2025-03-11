@@ -8,32 +8,32 @@ const services = [
   {
     title: "गुरुकुल",
     description: "पारंपरिक वैदिक शिक्षा प्रणाली",
-    image: "/gurukul-education.jpg",
+    image: "/3.jpg",
   },
   {
     title: "धर्म यज्ञ क्षेत्र",
     description: "पवित्र अनुष्ठान और यज्ञ",
-    image: "/yagna.jpg",
+    image: "/5.jpg",
   },
   {
     title: "गौ शाला",
     description: "गौ सेवा और संरक्षण",
-    image: "/goshala.jpg",
+    image: "/6.jpg",
   },
   {
     title: "योग व्यायाम केन्द्र",
     description: "योग और ध्यान का केंद्र",
-    image: "/yoga-center.jpg",
+    image: "/7.jpg",
   },
   {
     title: "सनातन धर्म दर्शन क्षेत्र",
     description: "सनातन धर्म का ज्ञान",
-    image: "/temple-learning.jpg",
+    image: "/8.jpg",
   },
   {
     title: "वैदिक स्वदेशी बाजार",
     description: "पारंपरिक उत्पाद",
-    image: "/market.jpg",
+    image: "/10.png",
   },
 ]
 

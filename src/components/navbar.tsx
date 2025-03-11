@@ -4,11 +4,13 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
+import { Menu, X, ChevronDown } from "lucide-react"
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false)
+  const [language, setLanguage] = useState("en")
 
   const navItems = [
     { name: "गुरुकुल", href: "#gurukul" },
@@ -24,6 +26,30 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const toggleLanguage = async () => {
+    const targetLang = language === "en" ? "hi" : "en";
+    setLanguage(targetLang);
+  
+    try {
+      const res = await fetch(
+        `https://translation.googleapis.com/language/translate/v2?key=YOUR_API_KEY`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            q: document.body.innerText,
+            target: targetLang,
+          }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const data = await res.json();
+      document.body.innerText = data.data.translations[0].translatedText;
+    } catch (error) {
+      console.error("Translation failed:", error);
+    }
+  };
+  
 
   return (
     <motion.nav
@@ -71,14 +97,51 @@ export default function Navbar() {
                 className="relative text-orange-800 hover:text-orange-600 transition-colors px-3 py-2"
               >
                 <span>{item.name}</span>
-                <motion.span
-                  className="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 origin-left"
-                  initial={{ scaleX: 0 }}
-                  whileHover={{ scaleX: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
               </motion.a>
             ))}
+
+            {/* Login Dropdown */}
+            <div className="relative group">
+              <button
+                onClick={() => setIsLoginMenuOpen(!isLoginMenuOpen)}
+                className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+              >
+                लॉगिन <ChevronDown className="w-4 h-4" />
+              </button>
+              <AnimatePresence>
+                {isLoginMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-full left-0 mt-2 w-48 bg-white shadow-lg rounded-lg overflow-hidden"
+                  >
+                    <Link
+                      href="/login/user"
+                      className="block px-4 py-2 hover:bg-gray-100 text-orange-800"
+                      onClick={() => setIsLoginMenuOpen(false)}
+                    >
+                      लॉगिन (उपयोगकर्ता)
+                    </Link>
+                    <Link
+                      href="/login/seller"
+                      className="block px-4 py-2 hover:bg-gray-100 text-orange-800"
+                      onClick={() => setIsLoginMenuOpen(false)}
+                    >
+                      लॉगिन (विक्रेता)
+                    </Link>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Language Toggle Button */}
+            <button
+              onClick={toggleLanguage}
+              className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              {language === "en" ? "हिन्दी" : "English"}
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -94,35 +157,6 @@ export default function Navbar() {
             )}
           </motion.button>
         </div>
-
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden overflow-hidden"
-            >
-              <div className="py-4 space-y-2">
-                {navItems.map((item) => (
-                  <motion.a
-                    key={item.name}
-                    href={item.href}
-                    initial={{ x: -20, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: -20, opacity: 0 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block px-4 py-3 text-orange-800 hover:bg-orange-100 rounded-lg transition-colors"
-                  >
-                    {item.name}
-                  </motion.a>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </motion.nav>
   )

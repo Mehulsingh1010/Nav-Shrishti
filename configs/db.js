@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/neon-http';
-import postgres from "postgres"
+// import postgres from "postgres"
 import * as schema from "./schema"
-import { drizzle } from "drizzle-orm/postgres-js"
+
 const connectionString = process.env.NEXT_PUBLIC_DATABASE_CONNECTION_STRING;
 
 if (!connectionString) {

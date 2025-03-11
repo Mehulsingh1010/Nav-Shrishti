@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="hi" className={devanagari.className}>
       <body>
-        <Navbar />
+        {/* <Navbar /> */}
         {children}
       </body>
     </html>

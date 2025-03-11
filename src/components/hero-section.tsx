@@ -20,17 +20,17 @@ export default function HeroSection() {
 
   const images = [
     { 
-      src: "/gurukul.jpg", 
+      src: "/1.jpg", 
       title: "गुरुकुल शिक्षा",
       description: "पारंपरिक शिक्षा का आधुनिक दृष्टिकोण"
     },
     { 
-      src: "/yoga.jpg", 
+      src: "/2.jpg", 
       title: "योग साधना",
       description: "शारीरिक और मानसिक स्वास्थ्य का मार्ग"
     },
     { 
-      src: "/temple.jpg", 
+      src: "/3.jpg", 
       title: "मंदिर संस्कृति",
       description: "आध्यात्मिक विरासत का संरक्षण"
     }
