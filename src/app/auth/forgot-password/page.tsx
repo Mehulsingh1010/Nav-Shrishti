@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import type React from "react"
@@ -63,8 +64,8 @@ export default function ForgotPasswordPage() {
       // Validate form data
       const validatedData = forgotPasswordSchema.parse(formData)
 
-      // Submit to API
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // Submit to API (Commented out backend request)
+      /*
       const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: {
@@ -72,9 +73,8 @@ export default function ForgotPasswordPage() {
         },
         body: JSON.stringify({ email: validatedData.email }),
       })
+      */
 
-      // Even if the email doesn't exist, we don't want to reveal that for security reasons
-      // So we show success message regardless
       setIsSubmitted(true)
 
       toast({
@@ -91,7 +91,6 @@ export default function ForgotPasswordPage() {
         })
         setErrors(newErrors)
       } else {
-        // Don't reveal if the email exists or not
         setIsSubmitted(true)
         toast({
           title: "Reset Link Sent",
@@ -145,46 +144,17 @@ export default function ForgotPasswordPage() {
                   {isSubmitting ? "Sending..." : "Send Reset Link"}
                 </Button>
               </div>
-
-              <div className="text-center mt-4">
-                <p className="text-sm text-gray-600">
-                  Remember your password?{" "}
-                  <Link href="/auth/login" className="text-[#c14d14] hover:underline">
-                    Login here
-                  </Link>
-                </p>
-              </div>
             </form>
           ) : (
             <div className="p-6 space-y-6 text-center">
-              <div className="py-8">
-                <div className="mb-4 text-[#c14d14]">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-16 w-16 mx-auto"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-                <h2 className="text-xl font-semibold mb-2">Check Your Email</h2>
-                <p className="text-gray-600 mb-6">
-                  We&#39;ve sent a password reset link to your email address. Please check your inbox and follow the
-                  instructions.
-                </p>
-                <div className="flex justify-center">
-                  <Link href="/auth/login">
-                    <Button className="bg-[#c14d14] hover:bg-[#a03d0e] text-white">Return to Login</Button>
-                  </Link>
-                </div>
-              </div>
+              <h2 className="text-xl font-semibold mb-2">Check Your Email</h2>
+              <p className="text-gray-600 mb-6">
+                We&apos;ve sent a password reset link to your email address. Please check your inbox and follow the
+                instructions.
+              </p>
+              <Link href="/auth/login">
+                <Button className="bg-[#c14d14] hover:bg-[#a03d0e] text-white">Return to Login</Button>
+              </Link>
             </div>
           )}
         </div>
@@ -192,4 +162,3 @@ export default function ForgotPasswordPage() {
     </div>
   )
 }
-
