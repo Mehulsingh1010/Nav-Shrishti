@@ -1,36 +1,36 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
-import { motion, AnimatePresence } from "framer-motion"
-import Link from "next/link"
-import { Menu, X, ChevronDown } from "lucide-react"
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { Menu, X, ChevronDown } from "lucide-react";
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false)
-  const [language, setLanguage] = useState("en")
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false);
+  const [language, setLanguage] = useState("en");
 
   const navItems = [
     { name: "गुरुकुल", href: "#gurukul" },
     { name: "धर्म", href: "#dharm" },
     { name: "योग", href: "#yoga" },
-    { name: "संपर्क", href: "#contact" }
-  ]
+    { name: "संपर्क", href: "#contact" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const toggleLanguage = async () => {
     const targetLang = language === "en" ? "hi" : "en";
     setLanguage(targetLang);
-  
+
     try {
       const res = await fetch(
         `https://translation.googleapis.com/language/translate/v2?key=YOUR_API_KEY`,
@@ -49,15 +49,14 @@ export default function Navbar() {
       console.error("Translation failed:", error);
     }
   };
-  
 
   return (
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled 
-          ? "bg-white/90 backdrop-blur-md shadow-lg" 
+        isScrolled
+          ? "bg-white/90 backdrop-blur-md shadow-lg"
           : "bg-orange-50/80 backdrop-blur-sm"
       }`}
     >
@@ -65,8 +64,8 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Logo and Title */}
           <Link href="/" className="flex items-center gap-4 group">
-            <motion.div 
-              whileHover={{ rotate: 360 }} 
+            <motion.div
+              whileHover={{ rotate: 360 }}
               transition={{ duration: 1 }}
               className="relative h-12 w-12 md:h-14 md:w-14"
             >
@@ -145,19 +144,81 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 hover:bg-orange-100 rounded-lg transition-colors"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6 text-orange-800" />
-            ) : (
-              <Menu className="w-6 h-6 text-orange-800" />
+          {/* Mobile Navigation Menu */}
+          <AnimatePresence>
+            {isMobileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="md:hidden fixed top-20 left-0 w-full bg-white shadow-md z-40"
+              >
+                <div className="flex flex-col items-center gap-4 py-4">
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="text-orange-800 hover:text-orange-600 transition-colors px-3 py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+
+                  {/* Mobile Login Dropdown */}
+                  <div className="relative w-full text-center">
+                    <button
+                      onClick={() => setIsLoginMenuOpen(!isLoginMenuOpen)}
+                      className="flex items-center justify-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors w-full"
+                    >
+                      लॉगिन <ChevronDown className="w-4 h-4" />
+                    </button>
+                    <AnimatePresence>
+                      {isLoginMenuOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white shadow-lg rounded-lg overflow-hidden"
+                        >
+                          <Link
+                            href="/login/user"
+                            className="block px-4 py-2 hover:bg-gray-100 text-orange-800"
+                            onClick={() => {
+                              setIsLoginMenuOpen(false);
+                              setIsMobileMenuOpen(false);
+                            }}
+                          >
+                            लॉगिन (उपयोगकर्ता)
+                          </Link>
+                          <Link
+                            href="/login/seller"
+                            className="block px-4 py-2 hover:bg-gray-100 text-orange-800"
+                            onClick={() => {
+                              setIsLoginMenuOpen(false);
+                              setIsMobileMenuOpen(false);
+                            }}
+                          >
+                            लॉगिन (विक्रेता)
+                          </Link>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Language Toggle Button */}
+                  <button
+                    onClick={toggleLanguage}
+                    className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    {language === "en" ? "हिन्दी" : "English"}
+                  </button>
+                </div>
+              </motion.div>
             )}
-          </motion.button>
+          </AnimatePresence>
         </div>
       </div>
     </motion.nav>
-  )
+  );
 }
