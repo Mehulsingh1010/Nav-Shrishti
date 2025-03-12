@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { hash } from "bcrypt"
 import { db } from "../../../../../configs/db"
 import { users } from "../../../../../configs/schema"
-
+import postgres from "postgres"
 // Schema for validation
 const registerSchema = z.object({
   title: z.string().min(1, "Title is required"),

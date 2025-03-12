@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextResponse } from "next/server"
 import { z } from "zod"
 import { compare } from "bcrypt"
 import { db } from "../../../../../configs/db"
 import { cookies } from "next/headers"
 import { sign } from "jsonwebtoken"
-
+import postgres from "postgres"
 // Schema for validation
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
