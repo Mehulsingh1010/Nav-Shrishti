@@ -15,14 +15,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 const dashboardData = {
   purchaseCount: 12,
   totalIncome: 45600,
-  teamCount: 28,
+  mainTeam: 12,
+  activeTeam: 22,
+  totalTeam: 28,
   referralIncome: 12500,
   salary: 25000,
   promotionalIncome: 8100,
   reward: 5000,
   tour: "Goa Retreat - June 2025",
-  activeTeam: 22,
-  powerTeam: 28,
   daysRemaining: 23,
 }
 
@@ -103,7 +103,7 @@ export default function DashboardPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-amber-900">{dashboardData.teamCount} Members</div>
+              <div className="text-3xl font-bold text-amber-900">{dashboardData.totalTeam} Members</div>
               <div className="flex items-center mt-1 text-sm text-amber-700">
                 <TrendingUp className="h-4 w-4 mr-1 text-green-600" />
                 <span>4 new members this month</span>
@@ -114,15 +114,28 @@ export default function DashboardPage() {
           <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 shadow-sm hover:shadow transition-all">
             <CardHeader className="pb-2">
               <div className="flex justify-between items-center">
-                <CardTitle className="text-lg font-semibold text-yellow-800">Active Team</CardTitle>
+                <CardTitle className="text-lg font-semibold text-yellow-800">Team Breakdown</CardTitle>
                 <div className="p-2 bg-white rounded-full">
                   <Award className="h-5 w-5 text-yellow-600" />
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-yellow-900">{dashboardData.activeTeam} / {dashboardData.powerTeam}</div>
-              <div className="flex items-center mt-1 text-sm text-yellow-700">
+              <div className="grid grid-cols-3 gap-2">
+                <div className="text-center">
+                  <div className="text-xs font-medium text-yellow-700">Main</div>
+                  <div className="text-xl font-bold text-yellow-900">{dashboardData.mainTeam}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs font-medium text-yellow-700">Active</div>
+                  <div className="text-xl font-bold text-yellow-900">{dashboardData.activeTeam}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs font-medium text-yellow-700">Total</div>
+                  <div className="text-xl font-bold text-yellow-900">{dashboardData.totalTeam}</div>
+                </div>
+              </div>
+              <div className="flex items-center mt-3 text-sm text-yellow-700">
                 <TrendingUp className="h-4 w-4 mr-1 text-green-600" />
                 <span>3 active members this month</span>
               </div>
