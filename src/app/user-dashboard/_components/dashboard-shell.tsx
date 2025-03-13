@@ -47,6 +47,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import UserProfile from "@/components/user-profile";
+import LogoutButton from "@/components/logout";
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -240,12 +242,13 @@ export function DashboardShell({ children }: DashboardShellProps) {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <p className="text-base font-medium text-orange-900">
+                      {/* <p className="text-base font-medium text-orange-900">
                         Mehul Singh
                       </p>
                       <p className="text-sm text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full inline-block">
                         REF123
-                      </p>
+                      </p> */}
+                      <UserProfile/>
                     </div>
                   </div>
                   <div className="mt-4 flex items-center gap-2 rounded-lg bg-white border border-orange-200 p-3 shadow-sm">
@@ -446,12 +449,14 @@ export function DashboardShell({ children }: DashboardShellProps) {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-sm font-medium truncate text-orange-900">
+                  {/* <span className="text-sm font-medium truncate text-orange-900">
                     Mehul Singh
                   </span>
                   <span className="text-xs bg-white px-2 py-0.5 rounded-full text-orange-700 inline-block w-fit">
                     REF123
-                  </span>
+                  </span> */}
+                  <UserProfile/>
+                  <LogoutButton />
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

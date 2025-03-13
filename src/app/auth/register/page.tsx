@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import type React from "react"
@@ -28,8 +29,8 @@ const registerSchema = z.object({
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
   pincode: z.string().min(6, "Pincode must be 6 digits"),
-  termsAccepted: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the terms and conditions" }),
+  termsAccepted: z.boolean().refine((val) => val === true, {
+    message: "You must accept the terms and conditions",
   }),
   captchaVerified: z.boolean().refine((val) => val === true, {
     message: "Please verify you are not a robot",
@@ -60,7 +61,7 @@ export default function RegisterPage() {
   }
 
   const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, termsAccepted: checked as true }))
+    setFormData((prev) => ({ ...prev, termsAccepted: checked }))
     if (errors.termsAccepted && checked) {
       setErrors((prev) => {
         const newErrors = { ...prev }
@@ -103,20 +104,24 @@ export default function RegisterPage() {
       // Validate form data
       const validatedData = registerSchema.parse(formData)
 
+      // Prepare data for API (remove captchaVerified as it's not needed in the API)
+      const { captchaVerified, ...apiData } = validatedData
+
       // Submit to API
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(validatedData),
+        body: JSON.stringify(apiData),
       })
 
-      const data = await response.json()
-
       if (!response.ok) {
+        const data = await response.json()
         throw new Error(data.error || "Registration failed")
       }
+
+      const data = await response.json()
 
       // Show success message with reference ID
       toast({
@@ -151,7 +156,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-[#f9f3e9] py-12">
-      <div className="container mt-10 mx-auto px-4">
+      <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
           <div className="bg-[#c14d14] p-6 text-center">
             <h1 className="text-2xl font-bold text-white">नया सदस्य पंजीकरण</h1>
@@ -358,4 +363,3 @@ export default function RegisterPage() {
     </div>
   )
 }
-

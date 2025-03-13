@@ -6,6 +6,7 @@ import { Tiro_Devanagari_Hindi } from "next/font/google"
 import "./globals.css"
 import type React from "react"
 import Navbar from "@/components/navbar"
+import { AuthProvider } from "@/components/Auth-provider"
 
 const devanagari = Tiro_Devanagari_Hindi({
   weight: "400",
@@ -31,7 +32,10 @@ export default function RootLayout({
     <html lang="hi" className={devanagari.className}>
       <body>
         <ClientLayout>
+        <AuthProvider>
           {children}
+        </AuthProvider>
+     
         </ClientLayout>
       </body>
     </html>

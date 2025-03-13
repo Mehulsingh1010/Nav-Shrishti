@@ -28,12 +28,33 @@ const dashboardData = {
 
 export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Good day")
-  const [userData, setUserData] = useState({
-    title: "Mr.",
-    firstName: "Mehul",
-    surname: "Singh",
-  })
+  // const [userData, setUserData] = useState({
+  //   title: "Mr.",
+  //   firstName: "Mehul",
+  //   surname: "Singh",
+  // })
+  const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
+  const [error, setError] = useState("");
 
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("/api/auth/profile");
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error);
+        }
+
+        setUser(data);
+      } catch (err: unknown) {
+        if (err instanceof Error)
+        setError(err.message);
+      }
+    }
+
+    fetchUser();
+  }, []);
   useEffect(() => {
     const hour = new Date().getHours()
     if (hour < 12) setGreeting("Good morning")
@@ -50,9 +71,10 @@ export default function DashboardPage() {
         {/* Top Section with User Welcome and Trial Info */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-orange-50 to-amber-50 p-6 rounded-xl border border-amber-100">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-orange-800">
-              {greeting}, {userData.title} {userData.firstName} {userData.surname}
-            </h1>
+          <h1 className="text-2xl font-bold tracking-tight text-orange-800">
+  {greeting}, {user ? user.name : "Guest"}
+</h1>
+
             <p className="text-orange-600 mt-1">Welcome to your dashboard. Here&#39;s an overview of your account.</p>
           </div>
           
