@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -21,8 +21,25 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [captchaVerified, setCaptchaVerified] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+  // Check screen size on mount and when resizing
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Initial check
+    checkScreenSize();
+    
+    // Add event listener for resize
+    window.addEventListener('resize', checkScreenSize);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setIsSubmitting(true);
@@ -56,10 +73,116 @@ export default function LoginPage() {
     }
   };
 
+  // Login form component - extracted for reuse
+  const LoginForm = () => (
+    <form onSubmit={handleSubmit} className="space-y-6 w-full">
+      {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+      
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input 
+            id="email" 
+            type="email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            className="w-full" 
+            required 
+          />
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Label htmlFor="password">Password</Label>
+            <Link href="/auth/forgot-password" className="text-sm text-orange-700 hover:underline">
+              Forgot password?
+            </Link>
+          </div>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pr-10"
+              required
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-center pt-2">
+        <ReCAPTCHA 
+          sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" 
+          onChange={() => setCaptchaVerified(true)} 
+          size={isMobile ? "compact" : "normal"}
+        />
+      </div>
+
+      <div className="flex justify-center pt-4">
+        <Button 
+          type="submit" 
+          className="bg-orange-700 hover:bg-orange-800 text-white px-8 py-6 h-auto text-lg rounded-md w-full" 
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Logging in..." : "Login"}
+        </Button>
+      </div>
+
+      <div className="text-center mt-4">
+        <p className="text-sm text-gray-600">
+          Don&lsquo;t have an account? <Link href="/auth/register" className="text-orange-700 hover:underline">Register here</Link>
+        </p>
+      </div>
+    </form>
+  );
+
+  // Mobile layout - only show login form
+  if (isMobile) {
+    return (
+      <div className="h-screen min-h-screen w-full flex flex-col bg-gradient-to-br from-orange-50 via-orange-100/30 to-orange-50">
+        {/* Logo at the top */}
+        <div className="flex items-center justify-center space-x-3 pt-8 pb-6">
+          <div className="h-10 w-10 bg-orange-700 rounded-full flex items-center justify-center">
+            <span className="text-white text-xl font-bold">ॐ</span>
+          </div>
+          <h2 className="text-orange-800 text-xl font-bold">वैदिक भारत</h2>
+        </div>
+        
+        {/* Login Form Container */}
+        <div className="flex-1 flex items-center justify-center px-4">
+          <div className="w-full max-w-md px-4 py-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-md">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-orange-900">सदस्य लॉगिन</h2>
+              <p className="text-orange-700 mt-1">Member Login</p>
+            </div>
+            
+            <LoginForm />
+          </div>
+        </div>
+        
+        {/* Footer */}
+        <div className="py-4 text-center">
+          <p className="text-orange-800 text-xs">
+            © 2025 वैदिक भारत. सर्वाधिकार सुरक्षित.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop and tablet layout
   return (
-    <div className="min-h-screen h-screen w-full flex bg-gradient-to-br from-orange-50 via-orange-100/30 to-orange-50">
-      {/* Left Side - Design Elements */}
-      <div className="w-1/2 h-full relative bg-gradient-to-br from-orange-800 to-orange-600 p-12 flex flex-col justify-between overflow-hidden">
+    <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-gradient-to-br from-orange-50 via-orange-100/30 to-orange-50">
+      {/* Left Side - Design Elements (hidden on mobile) */}
+      <div className="w-full md:w-1/2 h-full relative bg-gradient-to-br from-orange-800 to-orange-600 p-6 md:p-12 flex flex-col justify-between">
         {/* Logo at the top */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -68,15 +191,15 @@ export default function LoginPage() {
           className="relative z-10"
         >
           <div className="flex items-center space-x-3">
-            <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center">
-              <span className="text-orange-800 text-2xl font-bold">ॐ</span>
+            <div className="h-10 md:h-12 w-10 md:w-12 bg-white rounded-full flex items-center justify-center">
+              <span className="text-orange-800 text-xl md:text-2xl font-bold">ॐ</span>
             </div>
-            <h2 className="text-white text-2xl font-bold">वैदिक भारत</h2>
+            <h2 className="text-white text-xl md:text-2xl font-bold">वैदिक भारत</h2>
           </div>
         </motion.div>
 
         {/* Circular Rotating Mantra */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] opacity-20">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] md:w-[350px] h-[250px] md:h-[350px] opacity-20">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
@@ -107,7 +230,7 @@ export default function LoginPage() {
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="inline-block px-5 py-2 bg-white/20 rounded-full text-white font-semibold text-sm tracking-wide mb-6"
+            className="inline-block px-4 py-1 md:px-5 md:py-2 bg-white/20 rounded-full text-white font-semibold text-xs md:text-sm tracking-wide mb-4 md:mb-6"
           >
             वैदिक संस्कृति का पुनरुत्थान
           </motion.span>
@@ -116,7 +239,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="text-5xl font-extrabold text-white leading-tight mb-6"
+            className="text-3xl md:text-5xl font-extrabold text-white leading-tight mb-4 md:mb-6"
           >
             आपके खाते में
             <span className="block text-orange-200">आपका स्वागत है</span>
@@ -126,7 +249,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
-            className="text-xl text-orange-100 mb-10 max-w-md mx-auto"
+            className="text-lg md:text-xl text-orange-100 mb-6 md:mb-10 max-w-md mx-auto"
           >
             आध्यात्मिक यात्रा पर हमारे साथ जुड़ें और अपनी संस्कृति का संरक्षण करें
           </motion.p>
@@ -136,7 +259,7 @@ export default function LoginPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="grid grid-cols-2 gap-6 max-w-lg mx-auto"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 max-w-lg mx-auto"
           >
             {[
               { title: "विशेष कार्यक्रम", description: "मंदिरों और आश्रमों में विशेष पहुंच" },
@@ -146,99 +269,34 @@ export default function LoginPage() {
               <motion.div
                 key={index}
                 whileHover={{ y: -5, scale: 1.05 }}
-                className={`p-5 bg-white/10 backdrop-blur-sm rounded-lg text-left ${
-                  index === 2 ? "col-span-2" : ""
+                className={`p-4 md:p-5 bg-white/10 backdrop-blur-sm rounded-lg text-left ${
+                  index === 2 ? "sm:col-span-2" : ""
                 }`}
               >
-                <h3 className="text-lg font-bold text-white mb-1">{item.title}</h3>
-                <p className="text-orange-100 text-sm">{item.description}</p>
+                <h3 className="text-base md:text-lg font-bold text-white mb-1">{item.title}</h3>
+                <p className="text-orange-100 text-xs md:text-sm">{item.description}</p>
               </motion.div>
             ))}
           </motion.div>
         </div>
 
         {/* Footer */}
-        <div className="relative z-10 mt-auto">
-          <p className="text-orange-200 text-sm text-center">
+        <div className="relative z-10">
+          <p className="text-orange-200 text-xs md:text-sm text-center">
             © 2025 वैदिक भारत. सर्वाधिकार सुरक्षित.
           </p>
         </div>
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="w-1/2 h-full flex items-center justify-center">
-        <div className="w-full max-w-md px-8 py-10">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-orange-900">सदस्य लॉगिन</h2>
+      <div className="w-full md:w-1/2 h-full flex items-center justify-center">
+        <div className="w-full max-w-md px-6 py-8 md:py-0">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-orange-900">सदस्य लॉगिन</h2>
             <p className="text-orange-700 mt-2">Member Login</p>
           </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && <p className="text-sm text-red-500 text-center">{error}</p>}
-            
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  value={email} 
-                  onChange={(e) => setEmail(e.target.value)} 
-                  className="w-full" 
-                  required 
-                />
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link href="/auth/forgot-password" className="text-sm text-orange-700 hover:underline">
-                    Forgot password?
-                  </Link>
-                </div>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pr-10"
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-center pt-2">
-              <ReCAPTCHA 
-                sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" 
-                onChange={() => setCaptchaVerified(true)} 
-              />
-            </div>
-
-            <div className="flex justify-center pt-4">
-              <Button 
-                type="submit" 
-                className="bg-orange-700 hover:bg-orange-800 text-white px-8 py-6 h-auto text-lg rounded-md w-full" 
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Logging in..." : "Login"}
-              </Button>
-            </div>
-
-            <div className="text-center mt-4">
-              <p className="text-sm text-gray-600">
-                Don&lsquo;t have an account? <Link href="/auth/register" className="text-orange-700 hover:underline">Register here</Link>
-              </p>
-            </div>
-          </form>
+          
+          <LoginForm />
         </div>
       </div>
     </div>
