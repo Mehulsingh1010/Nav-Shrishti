@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { DashboardShell } from "./_components/dashboard-shell"
 import { DashboardHeader } from "./_components/dashboard-header"
 import { Button } from "@/components/ui/button"
+import loader from "@/components/loader"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -35,6 +36,7 @@ export default function DashboardPage() {
   // })
   const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchUser() {
@@ -50,6 +52,8 @@ export default function DashboardPage() {
       } catch (err: unknown) {
         if (err instanceof Error)
         setError(err.message);
+      } finally{
+        setLoading(false);
       }
     }
 
@@ -64,6 +68,8 @@ export default function DashboardPage() {
     // In a real app, we would fetch user data here
     // fetchUserData().then(data => setUserData(data))
   }, [])
+
+
 
   return (
     <DashboardShell>

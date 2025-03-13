@@ -114,37 +114,13 @@ export default function Navbar() {
 
             {/* Login Dropdown */}
             <div className="relative group">
-              <button
-                onClick={() => setIsLoginMenuOpen(!isLoginMenuOpen)}
+              
+                <Link
+                href="/auth/login"
                 className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-              >
-                लॉगिन <ChevronDown className="w-4 h-4" />
-              </button>
-              <AnimatePresence>
-                {isLoginMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="absolute top-full left-0 mt-2 w-48 bg-white shadow-lg rounded-lg overflow-hidden"
-                  >
-                    <Link
-                      href="/login/user"
-                      className="block px-4 py-2 hover:bg-gray-100 text-orange-800"
-                      onClick={() => setIsLoginMenuOpen(false)}
-                    >
-                      लॉगिन (उपयोगकर्ता)
-                    </Link>
-                    <Link
-                      href="/login/seller"
-                      className="block px-4 py-2 hover:bg-gray-100 text-orange-800"
-                      onClick={() => setIsLoginMenuOpen(false)}
-                    >
-                      लॉगिन (विक्रेता)
-                    </Link>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                >
+                लॉगिन
+                </Link>
             </div>
 
             {/* Language Toggle Button */}

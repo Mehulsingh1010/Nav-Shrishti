@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const pathname = usePathname(); // Get the current path
+  const pathname = usePathname();
 
   useEffect(() => {
     async function fetchUser() {
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (
           err instanceof Error &&
           err.message === "Not authenticated" &&
-          pathname !== "/" // Only redirect if not on the home page
+          !["/auth/login", "/auth/register", "/"].includes(pathname) // Allow login & register pages
         ) {
           router.push("/auth/login");
         }

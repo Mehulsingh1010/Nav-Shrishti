@@ -442,12 +442,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
           >
             {sidebarOpen ? (
               <div className="flex items-center gap-3 w-full bg-gradient-to-r from-orange-100 to-amber-100 rounded-lg p-3">
-                <Avatar className="h-10 w-10 shrink-0 border-2 border-orange-200">
-                  <AvatarImage src="/placeholder.svg" alt="User" />
-                  <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-500 text-white">
-                    MS
-                  </AvatarFallback>
-                </Avatar>
+                
                 <div className="flex flex-col min-w-0 flex-1">
                   {/* <span className="text-sm font-medium truncate text-orange-900">
                     Mehul Singh
