@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface User {
   id: string;
@@ -20,6 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const pathname = usePathname(); // Get the current path
 
   useEffect(() => {
     async function fetchUser() {
@@ -33,8 +34,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         setUser(data);
       } catch (err: unknown) {
-        if (err instanceof Error && err.message === "Not authenticated") {
-          router.push("/auth/login"); // Redirect if not authenticated
+        if (
+          err instanceof Error &&
+          err.message === "Not authenticated" &&
+          pathname !== "/" // Only redirect if not on the home page
+        ) {
+          router.push("/auth/login");
         }
       } finally {
         setLoading(false);
@@ -42,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     fetchUser();
-  }, [router]);
+  }, [router, pathname]);
 
   return (
     <AuthContext.Provider value={{ user, loading }}>
