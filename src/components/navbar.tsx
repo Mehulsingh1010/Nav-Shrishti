@@ -29,7 +29,8 @@ export default function Navbar() {
     { name: "गुरुकुल", href: "#gurukul" },
     { name: "धर्म", href: "#dharm" },
     { name: "योग", href: "#yoga" },
-    { name: "संपर्क", href: "#contact" }
+    { name: "संपर्क", href: "#contact" },
+    {name: "सेवाएँ", href: "#services"}
   ]
 
   useEffect(() => {

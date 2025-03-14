@@ -91,17 +91,17 @@ export function DashboardShell({ children }: DashboardShellProps) {
   const navigation = [
     {
       name: "Dashboard",
-      href: "/dashboard",
+      href: "/user-dashboard",
       icon: Home,
-      current: pathname === "/dashboard",
+      current: pathname === "/user-dashboard",
     },
     {
       name: "Profile",
       href: "#",
       icon: User,
-      current: pathname.startsWith("/dashboard/profile"),
+      current: pathname.startsWith("/user-dashboard/profile"),
       children: [
-        { name: "View Profile", href: "/dashboard/profile" },
+        { name: "View Profile", href: "/user-dashboard/profile/view-profile" },
         { name: "Update Profile", href: "/dashboard/profile/update" },
         { name: "KYC Update", href: "/dashboard/profile/kyc" },
       ],

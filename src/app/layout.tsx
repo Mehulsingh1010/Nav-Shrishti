@@ -7,6 +7,7 @@ import "./globals.css"
 import type React from "react"
 import Navbar from "@/components/navbar"
 import { AuthProvider } from "@/components/Auth-provider"
+import Footer from "@/components/footer"
 
 const devanagari = Tiro_Devanagari_Hindi({
   weight: "400",
@@ -51,6 +52,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
     <>
       {pathname === "/" && <Navbar />}
       {children}
+      {pathname === "/" && <Footer />}
     </>
   )
 }
