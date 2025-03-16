@@ -50,7 +50,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   // Conditionally render the Navbar only on the home page (`/`)
   return (
     <>
-      {pathname === "/" && <Navbar />}
+      {pathname === "/"  && <Navbar />}
       {children}
       {pathname === "/" && <Footer />}
     </>

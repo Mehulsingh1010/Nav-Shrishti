@@ -26,11 +26,11 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   const navItems = [
-    { name: "गुरुकुल", href: "#gurukul" },
-    { name: "धर्म", href: "#dharm" },
-    { name: "योग", href: "#yoga" },
-    { name: "संपर्क", href: "#contact" },
-    {name: "सेवाएँ", href: "#services"}
+    { name: "उत्पाद", href: "/navlinks/products" },
+    { name: "संपर्क", href: "/navlinks/contact" },
+    { name: "कार्यक्रम", href: "/navlinks/events" },
+    { name: "गैलरी", href: "/navlinks/gallery" },
+    { name: "हमारे बारे में", href: "/navlinks/about" }
   ]
 
   useEffect(() => {
