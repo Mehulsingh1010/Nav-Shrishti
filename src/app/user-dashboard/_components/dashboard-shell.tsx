@@ -49,6 +49,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import UserProfile from "@/components/user-profile";
 import LogoutButton from "@/components/logout";
+import Link from "next/link";
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -173,18 +174,16 @@ export function DashboardShell({ children }: DashboardShellProps) {
     <div className="flex min-h-screen bg-orange-50">
       {/* Mobile navigation */}
       <header className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b bg-white px-4 md:hidden">
-        <div className="flex items-center gap-3">
-          <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-9 w-9 rounded-md flex items-center justify-center">
-          <Image src="/logo.png" alt="Logo" width={36} height={36} />
-
+        <Link href="/">
+          <div className="flex items-center gap-3">
+            <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-9 w-9 rounded-md flex items-center justify-center">
+              <Image src="/logo.png" alt="Logo" width={36} height={36} />
+            </div>
+            <span className="font-semibold text-lg text-orange-900">
+              नव सृष्टि सृजन
+            </span>
           </div>
-          <span className="font-semibold text-lg text-orange-900">
-            नव सृष्टि सृजन
-          </span>
-        
-
-        </div>
-
+        </Link>
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
@@ -248,7 +247,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
                       <p className="text-sm text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full inline-block">
                         REF123
                       </p> */}
-                      <UserProfile/>
+                      <UserProfile />
                     </div>
                   </div>
                   <div className="mt-4 flex items-center gap-2 rounded-lg bg-white border border-orange-200 p-3 shadow-sm">
@@ -353,17 +352,18 @@ export function DashboardShell({ children }: DashboardShellProps) {
           collapsible="icon"
         >
           <SidebarHeader className="border-b border-orange-200 h-16 flex items-center px-5">
-            <div className="flex items-center gap-3 w-full overflow-hidden">
-              <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-9 w-9 rounded-md flex items-center justify-center shrink-0">
-                {/* <span className="text-white font-bold text-lg">न</span> */}
-                <Image src="/logo.png" alt="Logo" width={36} height={36} />
-
-
-              </div>
-              <span className="font-semibold text-lg text-orange-900 truncate">
-                नव सृष्टि सृजन
-              </span>
-            </div>
+            <Link href="/">
+              <div className="flex items-center gap-3 w-full overflow-hidden">
+                {" "}
+                <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-9 w-9 rounded-md flex items-center justify-center shrink-0">
+                  {/* <span className="text-white font-bold text-lg">न</span> */}
+                  <Image src="/logo.png" alt="Logo" width={36} height={36} />
+                </div>
+                <span className="font-semibold text-lg text-orange-900 truncate">
+                  नव सृष्टि सृजन
+                </span>
+              </div>{" "}
+            </Link>
           </SidebarHeader>
           <SidebarContent className="px-3 py-5 overflow-y-auto">
             <SidebarMenu>
@@ -442,7 +442,6 @@ export function DashboardShell({ children }: DashboardShellProps) {
           >
             {sidebarOpen ? (
               <div className="flex items-center gap-3 w-full bg-gradient-to-r from-orange-100 to-amber-100 rounded-lg p-3">
-                
                 <div className="flex flex-col min-w-0 flex-1">
                   {/* <span className="text-sm font-medium truncate text-orange-900">
                     Mehul Singh
@@ -450,7 +449,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
                   <span className="text-xs bg-white px-2 py-0.5 rounded-full text-orange-700 inline-block w-fit">
                     REF123
                   </span> */}
-                  <UserProfile/>
+                  <UserProfile />
                   <LogoutButton />
                 </div>
                 <DropdownMenu>
@@ -520,7 +519,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
         <div className="flex-1">
           <div className="flex flex-col">
             <header className="sticky top-0 z-30 hidden h-16 items-center gap-4 border-b bg-white px-6 md:flex shadow-sm">
-              <SidebarTrigger />
+              {/* <SidebarTrigger /> */}
               <div className="flex-1" />
               <div className="flex items-center gap-4">
                 <Button

@@ -24,6 +24,8 @@ export default function Navbar() {
   const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false)
   const [language, setLanguage] = useState("en")
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
+  const [error, setError] = useState("");
 
   const navItems = [
     { name: "उत्पाद", href: "/navlinks/products" },
@@ -33,6 +35,27 @@ export default function Navbar() {
     { name: "हमारे बारे में", href: "/navlinks/about" }
   ]
 
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("/api/auth/profile");
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error);
+        }
+
+        setUser(data);
+      } catch (err: unknown) {
+        if (err instanceof Error)
+        setError(err.message);
+      } finally{
+        
+      }
+    }
+
+    fetchUser();
+  }, []);
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
@@ -116,12 +139,21 @@ export default function Navbar() {
             {/* Login Dropdown */}
             <div className="relative group">
               
-                <Link
-                href="/auth/login"
-                className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-                >
-                लॉगिन
-                </Link>
+                {user ? (
+                  <Link
+                    href="/user-dashboard"
+                    className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                  >
+                    डैशबोर्ड
+                  </Link>
+                ) : (
+                  <Link
+                    href="/auth/login"
+                    className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+                  >
+                    लॉगिन
+                  </Link>
+                )}
             </div>
 
             {/* Language Toggle Button */}
@@ -161,7 +193,7 @@ export default function Navbar() {
                       <div>
                         <p className="text-base font-medium text-orange-900">Guest User</p>
                         <Link 
-                          href="/login/user"
+                          href="/auth/login"
                           className="text-sm text-white bg-orange-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-orange-600"
                           onClick={() => setMobileOpen(false)}
                         >
@@ -191,19 +223,12 @@ export default function Navbar() {
                       {/* Login Options */}
                       <div className="px-2 py-3 border-t border-gray-100 mt-2">
                         <p className="text-sm font-medium text-gray-500 mb-2 px-2">लॉगिन विकल्प</p>
-                        <Link
-                          href="/login/user"
-                          className="flex w-full px-4 py-2 hover:bg-orange-100 text-orange-800 rounded-lg transition-colors"
+                        <Link 
+                          href="/auth/login"
+                          className="text-sm text-white bg-orange-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-orange-600"
                           onClick={() => setMobileOpen(false)}
                         >
-                          लॉगिन (उपयोगकर्ता)
-                        </Link>
-                        <Link
-                          href="/login/seller"
-                          className="flex w-full px-4 py-2 hover:bg-orange-100 text-orange-800 rounded-lg transition-colors"
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          लॉगिन (विक्रेता)
+                          लॉगिन करें
                         </Link>
                       </div>
                     </nav>

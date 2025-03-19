@@ -36,9 +36,42 @@ const salesData = {
 
 export default function SellerDashboardPage() {
   const [greeting, setGreeting] = useState("Good day")
-  const [user, setUser] = useState({ name: "Rahul Sharma" })
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredProducts, setFilteredProducts] = useState(mockProducts)
+  const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("/api/auth/profile");
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error);
+        }
+
+        setUser(data);
+      } catch (err: unknown) {
+        if (err instanceof Error)
+        setError(err.message);
+      } finally{
+        setLoading(false);
+      }
+    }
+
+    fetchUser();
+  }, []);
+  useEffect(() => {
+    const hour = new Date().getHours()
+    if (hour < 12) setGreeting("Good morning")
+    else if (hour < 17) setGreeting("Good afternoon")
+    else setGreeting("Good evening")
+
+    // In a real app, we would fetch user data here
+    // fetchUserData().then(data => setUserData(data))
+  }, [])
 
   useEffect(() => {
     const hour = new Date().getHours()
@@ -72,7 +105,7 @@ export default function SellerDashboardPage() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-orange-50 to-amber-50 p-6 rounded-xl border border-amber-100">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-orange-800">
-              {greeting}, {user.name}
+              {greeting}, {user?.name || "Guest"}
             </h1>
             <p className="text-orange-600 mt-1">
               Welcome to your seller dashboard. Manage your products and track your sales.

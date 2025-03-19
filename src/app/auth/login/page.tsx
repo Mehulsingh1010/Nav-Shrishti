@@ -22,29 +22,36 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [captchaVerified, setCaptchaVerified] = useState(false);
 
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setError("");
     setIsSubmitting(true);
-
+  
     if (!captchaVerified) {
       setError("Please verify you are not a robot.");
       setIsSubmitting(false);
       return;
     }
-
+  
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
+  
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-
-      toast({ title: "Login Successful", description: `Welcome back!` });
-      router.push("/user-dashboard");
+  
+      toast({ title: "Login Successful", description: "Welcome back!" });
+  
+      // Redirect based on role
+      if (data.role === "seller") {
+        router.push("/seller-dashboard");
+      } else {
+        router.push("/user-dashboard");
+      }
+  
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message || "Login failed. Please try again.");
@@ -55,6 +62,7 @@ export default function LoginPage() {
       setIsSubmitting(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-[#f9f3e9] flex flex-col lg:flex-row">
