@@ -92,7 +92,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
       name: "Dashboard",
       href: "/seller",
       icon: Home,
-      current: pathname === "/seller",
+      current: pathname === "/seller-dashboard",
     },
     {
       name: "Office",
@@ -440,7 +440,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
         <div className="flex-1">
           <div className="flex flex-col">
             <header className="sticky top-0 z-30 hidden h-16 items-center gap-4 border-b bg-white px-6 md:flex shadow-sm">
-              <SidebarTrigger />
+              
               <div className="flex-1" />
               <div className="flex items-center gap-4">
                 <Button variant="ghost" size="icon" className="text-orange-600 relative">
