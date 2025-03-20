@@ -1,21 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
-import { motion, AnimatePresence } from "framer-motion"
-import Link from "next/link"
-import { Menu, X, ChevronDown, Clock, Bell, User } from "lucide-react"
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { Menu, Bell, User } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
@@ -40,22 +33,27 @@ export default function Navbar() {
       try {
         const res = await fetch("/api/auth/profile");
         const data = await res.json();
-
+  
         if (!res.ok) {
           throw new Error(data.error);
         }
-
+  
         setUser(data);
+  
+        // Check user role and redirect accordingly
+        if (data.role === "seller") {
+          window.location.href = "/seller-dashboard";
+        } else if (data.role === "user") {
+          window.location.href = "/user-dashboard";
+        }
       } catch (err: unknown) {
-        if (err instanceof Error)
-        setError(err.message);
-      } finally{
-        
+        if (err instanceof Error) setError(err.message);
       }
     }
-
+  
     fetchUser();
   }, []);
+  
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
@@ -97,7 +95,7 @@ export default function Navbar() {
           : "bg-orange-50/80 backdrop-blur-sm"
       }`}
     >
-      <div className="container mx-auto px-4">
+      <div className="container  mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo and Title */}
           <Link href="/" className="flex items-center gap-4 group">

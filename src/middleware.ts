@@ -13,8 +13,11 @@ const publicRoutes = [
 ]; // Define routes that don't require authentication
 
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = req.cookies.get("token")?.value; // Ensure correct cookie retrieval
   const { pathname } = req.nextUrl;
+
+  console.log("Middleware - Path:", pathname);
+  console.log("Middleware - Token:", token);
 
   // Allow public routes without authentication
   if (publicRoutes.includes(pathname)) {

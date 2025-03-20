@@ -1,9 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import { useEffect, useState } from "react"
-import { BarChart3, Plus, ShoppingCart, Wallet, ArrowUp, TrendingUp, Search, Download } from "lucide-react"
+import {
+  BarChart3,
+  Plus,
+  ShoppingCart,
+  Wallet,
+  ArrowUp,
+  TrendingUp,
+  Search,
+  Download,
+  Edit,
+  Trash2,
+} from "lucide-react"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -13,90 +24,159 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { SellerDashboardShell } from "./_components/seller-dashboard-shell"
+import { ProductFormModal } from "./_components/product-form-modal"
+import { DeleteProductDialog } from "./_components/delete-product-dialog"
+import { toast, useToast } from "../../hooks/use-toast"
 
-// Mock data - would come from API in real implementation
-const mockProducts = [
-  { id: 1, name: "Organic Fertilizer", sku: "FRT-001", price: 1200, units: 150, category: "Agriculture" },
-  { id: 2, name: "Neem Oil Extract", sku: "NOE-002", price: 850, units: 75, category: "Pesticides" },
-  { id: 3, name: "Soil Health Kit", sku: "SHK-003", price: 1500, units: 25, category: "Testing" },
-  { id: 4, name: "Seed Variety Pack", sku: "SVP-004", price: 650, units: 200, category: "Seeds" },
-  { id: 5, name: "Drip Irrigation Set", sku: "DIS-005", price: 3200, units: 15, category: "Equipment" },
-]
+// Define the product type
+type Product = {
+  id: number
+  productId: string
+  name: string
+  description: string
+  category: string
+  price: number
+  availableUnits: number
+  status: "available" | "sold_out"
+  photoUrl: string | null
+}
 
-const salesData = {
-  daily: 12500,
-  weekly: 78500,
-  monthly: 345000,
-  availableBalance: 278000,
-  totalIncome: 1245000,
-  productsSold: 87,
-  newOrders: 12,
-  pendingOrders: 5,
+// Define sales data type
+type SalesData = {
+  daily: number
+  weekly: number
+  monthly: number
+  availableBalance: number
+  totalIncome: number
+  productsSold: number
+  newOrders: number
+  pendingOrders: number
 }
 
 export default function SellerDashboardPage() {
   const [greeting, setGreeting] = useState("Good day")
   const [searchTerm, setSearchTerm] = useState("")
-  const [filteredProducts, setFilteredProducts] = useState(mockProducts)
-  const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>([])
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null)
+  const [error, setError] = useState("")
 
+  // Modal states
+  const [productFormOpen, setProductFormOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [formMode, setFormMode] = useState<"add" | "edit">("add")
+
+  // Mock sales data - would come from API in real implementation
+  const [salesData, setSalesData] = useState<SalesData>({
+    daily: 12500,
+    weekly: 78500,
+    monthly: 345000,
+    availableBalance: 278000,
+    totalIncome: 1245000,
+    productsSold: 87,
+    newOrders: 12,
+    pendingOrders: 5,
+  })
+
+  // Fetch user data
   useEffect(() => {
     async function fetchUser() {
       try {
-        const res = await fetch("/api/auth/profile");
-        const data = await res.json();
+        const res = await fetch("/api/auth/profile")
+        const data = await res.json()
 
         if (!res.ok) {
-          throw new Error(data.error);
+          throw new Error(data.error)
         }
 
-        setUser(data);
+        setUser(data)
       } catch (err: unknown) {
-        if (err instanceof Error)
-        setError(err.message);
-      } finally{
-        setLoading(false);
+        if (err instanceof Error) setError(err.message)
       }
     }
 
-    fetchUser();
-  }, []);
+    fetchUser()
+  }, [])
+
+  // Set greeting based on time of day
   useEffect(() => {
     const hour = new Date().getHours()
     if (hour < 12) setGreeting("Good morning")
     else if (hour < 17) setGreeting("Good afternoon")
     else setGreeting("Good evening")
-
-    // In a real app, we would fetch user data here
-    // fetchUserData().then(data => setUserData(data))
   }, [])
 
+  // Fetch products
   useEffect(() => {
-    const hour = new Date().getHours()
-    if (hour < 12) setGreeting("Good morning")
-    else if (hour < 17) setGreeting("Good afternoon")
-    else setGreeting("Good evening")
+    async function fetchProducts() {
+      setIsLoading(true)
+      try {
+        const response = await fetch("/api/products")
 
-    // In a real app, we would fetch user data here
-    // fetchUserData().then(data => setUser(data))
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(error.error || "Failed to fetch products")
+        }
+
+        const data = await response.json()
+        setProducts(data)
+      } catch (error) {
+        console.error("Error fetching products:", error)
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Failed to load products",
+          variant: "destructive",
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchProducts()
   }, [])
 
+  // Filter products based on search term
   useEffect(() => {
     if (searchTerm) {
       setFilteredProducts(
-        mockProducts.filter(
+        products.filter(
           (product) =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            product.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.productId.toLowerCase().includes(searchTerm.toLowerCase()) ||
             product.category.toLowerCase().includes(searchTerm.toLowerCase()),
         ),
       )
     } else {
-      setFilteredProducts(mockProducts)
+      setFilteredProducts(products)
     }
-  }, [searchTerm])
+  }, [searchTerm, products])
+
+  // Handle add product button click
+  const handleAddProduct = () => {
+    setSelectedProduct(null)
+    setFormMode("add")
+    setProductFormOpen(true)
+  }
+
+  // Handle edit product button click
+  const handleEditProduct = (product: Product) => {
+    setSelectedProduct(product)
+    setFormMode("edit")
+    setProductFormOpen(true)
+  }
+
+  // Handle delete product button click
+  const handleDeleteProduct = (product: Product) => {
+    setSelectedProduct(product)
+    setDeleteDialogOpen(true)
+  }
+
+  // Format price from paise to rupees
+  const formatPrice = (price: number) => {
+    return (price / 100).toLocaleString("en-IN")
+  }
 
   return (
     <SellerDashboardShell>
@@ -113,7 +193,7 @@ export default function SellerDashboardPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button className="bg-orange-600 hover:bg-orange-700 shadow-md transition-all">
+            <Button className="bg-orange-600 hover:bg-orange-700 shadow-md transition-all" onClick={handleAddProduct}>
               <Plus className="mr-2 h-4 w-4" />
               Add New Product
             </Button>
@@ -211,7 +291,7 @@ export default function SellerDashboardPage() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <Button className="bg-orange-600 hover:bg-orange-700">
+                <Button className="bg-orange-600 hover:bg-orange-700" onClick={handleAddProduct}>
                   <Plus className="mr-2 h-4 w-4" />
                   Add Product
                 </Button>
@@ -224,51 +304,83 @@ export default function SellerDashboardPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Product Name</TableHead>
-                    <TableHead>SKU</TableHead>
+                    <TableHead>Product ID</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead className="text-right">Price (₹)</TableHead>
                     <TableHead className="text-right">Available Units</TableHead>
+                    <TableHead className="text-right">Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProducts.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell className="font-medium">{product.name}</TableCell>
-                      <TableCell>{product.sku}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          className="bg-orange-50 text-orange-700 hover:bg-orange-100 border-orange-200"
-                        >
-                          {product.category}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">₹{product.price.toLocaleString()}</TableCell>
-                      <TableCell className="text-right">
-                        <span className={product.units < 50 ? "text-red-600 font-medium" : ""}>{product.units}</span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 border-orange-200 text-orange-700 hover:bg-orange-100"
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-8 border-green-200 text-green-700 hover:bg-green-100"
-                          >
-                            <ShoppingCart className="h-3.5 w-3.5 mr-1" />
-                            Sell
-                          </Button>
-                        </div>
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-10">
+                        Loading products...
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : filteredProducts.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-10">
+                        {searchTerm ? "No products match your search" : "No products found. Add your first product!"}
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredProducts.map((product) => (
+                      <TableRow key={product.id}>
+                        <TableCell className="font-medium">{product.name}</TableCell>
+                        <TableCell>{product.productId}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className="bg-orange-50 text-orange-700 hover:bg-orange-100 border-orange-200"
+                          >
+                            {product.category}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">₹{formatPrice(product.price)}</TableCell>
+                        <TableCell className="text-right">
+                          <span className={product.availableUnits < 50 ? "text-red-600 font-medium" : ""}>
+                            {product.availableUnits}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Badge
+                            variant={product.status === "available" ? "default" : "destructive"}
+                            className={
+                              product.status === "available"
+                                ? "bg-green-100 text-green-700 hover:bg-green-200 border-green-200"
+                                : "bg-red-100 text-red-700 hover:bg-red-200 border-red-200"
+                            }
+                          >
+                            {product.status === "available" ? "Available" : "Sold Out"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 border-orange-200 text-orange-700 hover:bg-orange-100"
+                              onClick={() => handleEditProduct(product)}
+                            >
+                              <Edit className="h-3.5 w-3.5 mr-1" />
+                              Edit
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="h-8 border-red-200 text-red-700 hover:bg-red-100"
+                              onClick={() => handleDeleteProduct(product)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5 mr-1" />
+                              Delete
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </div>
@@ -360,6 +472,24 @@ export default function SellerDashboardPage() {
           </Card>
         </Tabs>
       </div>
+
+      {/* Product Form Modal */}
+      <ProductFormModal
+        open={productFormOpen}
+        onOpenChange={setProductFormOpen}
+        // product={selectedProduct || undefined}
+        mode={formMode}
+      />
+
+      {/* Delete Product Dialog */}
+      {selectedProduct && (
+        <DeleteProductDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          productId={selectedProduct.id}
+          productName={selectedProduct.name}
+        />
+      )}
     </SellerDashboardShell>
   )
 }

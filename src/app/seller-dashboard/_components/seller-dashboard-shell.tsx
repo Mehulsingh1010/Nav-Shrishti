@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import type React from "react"
-
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import {
@@ -24,7 +25,7 @@ import {
   Banknote,
 } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
+// Removed duplicate import of Link
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -164,12 +165,14 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
     <div className="flex min-h-screen bg-orange-50">
       {/* Mobile navigation */}
       <header className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b bg-white px-4 md:hidden">
+        <Link href='/'>
         <div className="flex items-center gap-3">
           <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-9 w-9 rounded-md flex items-center justify-center">
             <Image src="/logo.png" alt="Logo" width={36} height={36} />
           </div>
           <span className="font-semibold text-lg text-orange-900">Seller Portal</span>
         </div>
+        </Link>
 
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="text-orange-600 relative">
@@ -303,12 +306,14 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
           collapsible="icon"
         >
           <SidebarHeader className="border-b border-orange-200 h-16 flex items-center px-5">
+            <Link href='/'> 
             <div className="flex items-center gap-3 w-full overflow-hidden">
               <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-9 w-9 rounded-md flex items-center justify-center shrink-0">
                 <Image src="/logo.png" alt="Logo" width={36} height={36} />
               </div>
               <span className="font-semibold text-lg text-orange-900 truncate">Seller Portal</span>
             </div>
+            </Link>
           </SidebarHeader>
           <SidebarContent className="px-3 py-5 overflow-y-auto">
             <SidebarMenu>
