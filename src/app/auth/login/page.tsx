@@ -45,11 +45,16 @@ export default function LoginPage() {
   
       toast({ title: "Login Successful", description: "Welcome back!" });
   
+      // Store user role in localStorage or sessionStorage
+      localStorage.setItem("userRole", data.role); 
+  
       // Redirect based on role
       if (data.role === "seller") {
         router.push("/seller-dashboard");
-      } else {
+      } else if (data.role === "user") {
         router.push("/user-dashboard");
+      } else {
+        router.push("/");
       }
   
     } catch (err) {
@@ -62,6 +67,7 @@ export default function LoginPage() {
       setIsSubmitting(false);
     }
   };
+  
   
 
   return (

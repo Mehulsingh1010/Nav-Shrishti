@@ -10,16 +10,16 @@ const publicRoutes = [
   "/navlinks/products",
   "/auth/login",
   "/auth/register",
-]; // Define routes that don't require authentication
+]; 
 
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token")?.value; // Ensure correct cookie retrieval
+  const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
 
   console.log("Middleware - Path:", pathname);
   console.log("Middleware - Token:", token);
 
-  // Allow public routes without authentication
+  // Skip authentication check for public routes
   if (publicRoutes.includes(pathname)) {
     return NextResponse.next();
   }
@@ -32,7 +32,7 @@ export function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
+// Adjust matcher to avoid applying middleware to public routes
 export const config = {
-  matcher: ["/dashboard/:path*", "/((?!_next|static|favicon.ico|api).*)"], 
-  // Protect "/dashboard" and its subpaths, and apply middleware only to non-public assets
+  matcher: ["/dashboard/:path*"], // Apply middleware only to protected routes
 };

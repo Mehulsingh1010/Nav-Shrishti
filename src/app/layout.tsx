@@ -27,6 +27,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
+
+  
   // On the server side, we cannot directly access the path. So, we'll conditionally check it in the client
   // by using a different logic
   return (
@@ -45,14 +48,14 @@ export default function RootLayout({
 
 // This will render on the client-side only to decide whether to show the Navbar based on the path
 function ClientLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const hideNavAndFooter = pathname.startsWith("/seller-dashboard") || pathname.startsWith("/user-dashboard")|| pathname.startsWith("/auth"); // Hide Navbar and Footer on these paths)
 
-  // Conditionally render the Navbar only on the home page (`/`)
-  return (
+  return ( 
     <>
-      {pathname === "/"  && <Navbar />}
+      {!hideNavAndFooter && <Navbar />}
       {children}
-      {pathname === "/" && <Footer />}
+      {!hideNavAndFooter && <Footer />}
     </>
   )
 }

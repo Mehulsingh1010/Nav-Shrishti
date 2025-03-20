@@ -16,6 +16,17 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const publicRoutes = [
+  "/",
+  "/navlinks",
+  "/navlinks/contact",
+  "/navlinks/about",
+  "/navlinks/gallery",
+  "/navlinks/products",
+  "/auth/login",
+  "/auth/register",
+];
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -37,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (
           err instanceof Error &&
           err.message === "Not authenticated" &&
-          !["/auth/login", "/auth/register", "/"].includes(pathname) // Allow login & register pages
+          !publicRoutes.includes(pathname) // Allow all public routes
         ) {
           router.push("/auth/login");
         }

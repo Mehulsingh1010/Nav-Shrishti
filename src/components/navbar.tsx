@@ -6,18 +6,23 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Menu, Bell, User } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false)
-  const [language, setLanguage] = useState("en")
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false);
+  const [language, setLanguage] = useState("en");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<{
+    id: string;
+    name: string;
+    email: string;
+  } | null>(null);
   const [error, setError] = useState("");
 
   const navItems = [
@@ -25,21 +30,21 @@ export default function Navbar() {
     { name: "संपर्क", href: "/navlinks/contact" },
     { name: "कार्यक्रम", href: "/navlinks/events" },
     { name: "गैलरी", href: "/navlinks/gallery" },
-    { name: "हमारे बारे में", href: "/navlinks/about" }
-  ]
-
+    { name: "हमारे बारे में", href: "/navlinks/about" },
+  ];
+  const pathname = usePathname();
   useEffect(() => {
     async function fetchUser() {
       try {
         const res = await fetch("/api/auth/profile");
         const data = await res.json();
-  
+
         if (!res.ok) {
           throw new Error(data.error);
         }
-  
+
         setUser(data);
-  
+
         // Check user role and redirect accordingly
         if (data.role === "seller") {
           window.location.href = "/seller-dashboard";
@@ -50,22 +55,22 @@ export default function Navbar() {
         if (err instanceof Error) setError(err.message);
       }
     }
-  
+
     fetchUser();
   }, []);
-  
+
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const toggleLanguage = async () => {
     const targetLang = language === "en" ? "hi" : "en";
     setLanguage(targetLang);
-  
+
     try {
       const res = await fetch(
         `https://translation.googleapis.com/language/translate/v2?key=YOUR_API_KEY`,
@@ -90,8 +95,8 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled 
-          ? "bg-white/90 backdrop-blur-md shadow-lg" 
+        isScrolled
+          ? "bg-white/90 backdrop-blur-md shadow-lg"
           : "bg-orange-50/80 backdrop-blur-sm"
       }`}
     >
@@ -99,8 +104,8 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Logo and Title */}
           <Link href="/" className="flex items-center gap-4 group">
-            <motion.div 
-              whileHover={{ rotate: 360 }} 
+            <motion.div
+              whileHover={{ rotate: 360 }}
               transition={{ duration: 1 }}
               className="relative h-12 w-12 md:h-14 md:w-14"
             >
@@ -123,35 +128,37 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            {navItems.map((item) => (
-              <motion.a
-                key={item.name}
-                href={item.href}
-                whileHover={{ scale: 1.05 }}
-                className="relative text-orange-800 hover:text-orange-600 transition-colors px-3 py-2"
-              >
-                <span>{item.name}</span>
-              </motion.a>
-            ))}
+          {navItems.map((item) => (
+  <motion.a
+    key={item.name}
+    href={item.href}
+    whileHover={{ scale: 1.05 }}
+    className={`relative text-orange-800 hover:text-orange-600 transition-colors px-3 py-2 ${
+      pathname === item.href ? "bg-orange-100 rounded-lg font-bold" : ""
+    }`}
+  >
+    <span>{item.name}</span>
+  </motion.a>
+))}
+
 
             {/* Login Dropdown */}
             <div className="relative group">
-              
-                {user ? (
-                  <Link
-                    href="/user-dashboard"
-                    className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-                  >
-                    डैशबोर्ड
-                  </Link>
-                ) : (
-                  <Link
-                    href="/auth/login"
-                    className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-                  >
-                    लॉगिन
-                  </Link>
-                )}
+              {user ? (
+                <Link
+                  href="/user-dashboard"
+                  className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                >
+                  डैशबोर्ड
+                </Link>
+              ) : (
+                <Link
+                  href="/auth/login"
+                  className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+                >
+                  लॉगिन
+                </Link>
+              )}
             </div>
 
             {/* Language Toggle Button */}
@@ -165,11 +172,17 @@ export default function Navbar() {
 
           {/* Mobile Actions */}
           <div className="flex md:hidden items-center gap-2">
-            <Button variant="ghost" size="icon" className="text-orange-600 relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-orange-600 relative"
+            >
               <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-orange-500">2</Badge>
+              <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-orange-500">
+                2
+              </Badge>
             </Button>
-            
+
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-10 w-10 p-0">
@@ -189,8 +202,10 @@ export default function Navbar() {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-base font-medium text-orange-900">Guest User</p>
-                        <Link 
+                        <p className="text-base font-medium text-orange-900">
+                          Guest User
+                        </p>
+                        <Link
                           href="/auth/login"
                           className="text-sm text-white bg-orange-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-orange-600"
                           onClick={() => setMobileOpen(false)}
@@ -200,28 +215,31 @@ export default function Navbar() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Navigation Menu */}
                   <div className="flex-1 overflow-auto">
                     <nav className="grid gap-1 p-3">
                       {navItems.map((item) => (
-                        <Button
+                        <motion.a
                           key={item.name}
-                          variant="ghost"
-                          className="w-full justify-start py-3 text-base hover:bg-orange-100"
-                          onClick={() => setMobileOpen(false)}
-                          asChild
+                          href={item.href}
+                          whileHover={{ scale: 1.05 }}
+                          className={`relative text-orange-800 hover:text-orange-600 transition-colors px-3 py-2 ${
+                            pathname === item.href
+                              ? "bg-orange-100 rounded-lg font-bold"
+                              : ""
+                          }`}
                         >
-                          <a href={item.href}>
-                            {item.name}
-                          </a>
-                        </Button>
+                          <span>{item.name}</span>
+                        </motion.a>
                       ))}
-                      
+
                       {/* Login Options */}
                       <div className="px-2 py-3 border-t border-gray-100 mt-2">
-                        <p className="text-sm font-medium text-gray-500 mb-2 px-2">लॉगिन विकल्प</p>
-                        <Link 
+                        <p className="text-sm font-medium text-gray-500 mb-2 px-2">
+                          लॉगिन विकल्प
+                        </p>
+                        <Link
                           href="/auth/login"
                           className="text-sm text-white bg-orange-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-orange-600"
                           onClick={() => setMobileOpen(false)}
@@ -231,7 +249,7 @@ export default function Navbar() {
                       </div>
                     </nav>
                   </div>
-                  
+
                   {/* Language Toggle Footer */}
                   <div className="border-t p-4 bg-orange-50">
                     <button
@@ -251,5 +269,5 @@ export default function Navbar() {
         </div>
       </div>
     </motion.nav>
-  )
+  );
 }
