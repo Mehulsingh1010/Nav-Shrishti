@@ -5,13 +5,14 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Menu, Bell, User } from "lucide-react";
+import { Menu, Bell, User, ArrowBigRight } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -24,6 +25,28 @@ export default function Navbar() {
     email: string;
   } | null>(null);
   const [error, setError] = useState("");
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const router=useRouter();
+
+  useEffect(() => {
+    // Read the user role from localStorage when the component mounts
+    const role = localStorage.getItem("userRole");
+    if (role) {
+      setUserRole(role);
+    }
+  }, []);
+
+  const handleDashboardRedirect = () => {
+    if (userRole === "seller") {
+      router.push("/seller-dashboard");
+    } else if (userRole === "user") {
+      router.push("/user-dashboard");
+    } else {
+      // In case no role is found, maybe redirect to the homepage or show an error.
+      // router.push("/");
+    }
+  };
+
 
   const navItems = [
     { name: "उत्पाद", href: "/navlinks/products" },
@@ -46,11 +69,7 @@ export default function Navbar() {
         setUser(data);
 
         // Check user role and redirect accordingly
-        if (data.role === "seller") {
-          window.location.href = "/seller-dashboard";
-        } else if (data.role === "user") {
-          window.location.href = "/user-dashboard";
-        }
+        
       } catch (err: unknown) {
         if (err instanceof Error) setError(err.message);
       }
@@ -145,12 +164,9 @@ export default function Navbar() {
             {/* Login Dropdown */}
             <div className="relative group">
               {user ? (
-                <Link
-                  href="/user-dashboard"
-                  className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-                >
-                  डैशबोर्ड
-                </Link>
+                <button  onClick={handleDashboardRedirect} className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                  dashboard <ArrowBigRight/>
+                </button>
               ) : (
                 <Link
                   href="/auth/login"
