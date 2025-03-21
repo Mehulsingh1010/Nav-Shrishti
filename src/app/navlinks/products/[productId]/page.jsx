@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { db } from "../../../../../configs/db";
-import { products } from "../../../../../configs/schema";
+import { products, users } from "../../../../../configs/schema";
 import { eq } from "drizzle-orm";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, ArrowLeft } from "lucide-react";
@@ -23,16 +24,29 @@ export default async function ProductDetailPage({ params }) {
     notFound();
   }
 
-  // Get seller information (in a real app, you would join with the users table)
-  // For now, we'll just use a placeholder
-  const seller = {
-    name: "विक्रेता का नाम",
-    rating: 4.5,
-    sales: 120,
-  };
+  // Fetch the seller information using the sellerId from the product
+  let sellerName = "Unknown Seller";
+  let sellerRating = 0;
+  let sellerSales = 0;
+
+  try {
+    const seller = await db.query.users.findFirst({
+      where: eq(users.id, product.sellerId),
+    });
+
+    if (seller) {
+      sellerName = seller.firstName || "Unknown";
+      // You might want to calculate these from other tables
+      sellerRating = 4.5; // Placeholder or could be calculated
+      sellerSales = 120;  // Placeholder or could be calculated
+    }
+  } catch (error) {
+    console.error("Error fetching seller information:", error);
+    // Continue with default values if there's an error
+  }
 
   return (
-    <div className="container  mx-auto px-4 py-12 max-w-6xl">
+    <div className="container mx-auto px-4 py-12 max-w-6xl">
       <Link
         href="/products"
         className="inline-flex items-center text-orange-600 hover:text-orange-700 mb-8"
@@ -103,7 +117,7 @@ export default async function ProductDetailPage({ params }) {
 
             <div className="flex items-center justify-between">
               <span className="text-gray-700">विक्रेता:</span>
-              <span className="font-medium">{seller.name}</span>
+              <span className="font-medium">{sellerName}</span>
             </div>
           </div>
 
@@ -132,3 +146,6 @@ export default async function ProductDetailPage({ params }) {
     </div>
   );
 }
+
+
+

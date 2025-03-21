@@ -41,7 +41,7 @@ export function ProductFormModal({ open, onOpenChange, product, mode }: ProductF
     product || {
       name: "",
       description: "",
-      category: "Agriculture",
+      category: "",
       price: "",
       availableUnits: "",
       photoUrl: "",
