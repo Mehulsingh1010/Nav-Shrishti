@@ -1,21 +1,21 @@
-import Image from "next/image"
-import Link from "next/link"
-import { notFound } from "next/navigation"
-import { db } from "../../../../../../configs/db"
-import { products } from "../../../../../../configs/schema"
-import { eq } from "drizzle-orm"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { ShoppingCart, ArrowLeft } from "lucide-react"
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { db } from "../../../../../../configs/db";
+import { products } from "../../../../../../configs/schema";
+import { eq } from "drizzle-orm";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { ShoppingCart, ArrowLeft } from "lucide-react";
 
 // Helper function to format price from paise to rupees
-function formatPrice(price: number) {
-  return `₹${(price / 100).toLocaleString("en-IN")}`
+function formatPrice(price) {
+  return `₹${(price / 100).toLocaleString("en-IN")}`;
 }
 
 // Helper function to map database categories to display names and descriptions in Hindi
-function getCategoryInfo(categoryId: string): { name: string; description: string } | null {
-  const categoryMap: Record<string, { name: string; description: string }> = {
+function getCategoryInfo(categoryId) {
+  const categoryMap = {
     agriculture: {
       name: "कृषि उत्पाद",
       description: "प्राकृतिक और जैविक कृषि उत्पाद",
@@ -41,30 +41,26 @@ function getCategoryInfo(categoryId: string): { name: string; description: strin
       description: "विविध प्राकृतिक और जैविक उत्पाद",
     },
     // Add more categories as needed
-  }
+  };
 
-  return categoryMap[categoryId] || null
+  return categoryMap[categoryId] || null;
 }
 
-export default async function CategoryPage({
-  params,
-}: {
-  params: { categoryId: string }
-}) {
+export default async function CategoryPage({ params }) {
   // Get category info
-  const categoryInfo = getCategoryInfo(params.categoryId)
+  const categoryInfo = getCategoryInfo(params.categoryId);
 
   if (!categoryInfo) {
-    notFound()
+    notFound();
   }
 
   // Convert categoryId back to database category format (first letter uppercase)
-  const dbCategory = params.categoryId.charAt(0).toUpperCase() + params.categoryId.slice(1)
+  const dbCategory = params.categoryId.charAt(0).toUpperCase() + params.categoryId.slice(1);
 
   // Fetch products for this category
   const categoryProducts = await db.query.products.findMany({
-    where: eq(products.category, dbCategory as "Agriculture" | "Pesticides" | "Testing" | "Seeds" | "Equipment" | "Other"),
-  })
+    where: eq(products.category, dbCategory),
+  });
 
   return (
     <div className="container  mx-auto px-4 py-12 max-w-6xl">
@@ -135,6 +131,5 @@ export default async function CategoryPage({
         </div>
       )}
     </div>
-  )
+  );
 }
-

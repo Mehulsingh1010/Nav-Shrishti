@@ -1,41 +1,21 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowRight, ShoppingCart } from "lucide-react"
-import { db } from "../../../../configs/db"
-import { products } from "../../../../configs/schema"
-import { eq } from "drizzle-orm"
-
-// Define types for our data structure
-type Product = {
-  id: number
-  productId: string
-  name: string
-  description: string | null
-  category: string
-  price: number
-  availableUnits: number
-  status: string
-  photoUrl: string | null
-}
-
-type ProductCategory = {
-  id: string
-  name: string
-  description: string
-  products: Product[]
-}
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowRight, ShoppingCart } from "lucide-react";
+import { db } from "../../../../configs/db";
+import { products } from "../../../../configs/schema";
+import { eq } from "drizzle-orm";
 
 // Helper function to format price from paise to rupees
-function formatPrice(price: number) {
-  return `₹${(price / 100).toLocaleString("en-IN")}`
+function formatPrice(price) {
+  return `₹${(price / 100).toLocaleString("en-IN")}`;
 }
 
 // Helper function to map database categories to display names and descriptions in Hindi
-function getCategoryInfo(category: string): { id: string; name: string; description: string } {
-  const categoryMap: Record<string, { name: string; description: string }> = {
+function getCategoryInfo(category) {
+  const categoryMap = {
     Agriculture: {
       name: "कृषि उत्पाद",
       description: "प्राकृतिक और जैविक कृषि उत्पाद",
@@ -60,49 +40,48 @@ function getCategoryInfo(category: string): { id: string; name: string; descript
       name: "अन्य उत्पाद",
       description: "विविध प्राकृतिक और जैविक उत्पाद",
     },
-    // Add more categories as needed
-  }
+  };
 
   return {
     id: category.toLowerCase(),
     name: categoryMap[category]?.name || category,
     description: categoryMap[category]?.description || "प्राकृतिक और जैविक उत्पाद",
-  }
+  };
 }
 
 export default async function ProductsPage() {
   // Fetch all available products from the database
   const allProducts = await db.query.products.findMany({
     where: eq(products.status, "available"),
-  })
+  });
 
   // Group products by category
-  const productsByCategory = allProducts.reduce((acc: Record<string, Product[]>, product) => {
+  const productsByCategory = allProducts.reduce((acc, product) => {
     if (!acc[product.category]) {
-      acc[product.category] = []
+      acc[product.category] = [];
     }
-    acc[product.category].push(product)
-    return acc
-  }, {})
+    acc[product.category].push(product);
+    return acc;
+  }, {});
 
   // Create category objects with products
-  const productCategories: ProductCategory[] = Object.keys(productsByCategory).map((category) => {
-    const categoryInfo = getCategoryInfo(category)
+  const productCategories = Object.keys(productsByCategory).map((category) => {
+    const categoryInfo = getCategoryInfo(category);
     return {
       id: categoryInfo.id,
       name: categoryInfo.name,
       description: categoryInfo.description,
       products: productsByCategory[category],
-    }
-  })
+    };
+  });
 
   // Get featured products (for example, taking 3 random products)
   const featuredProducts = allProducts
     .sort(() => 0.5 - Math.random()) // Simple random shuffle
-    .slice(0, 3)
+    .slice(0, 3);
 
   // Default to first category if available
-  const defaultCategory = productCategories.length > 0 ? productCategories[0].id : "other"
+  const defaultCategory = productCategories.length > 0 ? productCategories[0].id : "other";
 
   return (
     <div className="flex flex-col  min-h-screen">
@@ -279,6 +258,5 @@ export default async function ProductsPage() {
         </section>
       )}
     </div>
-  )
+  );
 }
-
