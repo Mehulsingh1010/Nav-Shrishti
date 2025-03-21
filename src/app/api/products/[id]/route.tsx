@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 // GET a specific product
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params?: { [key: string]: string | string[] | undefined } }) {
   try {
     const token = (await cookies()).get("token")?.value;
 
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const productId = Number.parseInt(params.id);
+    const productId = Number.parseInt(Array.isArray(params?.id) ? params.id[0] : params?.id ?? "");
 
     const product = await db.query.products.findFirst({
       where: eq(products.id, productId),
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
 
 // DELETE a product
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params?: { [key: string]: string | string[] | undefined } }) {
   try {
     const token = (await cookies()).get("token")?.value;
 
@@ -51,7 +51,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     }
 
     const sellerId = Number.parseInt(token);
-    const productId = Number.parseInt(params.id);
+    const productId = Number.parseInt(Array.isArray(params?.id) ? params.id[0] : params?.id ?? "");
 
     const existingProduct = await db.query.products.findFirst({
       where: eq(products.id, productId),
