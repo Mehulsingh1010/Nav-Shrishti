@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { type NextRequest, NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 import { db } from "../../../../configs/db";
 import { products } from "../../../../configs/schema";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 // GET all products for the current seller
-export async function GET(req: NextRequest) {
+export async function GET(req) {
   try {
     const token = (await cookies()).get("token")?.value;
 
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
 }
 
 // POST a new product
-export async function POST(req: NextRequest) {
+export async function POST(req) {
   try {
     const token = (await cookies()).get("token")?.value;
 
