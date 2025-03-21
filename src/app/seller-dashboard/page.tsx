@@ -26,7 +26,7 @@ import { Badge } from "@/components/ui/badge"
 import { SellerDashboardShell } from "./_components/seller-dashboard-shell"
 import { ProductFormModal } from "./_components/product-form-modal"
 import { DeleteProductDialog } from "./_components/delete-product-dialog"
-import { toast, useToast } from "../../hooks/use-toast"
+import { toast } from "../../hooks/use-toast"
 
 // Define the product type
 type Product = {
@@ -67,6 +67,30 @@ export default function SellerDashboardPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [formMode, setFormMode] = useState<"add" | "edit">("add")
+
+  const refreshProducts = async () => {
+    setIsLoading(true)
+    try {
+      const response = await fetch("/api/products")
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to fetch products")
+      }
+
+      const data = await response.json()
+      setProducts(data)
+    } catch (error) {
+      console.error("Error fetching products:", error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to load products",
+        variant: "destructive",
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   // Mock sales data - would come from API in real implementation
   const [salesData, setSalesData] = useState<SalesData>({
@@ -110,31 +134,7 @@ export default function SellerDashboardPage() {
 
   // Fetch products
   useEffect(() => {
-    async function fetchProducts() {
-      setIsLoading(true)
-      try {
-        const response = await fetch("/api/products")
-
-        if (!response.ok) {
-          const error = await response.json()
-          throw new Error(error.error || "Failed to fetch products")
-        }
-
-        const data = await response.json()
-        setProducts(data)
-      } catch (error) {
-        console.error("Error fetching products:", error)
-        toast({
-          title: "Error",
-          description: error instanceof Error ? error.message : "Failed to load products",
-          variant: "destructive",
-        })
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchProducts()
+    refreshProducts()
   }, [])
 
   // Filter products based on search term
@@ -176,6 +176,13 @@ export default function SellerDashboardPage() {
   // Format price from paise to rupees
   const formatPrice = (price: number) => {
     return (price / 100).toLocaleString("en-IN")
+  }
+
+  const handleProductFormClose = (open: boolean) => {
+    setProductFormOpen(open)
+    if (!open) {
+      refreshProducts()
+    }
   }
 
   return (
@@ -476,8 +483,8 @@ export default function SellerDashboardPage() {
       {/* Product Form Modal */}
       <ProductFormModal
         open={productFormOpen}
-        onOpenChange={setProductFormOpen}
-        // product={selectedProduct || undefined}
+        onOpenChange={handleProductFormClose}
+        // product={selectedProduct}
         mode={formMode}
       />
 
@@ -485,7 +492,12 @@ export default function SellerDashboardPage() {
       {selectedProduct && (
         <DeleteProductDialog
           open={deleteDialogOpen}
-          onOpenChange={setDeleteDialogOpen}
+          onOpenChange={(open) => {
+            setDeleteDialogOpen(open)
+            if (!open) {
+              refreshProducts()
+            }
+          }}
           productId={selectedProduct.id}
           productName={selectedProduct.name}
         />

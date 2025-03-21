@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/no-unescaped-entities */
 "use client"
 
 import { useState } from "react"
@@ -14,35 +13,48 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { toast, useToast } from "../../../hooks/use-toast"
+import { toast } from "../../../hooks/use-toast"
 
-type DeleteProductDialogProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
+interface DeleteProductDialogProps {
   productId: number
   productName: string
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
-export function DeleteProductDialog({ open, onOpenChange, productId, productName }: DeleteProductDialogProps) {
+export function DeleteProductDialog({ productId, productName, open, onOpenChange }: DeleteProductDialogProps) {
   const router = useRouter()
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
     setIsDeleting(true)
-
     try {
+      // Log the endpoint being called for debugging
+      console.log(`Deleting product at endpoint: /api/products/${productId}`)
+      
       const response = await fetch(`/api/products/${productId}`, {
         method: "DELETE",
       })
 
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || "Failed to delete product")
+      // Handle specific error cases
+      if (response.status === 405) { // Method Not Allowed
+        throw new Error(`The API endpoint doesn't support the DELETE method. Please ensure your API route handler implements DELETE.`)
+      } else if (!response.ok) {
+        // Safely try to parse the error response as JSON
+        let errorMessage = `Server error: ${response.status} ${response.statusText}`
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.error || errorMessage
+        } catch (parseError) {
+          // If JSON parsing fails, use status text or a generic message
+          console.log("Failed to parse error response as JSON")
+        }
+        throw new Error(errorMessage)
       }
 
       toast({
         title: "Product Deleted",
-        description: "The product has been deleted successfully",
+        description: `${productName} has been deleted successfully`,
       })
 
       onOpenChange(false)
@@ -50,8 +62,8 @@ export function DeleteProductDialog({ open, onOpenChange, productId, productName
     } catch (error) {
       console.error("Error deleting product:", error)
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete product",
+        title: "API Error",
+        description: error instanceof Error ? error.message : "Failed to delete product. Please check your API configuration.",
         variant: "destructive",
       })
     } finally {
@@ -63,14 +75,14 @@ export function DeleteProductDialog({ open, onOpenChange, productId, productName
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogTitle>Are you sure you want to delete this product?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will permanently delete the product "{productName}". This action cannot be undone.
+            This will permanently delete <strong>{productName}</strong>. This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-red-600 hover:bg-red-700">
+          <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
             {isDeleting ? "Deleting..." : "Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>
@@ -78,4 +90,3 @@ export function DeleteProductDialog({ open, onOpenChange, productId, productName
     </AlertDialog>
   )
 }
-
