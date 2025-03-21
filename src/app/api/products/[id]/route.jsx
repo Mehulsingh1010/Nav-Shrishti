@@ -1,11 +1,11 @@
-import { type NextRequest, NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 import { db } from "../../../../../configs/db";
 import { products } from "../../../../../configs/schema";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
 // GET a specific product
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req, { params }) {
   try {
     const token = (await cookies()).get("token")?.value;
 
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
 
 // DELETE a product
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req, { params }) {
   try {
     const token = (await cookies()).get("token")?.value;
 
