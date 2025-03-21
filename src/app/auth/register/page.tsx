@@ -299,7 +299,7 @@ export default function RegisterPage() {
                         <SelectTrigger id="title" className="w-full bg-white">
                           <SelectValue placeholder="Select title" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="">
                           <SelectItem value="Mr">Mr</SelectItem>
                           <SelectItem value="Mrs">Mrs</SelectItem>
                           <SelectItem value="Ms">Ms</SelectItem>

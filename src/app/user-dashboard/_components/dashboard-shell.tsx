@@ -51,6 +51,8 @@ import UserProfile from "@/components/user-profile";
 import LogoutButton from "@/components/logout";
 import Link from "next/link";
 
+
+
 interface DashboardShellProps {
   children: React.ReactNode;
 }
@@ -207,18 +209,16 @@ export function DashboardShell({ children }: DashboardShellProps) {
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent className="bg-white" align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <a href="/dashboard/profile">Profile</a>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a href="/dashboard/settings">Settings</a>
-              </DropdownMenuItem>
+             
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-600" asChild>
-                <a href="/logout">Logout</a>
+                <LogoutButton/>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -327,16 +327,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
                   </nav>
                 </div>
                 <div className="border-t p-4 bg-orange-50">
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-red-600 py-3 text-base"
-                    asChild
-                  >
-                    <a href="/logout">
-                      <LogOut className="mr-3 h-5 w-5" />
-                      Logout
-                    </a>
-                  </Button>
+                  <LogoutButton/>
                 </div>
               </div>
             </SheetContent>
@@ -450,7 +441,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
                     REF123
                   </span> */}
                   <UserProfile />
-                  <LogoutButton />
+                  
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -466,15 +457,10 @@ export function DashboardShell({ children }: DashboardShellProps) {
                     <DropdownMenuItem asChild>
                       <a href="/dashboard/profile">Profile</a>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <a href="/dashboard/settings">Settings</a>
-                    </DropdownMenuItem>
+                    
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-600" asChild>
-                      <a href="/logout">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Logout
-                      </a>
+                    <DropdownMenuItem asChild>
+                      <LogoutButton/>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -501,15 +487,10 @@ export function DashboardShell({ children }: DashboardShellProps) {
                   <DropdownMenuItem asChild>
                     <a href="/dashboard/profile">Profile</a>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <a href="/dashboard/settings">Settings</a>
-                  </DropdownMenuItem>
+                  
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="text-red-600" asChild>
-                    <a href="/logout">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Logout
-                    </a>
+                    <LogoutButton/>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -558,20 +539,20 @@ export function DashboardShell({ children }: DashboardShellProps) {
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
+                    <div className="bg-white shadow-md rounded-md">
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
                       <a href="/dashboard/profile">Profile</a>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <a href="/dashboard/settings">Settings</a>
-                    </DropdownMenuItem>
+                   
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-red-600" asChild>
-                      <a href="/logout">Logout</a>
+                      <LogoutButton/>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
+                  </div>
                 </DropdownMenu>
               </div>
             </header>

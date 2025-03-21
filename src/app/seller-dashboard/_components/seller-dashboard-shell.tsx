@@ -91,7 +91,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
   const navigation = [
     {
       name: "Dashboard",
-      href: "/seller",
+      href: "/seller-dashboard",
       icon: Home,
       current: pathname === "/seller-dashboard",
     },
@@ -199,12 +199,10 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
               <DropdownMenuItem asChild>
                 <Link href="/seller/profile">Profile</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/seller/settings">Settings</Link>
-              </DropdownMenuItem>
+              
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-600" asChild>
-                <Link href="/logout">Logout</Link>
+              <LogoutButton/>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -285,12 +283,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
                   </nav>
                 </div>
                 <div className="border-t p-4 bg-orange-50">
-                  <Button variant="ghost" className="w-full justify-start text-red-600 py-3 text-base" asChild>
-                    <Link href="/logout">
-                      <LogOut className="mr-3 h-5 w-5" />
-                      Logout
-                    </Link>
-                  </Button>
+                <LogoutButton/>
                 </div>
               </div>
             </SheetContent>
@@ -399,9 +392,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
                     <DropdownMenuItem asChild>
                       <Link href="/seller/profile">Profile</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/seller/settings">Settings</Link>
-                    </DropdownMenuItem>
+                  
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-red-600" asChild>
                       <LogoutButton/>
@@ -427,15 +418,10 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
                   <DropdownMenuItem asChild>
                     <Link href="/seller/profile">Profile</Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/seller/settings">Settings</Link>
-                  </DropdownMenuItem>
+                 
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="text-red-600" asChild>
-                    <Link href="/logout">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Logout
-                    </Link>
+                  <LogoutButton/>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -472,12 +458,10 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
                     <DropdownMenuItem asChild>
                       <Link href="/seller/profile">Profile</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/seller/settings">Settings</Link>
-                    </DropdownMenuItem>
+                   
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-red-600" asChild>
-                      <Link href="/logout">Logout</Link>
+                    <LogoutButton/>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

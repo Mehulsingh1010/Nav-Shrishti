@@ -56,6 +56,7 @@ export default function LoginPage() {
       } else {
         router.push("/");
       }
+      
   
     } catch (err) {
       if (err instanceof Error) {
