@@ -51,7 +51,7 @@ export default async function ProductDetailPage({ params }) {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
-      <Link href="/products" className="inline-flex items-center text-orange-600 hover:text-orange-700 mb-8">
+      <Link href="/navlinks/products" className="inline-flex items-center text-orange-600 hover:text-orange-700 mb-8">
         <ArrowLeft className="mr-2 h-4 w-4" />
         सभी उत्पादों पर वापस जाएं
       </Link>

@@ -10,7 +10,7 @@ export default function HallOfFamePage() {
       name: "श्री रामकृष्ण शर्मा",
       achievement: "वर्ष के सर्वश्रेष्ठ प्रमोटर",
       year: "2023",
-      avatar: "/placeholder.svg?height=300&width=300",
+      avatar: "/i2.jpg",
       description: "श्री रामकृष्ण शर्मा ने 500 से अधिक नए सदस्यों को संस्थान से जोड़ा और वैदिक संस्कृति का प्रचार किया।",
     },
     {
@@ -18,7 +18,7 @@ export default function HallOfFamePage() {
       name: "श्रीमती सुनीता पटेल",
       achievement: "सर्वश्रेष्ठ उद्यमी",
       year: "2023",
-      avatar: "/placeholder.svg?height=300&width=300",
+      avatar: "/i2.jpg",
       description:
         "श्रीमती सुनीता पटेल ने आयुर्वेदिक उत्पादों की एक सफल श्रृंखला विकसित की जिसने हजारों लोगों को स्वस्थ जीवनशैली अपनाने में मदद की।",
     },
@@ -27,7 +27,7 @@ export default function HallOfFamePage() {
       name: "डॉ. अनिल त्रिवेदी",
       achievement: "आयुर्वेद रत्न पुरस्कार",
       year: "2022",
-      avatar: "/placeholder.svg?height=300&width=300",
+      avatar: "/i2.jpg",
       description:
         "डॉ. अनिल त्रिवेदी ने आयुर्वेदिक चिकित्सा में अभूतपूर्व योगदान दिया और कई दुर्लभ रोगों के लिए प्रभावी उपचार विकसित किए।",
     },
@@ -36,7 +36,7 @@ export default function HallOfFamePage() {
       name: "योगाचार्य प्रमोद मिश्रा",
       achievement: "योग भूषण सम्मान",
       year: "2022",
-      avatar: "/placeholder.svg?height=300&width=300",
+      avatar: "/i2.jpg",
       description: "योगाचार्य प्रमोद मिश्रा ने योग के प्रचार-प्रसार में महत्वपूर्ण योगदान दिया और हजारों लोगों को योग से जोड़ा।",
     },
     {
@@ -44,7 +44,7 @@ export default function HallOfFamePage() {
       name: "श्री विजय अग्रवाल",
       achievement: "सर्वश्रेष्ठ वितरक",
       year: "2021",
-      avatar: "/placeholder.svg?height=300&width=300",
+      avatar: "/i2.jpg",
       description: "श्री विजय अग्रवाल ने स्वदेशी उत्पादों के वितरण में उत्कृष्ट कार्य किया और 100 से अधिक नए वितरण केंद्र स्थापित किए।",
     },
     {
@@ -52,7 +52,7 @@ export default function HallOfFamePage() {
       name: "श्रीमती राधिका शर्मा",
       achievement: "गौ सेवा रत्न",
       year: "2021",
-      avatar: "/placeholder.svg?height=300&width=300",
+      avatar: "/i2.jpg",
       description: "श्रीमती राधिका शर्मा ने गौ संरक्षण के क्षेत्र में उल्लेखनीय कार्य किया और एक बड़ी गौशाला की स्थापना में मदद की।",
     },
     {
@@ -60,7 +60,7 @@ export default function HallOfFamePage() {
       name: "पंडित हरिशंकर द्विवेदी",
       achievement: "वेद प्रचारक सम्मान",
       year: "2020",
-      avatar: "/placeholder.svg?height=300&width=300",
+      avatar: "/i2.jpg",
       description:
         "पंडित हरिशंकर द्विवेदी ने वेदों के प्रचार-प्रसार में महत्वपूर्ण योगदान दिया और कई वेद पाठशालाओं की स्थापना में सहयोग किया।",
     },
@@ -69,7 +69,7 @@ export default function HallOfFamePage() {
       name: "डॉ. मीना गुप्ता",
       achievement: "स्वदेशी विज्ञान पुरस्कार",
       year: "2020",
-      avatar: "/placeholder.svg?height=300&width=300",
+      avatar: "/i2.jpg",
       description:
         "डॉ. मीना गुप्ता ने प्राचीन भारतीय विज्ञान पर शोध किया और कई महत्वपूर्ण खोजें कीं जो आधुनिक विज्ञान में भी उपयोगी हैं।",
     },

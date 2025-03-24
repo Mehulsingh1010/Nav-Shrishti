@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
+// import user
 
 export default function AboutUsPage() {
   const certificates = [
@@ -59,7 +60,7 @@ export default function AboutUsPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
             <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg">
               <Image 
-                src="/placeholder.svg?height=600&width=600" 
+                src="/i1.jpeg"
                 alt="संस्था परिसर" 
                 fill 
                 className="object-cover"
@@ -132,7 +133,7 @@ export default function AboutUsPage() {
             <div className="md:col-span-4">
               <div className="relative aspect-square rounded-full overflow-hidden border-4 border-orange-200 shadow-lg mx-auto max-w-[300px]">
                 <Image 
-                  src="/placeholder.svg?height=300&width=300" 
+                  src="/i2.jpg" 
                   alt="संस्थापक" 
                   fill 
                   className="object-cover"
@@ -182,7 +183,7 @@ export default function AboutUsPage() {
                   <div className="flex items-center mb-4">
                     <div className="w-12 h-12 mr-4">
                       <Image 
-                        src={certificate.icon} 
+                        src="/t3.png"
                         alt={certificate.name} 
                         width={48} 
                         height={48} 

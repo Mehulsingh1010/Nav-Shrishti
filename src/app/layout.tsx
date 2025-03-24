@@ -49,13 +49,13 @@ export default function RootLayout({
 // This will render on the client-side only to decide whether to show the Navbar based on the path
 function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideNavAndFooter = pathname.startsWith("/seller-dashboard") || pathname.startsWith("/user-dashboard")|| pathname.startsWith("/auth"); // Hide Navbar and Footer on these paths)
+  const hideNavAndFooter = pathname.startsWith("/seller-dashboard") || pathname.startsWith("/user-dashboard") || pathname.startsWith("/auth"); 
 
   return ( 
     <>
       {!hideNavAndFooter && <Navbar />}
-      {children}
+      <div className={hideNavAndFooter ? "" : "pt-20"}>{children}</div> {/* Conditionally add padding */}
       {!hideNavAndFooter && <Footer />}
     </>
-  )
+  );
 }

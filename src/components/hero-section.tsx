@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 export default function HeroSection() {
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-orange-50 via-orange-100/30 to-orange-50 pt-20 overflow-hidden flex items-center justify-center">
+    <div className="relative min-h-screen mt-[-50px] bg-gradient-to-br from-orange-50 via-orange-100/30 to-orange-50 pt-20 overflow-hidden flex items-center justify-center">
       
       {/* Circular Rotating Mantra Around Main Heading */}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px]">
