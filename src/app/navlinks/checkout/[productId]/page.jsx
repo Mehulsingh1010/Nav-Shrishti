@@ -241,13 +241,8 @@ export default function CheckoutPage({ params }) {
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
                 <div className="relative w-20 h-20">
-                  <Image
-                    src={product.photoUrl || "/placeholder.svg"}
-                    alt={product.name}
-                    fill
-                    sizes="80px"
-                    className="object-cover rounded"
-                  />
+                <img src={product.photoUrl} alt={product.name} width="300" height="200" />
+
                 </div>
                 <div className="flex-grow">
                   <h3 className="font-medium text-gray-900">{product.name}</h3>

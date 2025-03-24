@@ -1,7 +1,14 @@
-import Image from "next/image";
+// import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowRight, ShoppingCart } from "lucide-react";
 import { db } from "../../../../configs/db";
@@ -45,7 +52,8 @@ function getCategoryInfo(category) {
   return {
     id: category.toLowerCase(),
     name: categoryMap[category]?.name || category,
-    description: categoryMap[category]?.description || "प्राकृतिक और जैविक उत्पाद",
+    description:
+      categoryMap[category]?.description || "प्राकृतिक और जैविक उत्पाद",
   };
 }
 
@@ -81,7 +89,8 @@ export default async function ProductsPage() {
     .slice(0, 3);
 
   // Default to first category if available
-  const defaultCategory = productCategories.length > 0 ? productCategories[0].id : "other";
+  const defaultCategory =
+    productCategories.length > 0 ? productCategories[0].id : "other";
 
   return (
     <div className="flex flex-col  min-h-screen">
@@ -89,9 +98,12 @@ export default async function ProductsPage() {
       <section className="bg-gradient-to-r from-orange-100 to-orange-50 py-16">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-6 text-center">
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-orange-800">हमारे उत्पाद</h1>
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-orange-800">
+              हमारे उत्पाद
+            </h1>
             <p className="max-w-[700px] text-gray-700 md:text-xl leading-relaxed">
-              पारंपरिक और आयुर्वेदिक उत्पादों की विस्तृत श्रृंखला जो आपके स्वास्थ्य और कल्याण के लिए लाभदायक हैं
+              पारंपरिक और आयुर्वेदिक उत्पादों की विस्तृत श्रृंखला जो आपके
+              स्वास्थ्य और कल्याण के लिए लाभदायक हैं
             </p>
             <div className="w-24 h-1 bg-orange-500 rounded-full"></div>
           </div>
@@ -107,7 +119,11 @@ export default async function ProductsPage() {
                 <div className="overflow-x-auto pb-4 max-w-full">
                   <TabsList className="inline-flex flex-nowrap p-1 bg-orange-50 border border-orange-200 rounded-lg">
                     {productCategories.map((category) => (
-                      <TabsTrigger key={category.id} value={category.id} className="px-4 py-2 whitespace-nowrap">
+                      <TabsTrigger
+                        key={category.id}
+                        value={category.id}
+                        className="px-4 py-2 whitespace-nowrap"
+                      >
                         {category.name}
                       </TabsTrigger>
                     ))}
@@ -116,10 +132,16 @@ export default async function ProductsPage() {
               </div>
 
               {productCategories.map((category) => (
-                <TabsContent key={category.id} value={category.id} className="pt-4">
+                <TabsContent
+                  key={category.id}
+                  value={category.id}
+                  className="pt-4"
+                >
                   <div className="max-w-5xl mx-auto">
                     <div className="bg-orange-50 p-6 rounded-lg border border-orange-200 mb-8 shadow-sm">
-                      <h2 className="text-2xl font-bold text-orange-800 mb-2">{category.name}</h2>
+                      <h2 className="text-2xl font-bold text-orange-800 mb-2">
+                        {category.name}
+                      </h2>
                       <p className="text-gray-700">{category.description}</p>
                     </div>
 
@@ -131,41 +153,50 @@ export default async function ProductsPage() {
                             className="border-orange-200 shadow-md hover:shadow-lg transition-all hover:border-orange-300"
                           >
                             <CardHeader className="p-0">
-                              <div className="relative">
-                                <Image
-                                  src={product.photoUrl || "/placeholder.svg?height=200&width=300"}
+                              <div className="relative w-full h-[200px] overflow-hidden flex justify-center items-center">
+                                <img
+                                  src={product.photoUrl}
                                   alt={product.name}
-                                  width={300}
-                                  height={200}
-                                  className="rounded-t-lg object-cover h-48 w-full"
+                                  className="w-full h-full object-contain"
                                 />
-                                {product.availableUnits < 10 && (
+
+                                {product.availableUnits < 10 ? (
                                   <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
                                     सीमित स्टॉक
                                   </div>
-                                )}
-                                {product.availableUnits >= 10 && (
+                                ) : (
                                   <div className="absolute top-2 right-2 bg-orange-600 text-white text-xs px-2 py-1 rounded-full">
                                     उपलब्ध
                                   </div>
                                 )}
                               </div>
                             </CardHeader>
+
                             <CardContent className="p-6">
-                              <CardTitle className="text-xl font-bold text-orange-800 mb-2">{product.name}</CardTitle>
+                              <CardTitle className="text-xl font-bold text-orange-800 mb-2">
+                                {product.name}
+                              </CardTitle>
                               <CardDescription className="text-gray-700 mb-2">
-                                {product.description && product.description.length > 100
-                                  ? `${product.description.substring(0, 100)}...`
+                                {product.description &&
+                                product.description.length > 100
+                                  ? `${product.description.substring(
+                                      0,
+                                      100
+                                    )}...`
                                   : product.description || ""}
                               </CardDescription>
-                              <p className="text-lg font-semibold text-orange-600">{formatPrice(product.price)}</p>
+                              <p className="text-lg font-semibold text-orange-600">
+                                {formatPrice(product.price)}
+                              </p>
                             </CardContent>
                             <CardFooter className="p-6 pt-0">
                               <Button
                                 className="w-full bg-orange-600 hover:bg-orange-700 transition-colors flex items-center justify-center gap-2"
                                 asChild
                               >
-                                <Link href={`/navlinks/products/${product.productId}`}>
+                                <Link
+                                  href={`/navlinks/products/${product.productId}`}
+                                >
                                   <ShoppingCart className="h-4 w-4" />
                                   अभी खरीदें
                                 </Link>
@@ -176,15 +207,21 @@ export default async function ProductsPage() {
                       </div>
                     ) : (
                       <div className="text-center py-12 bg-orange-50 rounded-lg border border-orange-200">
-                        <p className="text-orange-800">इस श्रेणी में कोई उत्पाद उपलब्ध नहीं है</p>
+                        <p className="text-orange-800">
+                          इस श्रेणी में कोई उत्पाद उपलब्ध नहीं है
+                        </p>
                       </div>
                     )}
 
                     {category.products.length > 3 && (
                       <div className="mt-8 text-center">
-                        <Button asChild className="bg-orange-600 hover:bg-orange-700 transition-colors">
+                        <Button
+                          asChild
+                          className="bg-orange-600 hover:bg-orange-700 transition-colors"
+                        >
                           <Link href={`/products/category/${category.id}`}>
-                            सभी {category.name} देखें <ArrowRight className="ml-2 h-4 w-4" />
+                            सभी {category.name} देखें{" "}
+                            <ArrowRight className="ml-2 h-4 w-4" />
                           </Link>
                         </Button>
                       </div>
@@ -195,7 +232,9 @@ export default async function ProductsPage() {
             </Tabs>
           ) : (
             <div className="text-center py-12 bg-orange-50 rounded-lg border border-orange-200 max-w-3xl mx-auto">
-              <p className="text-orange-800 text-lg">अभी कोई उत्पाद उपलब्ध नहीं है। कृपया बाद में पुनः जांचें।</p>
+              <p className="text-orange-800 text-lg">
+                अभी कोई उत्पाद उपलब्ध नहीं है। कृपया बाद में पुनः जांचें।
+              </p>
             </div>
           )}
         </div>
@@ -206,9 +245,12 @@ export default async function ProductsPage() {
         <section className="py-16 bg-gradient-to-r from-orange-50 to-orange-100">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-6 text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-orange-800">विशेष उत्पाद</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-orange-800">
+                विशेष उत्पाद
+              </h2>
               <p className="max-w-[700px] text-gray-700 md:text-xl">
-                हमारे सबसे लोकप्रिय और अनुशंसित उत्पाद जो आपके स्वास्थ्य और कल्याण के लिए विशेष रूप से चुने गए हैं
+                हमारे सबसे लोकप्रिय और अनुशंसित उत्पाद जो आपके स्वास्थ्य और
+                कल्याण के लिए विशेष रूप से चुने गए हैं
               </p>
               <div className="w-24 h-1 bg-orange-500 rounded-full"></div>
             </div>
@@ -220,24 +262,29 @@ export default async function ProductsPage() {
                   className="border-orange-200 shadow-md hover:shadow-lg transition-all hover:border-orange-300"
                 >
                   <CardHeader className="p-0">
-                    <div className="relative">
-                      <Image
-                        src={product.photoUrl || "/placeholder.svg?height=300&width=400"}
+                    <div className="relative w-full h-[200px] overflow-hidden flex justify-center items-center">
+                      <img
+                        src={product.photoUrl}
                         alt={product.name}
-                        width={400}
-                        height={300}
-                        className="rounded-t-lg object-cover h-56 w-full"
+                        className="w-full h-full object-contain"
                       />
+
                       <div className="absolute top-2 right-2 bg-orange-600 text-white text-xs px-2 py-1 rounded-full">
                         बेस्टसेलर
                       </div>
                     </div>
                   </CardHeader>
+
                   <CardContent className="p-6">
-                    <CardTitle className="text-xl font-bold text-orange-800 mb-2">{product.name}</CardTitle>
-                    <p className="text-orange-600 font-medium text-lg mb-2">{formatPrice(product.price)}</p>
+                    <CardTitle className="text-xl font-bold text-orange-800 mb-2">
+                      {product.name}
+                    </CardTitle>
+                    <p className="text-orange-600 font-medium text-lg mb-2">
+                      {formatPrice(product.price)}
+                    </p>
                     <CardDescription className="text-gray-700">
-                      {product.description || "प्राकृतिक और जैविक उत्पाद जो आपके स्वास्थ्य के लिए लाभदायक है।"}
+                      {product.description ||
+                        "प्राकृतिक और जैविक उत्पाद जो आपके स्वास्थ्य के लिए लाभदायक है।"}
                     </CardDescription>
                   </CardContent>
                   <CardFooter className="p-6 pt-0">

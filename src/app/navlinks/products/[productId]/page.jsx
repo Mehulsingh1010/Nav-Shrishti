@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import Image from "next/image"
+// import Image from "next/image"
 import { notFound } from "next/navigation"
 import { db } from "../../../../../configs/db"
 import { products, users } from "../../../../../configs/schema"
@@ -58,16 +58,15 @@ export default async function ProductDetailPage({ params }) {
 
       <div className="grid md:grid-cols-2 gap-12">
         {/* Product Image */}
-        <div className="bg-white rounded-lg overflow-hidden border border-orange-200 shadow-md">
-          <Image
-            src={product.photoUrl || "/placeholder.svg?height=600&width=600"}
-            alt={product.name}
-            width={600}
-            height={600}
-            className="w-full h-auto object-cover"
-            priority
-          />
-        </div>
+        {/* Product Image */}
+<div className="bg-white rounded-lg overflow-hidden border border-orange-200 shadow-md flex justify-center items-center h-[400px]">
+  <img
+    src={product.photoUrl}
+    alt={product.name}
+    className="w-full h-full object-contain"
+  />
+</div>
+
 
         {/* Product Details */}
         <div className="space-y-6">

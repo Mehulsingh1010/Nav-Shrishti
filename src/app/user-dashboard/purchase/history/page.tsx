@@ -4,7 +4,7 @@ import { db } from "../../../../../configs/db";
 import { orders, orderItems, products, payments, users } from "../../../../../configs/schema";
 import { eq, desc } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import Image from "next/image";
+// import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -131,7 +131,13 @@ export default async function PurchaseHistoryPage() {
               <CardContent>
                 {order.items.map((item) => (
                   <div key={item.id} className="p-4 border-b border-gray-100 flex items-center">
-                    <Image src={item.product?.photoUrl || "/placeholder.svg"} alt={item.product?.name || "Product"} width={64} height={64} className="h-16 w-16 object-cover" />
+<img
+  src={item.product?.photoUrl || "/placeholder.svg"} 
+  alt={item.product?.name || "Product"} 
+  width={64} 
+  height={64} 
+  className="h-16 w-16 object-cover" 
+/>
                     <div className="flex-grow ml-4">
                       <h3 className="font-medium text-gray-900">{item.product?.name || "Product"}</h3>
                       <span className="text-sm text-gray-500">मात्रा: {item.quantity} × {formatPrice(item.pricePerUnit)}</span>

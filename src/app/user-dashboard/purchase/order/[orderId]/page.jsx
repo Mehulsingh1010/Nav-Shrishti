@@ -4,7 +4,7 @@ import { db } from "../../../../../../configs/db";
 import { orders, orderItems, products, payments, users } from "../../../../../../configs/schema";
 import { eq } from "drizzle-orm";
 import { redirect, notFound } from "next/navigation";
-import Image from "next/image";
+// import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
@@ -111,8 +111,15 @@ export default async function OrderDetailPage({ params }) {
             {itemsWithProducts.map((item) => (
               <div key={item.id} className="p-4 border-b border-gray-100">
                 <div className="flex items-start">
-                  <Image src={item.product?.photoUrl || "/placeholder.svg"} alt={item.product?.name || "Product"} width={80} height={80} className="w-20 h-20 object-cover" />
-                  <div className="ml-4">
+                <img
+  src={item.product?.photoUrl || "/placeholder.svg"} 
+  alt={item.product?.name || "Product"} 
+  width="64" 
+  height="64" 
+  className="h-16 w-16 object-cover" 
+/>
+
+                <div className="ml-4">
                     <h3 className="font-medium text-gray-900">{item.product?.name || "Product"}</h3>
                     <p className="text-sm text-gray-500">विक्रेता: {item.seller?.firstName || "अज्ञात विक्रेता"}</p>
                     <div className="flex justify-between mt-2">

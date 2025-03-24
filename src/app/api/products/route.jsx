@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {  NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "../../../../configs/db";
 import { products } from "../../../../configs/schema";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
+import { put } from '@vercel/blob';
 
 // GET all products for the current seller
 export async function GET(req) {
@@ -40,24 +41,44 @@ export async function POST(req) {
     }
 
     const sellerId = Number.parseInt(token);
-    const data = await req.json();
-
-    const productId = Math.floor(Math.random() * 1000000); // Replace with a proper ID generator
-
-    const priceInPaise = Math.round(Number.parseFloat(data.price) * 100);
+    
+    // Handle form data for file uploads
+    const formData = await req.formData();
+    const name = formData.get('name');
+    const description = formData.get('description');
+    const category = formData.get('category');
+    const price = formData.get('price');
+    const availableUnits = formData.get('availableUnits');
+    const photoFile = formData.get('photoFile');
+    const photoUrl = formData.get('photoUrl');
+    
+    const productId = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+    const priceInPaise = Math.round(Number.parseFloat(price) * 100);
+    
+    // Handle image upload - either from file or URL
+    let finalPhotoUrl = photoUrl;
+    
+    if (photoFile && photoFile instanceof File) {
+      // Upload the file to Vercel Blob
+      const blob = await put(`products/${productId}/${photoFile.name}`, photoFile, {
+        access: 'public',
+      });
+      
+      finalPhotoUrl = blob.url;
+    }
 
     const newProduct = await db
       .insert(products)
       .values({
-        productId: productId.toString(),
+        productId,
         sellerId,
-        name: data.name,
-        description: data.description,
-        category: data.category,
+        name,
+        description,
+        category,
         price: priceInPaise,
-        availableUnits: Number.parseInt(data.availableUnits),
-        status: Number.parseInt(data.availableUnits) > 0 ? "available" : "sold_out",
-        photoUrl: data.photoUrl,
+        availableUnits: Number.parseInt(availableUnits),
+        status: Number.parseInt(availableUnits) > 0 ? "available" : "sold_out",
+        photoUrl: finalPhotoUrl,
       })
       .returning();
 

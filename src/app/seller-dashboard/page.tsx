@@ -2,7 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
-import { useEffect, useState } from "react"
+import type React from "react"
+
+import { useEffect, useState, useRef } from "react"
 import {
   BarChart3,
   Plus,
@@ -14,6 +16,8 @@ import {
   Download,
   Edit,
   Trash2,
+  Image,
+  Upload,
 } from "lucide-react"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -23,10 +27,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SellerDashboardShell } from "./_components/seller-dashboard-shell"
-import { ProductFormModal } from "./_components/product-form-modal"
-import { DeleteProductDialog } from "./_components/delete-product-dialog"
 import { toast } from "../../hooks/use-toast"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 // Define the product type
 type Product = {
@@ -39,6 +55,7 @@ type Product = {
   availableUnits: number
   status: "available" | "sold_out"
   photoUrl: string | null
+  photoFile?: File | null
 }
 
 // Define sales data type
@@ -67,6 +84,13 @@ export default function SellerDashboardPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [formMode, setFormMode] = useState<"add" | "edit">("add")
+
+  // Form states
+  const [imageUploadMethod, setImageUploadMethod] = useState<"url" | "file">("url")
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
 
   const refreshProducts = async () => {
     setIsLoading(true)
@@ -153,6 +177,20 @@ export default function SellerDashboardPage() {
     }
   }, [searchTerm, products])
 
+  // Reset form when opening/closing
+  useEffect(() => {
+    if (productFormOpen) {
+      // Set initial values when opening form
+      if (selectedProduct) {
+        setImagePreview(selectedProduct.photoUrl)
+        setImageUploadMethod(selectedProduct.photoUrl ? "url" : "file")
+      } else {
+        setImagePreview(null)
+        setImageUploadMethod("url")
+      }
+    }
+  }, [productFormOpen, selectedProduct])
+
   // Handle add product button click
   const handleAddProduct = () => {
     setSelectedProduct(null)
@@ -178,10 +216,100 @@ export default function SellerDashboardPage() {
     return (price / 100).toLocaleString("en-IN")
   }
 
-  const handleProductFormClose = (open: boolean) => {
-    setProductFormOpen(open)
-    if (!open) {
+  // Handle product form submission
+  const handleProductFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setIsFormSubmitting(true)
+
+    try {
+      const formData = new FormData(e.currentTarget)
+
+      // If using URL method and no file is selected, ensure the photoUrl is included
+      if (imageUploadMethod === "url") {
+        formData.delete("photoFile")
+      } else {
+        // If using file method and no file is selected, remove the photoUrl
+        formData.delete("photoUrl")
+      }
+
+      const endpoint = formMode === "add" ? "/api/products" : `/api/products/${selectedProduct?.productId}`
+
+      const method = formMode === "add" ? "POST" : "PUT"
+
+      const response = await fetch(endpoint, {
+        method,
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || `Failed to ${formMode === "add" ? "create" : "update"} product`)
+      }
+
+      toast({
+        title: "Success",
+        description: `Product ${formMode === "add" ? "created" : "updated"} successfully`,
+      })
+
+      setProductFormOpen(false)
       refreshProducts()
+    } catch (error) {
+      console.error(`Error ${formMode === "add" ? "creating" : "updating"} product:`, error)
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : `Failed to ${formMode === "add" ? "create" : "update"} product`,
+        variant: "destructive",
+      })
+    } finally {
+      setIsFormSubmitting(false)
+    }
+  }
+
+  // Handle file change
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Create a preview URL for the selected image
+      const previewUrl = URL.createObjectURL(file)
+      setImagePreview(previewUrl)
+    }
+  }
+
+  // Handle image upload method change
+  const handleImageUploadMethodChange = (value: string) => {
+    setImageUploadMethod(value as "url" | "file")
+    setImagePreview(selectedProduct?.photoUrl || null)
+  }
+
+  // Handle delete product
+  const handleDeleteConfirm = async () => {
+    if (!selectedProduct) return
+
+    try {
+      const response = await fetch(`/api/products/${selectedProduct.productId}`, {
+        method: "DELETE",
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || "Failed to delete product")
+      }
+
+      toast({
+        title: "Success",
+        description: "Product deleted successfully",
+      })
+
+      setDeleteDialogOpen(false)
+      refreshProducts()
+    } catch (error) {
+      console.error("Error deleting product:", error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete product",
+        variant: "destructive",
+      })
     }
   }
 
@@ -480,28 +608,169 @@ export default function SellerDashboardPage() {
         </Tabs>
       </div>
 
-      {/* Product Form Modal */}
-      <ProductFormModal
-        open={productFormOpen}
-        onOpenChange={handleProductFormClose}
-        // product={selectedProduct}
-        mode={formMode}
-      />
+      {/* Product Form Modal - Integrated directly into this file */}
+      <Dialog open={productFormOpen} onOpenChange={setProductFormOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{formMode === "add" ? "Add New Product" : "Edit Product"}</DialogTitle>
+          </DialogHeader>
+          <form ref={formRef} onSubmit={handleProductFormSubmit}>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Name
+                </Label>
+                <Input
+                  id="name"
+                  name="name"
+                  defaultValue={selectedProduct?.name || ""}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="description" className="text-right">
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  defaultValue={selectedProduct?.description || ""}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="category" className="text-right">
+                  Category
+                </Label>
+                <Select name="category" defaultValue={selectedProduct?.category || "Agriculture"}>
+                  <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Agriculture">Agriculture</SelectItem>
+                    <SelectItem value="Pesticides">Pesticides</SelectItem>
+                    <SelectItem value="Testing">Testing</SelectItem>
+                    <SelectItem value="Seeds">Seeds</SelectItem>
+                    <SelectItem value="Equipment">Equipment</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="price" className="text-right">
+                  Price (₹)
+                </Label>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  defaultValue={selectedProduct?.price ? (selectedProduct.price / 100).toFixed(2) : ""}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="availableUnits" className="text-right">
+                  Available Units
+                </Label>
+                <Input
+                  id="availableUnits"
+                  name="availableUnits"
+                  type="number"
+                  min="0"
+                  defaultValue={selectedProduct?.availableUnits || "0"}
+                  className="col-span-3"
+                  required
+                />
+              </div>
+
+              {/* Image Upload Section with Tabs */}
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label className="text-right pt-2">Product Image</Label>
+                <div className="col-span-3">
+                  <Tabs value={imageUploadMethod} className="w-full" onValueChange={handleImageUploadMethodChange}>
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="url" className="flex items-center gap-1">
+                        <Image className="h-4 w-4" />
+                        Image URL
+                      </TabsTrigger>
+                      <TabsTrigger value="file" className="flex items-center gap-1">
+                        <Upload className="h-4 w-4" />
+                        Upload File
+                      </TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="url" className="mt-2">
+                      <Input
+                        id="photoUrl"
+                        name="photoUrl"
+                        placeholder="https://example.com/image.jpg"
+                        defaultValue={selectedProduct?.photoUrl || ""}
+                        onChange={(e) => setImagePreview(e.target.value)}
+                      />
+                    </TabsContent>
+
+                    <TabsContent value="file" className="mt-2">
+                      <Input
+                        id="photoFile"
+                        name="photoFile"
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                      />
+                    </TabsContent>
+                  </Tabs>
+
+                  {/* Image Preview */}
+                  {imagePreview && (
+                    <div className="mt-4 border rounded-md p-2">
+                      <p className="text-sm text-muted-foreground mb-2">Image Preview:</p>
+                      <img
+                        src={imagePreview || "/placeholder.svg"}
+                        alt="Product preview"
+                        className="max-h-[200px] object-contain mx-auto rounded-md"
+                        onError={() => setImagePreview(null)}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setProductFormOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isFormSubmitting}>
+                {isFormSubmitting ? "Saving..." : formMode === "add" ? "Add Product" : "Save Changes"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Product Dialog */}
-      {selectedProduct && (
-        <DeleteProductDialog
-          open={deleteDialogOpen}
-          onOpenChange={(open) => {
-            setDeleteDialogOpen(open)
-            if (!open) {
-              refreshProducts()
-            }
-          }}
-          productId={selectedProduct.id}
-          productName={selectedProduct.name}
-        />
-      )}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this product?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the product "{selectedProduct?.name}" and
+              remove it from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SellerDashboardShell>
   )
 }
