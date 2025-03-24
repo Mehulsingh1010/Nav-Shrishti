@@ -123,7 +123,7 @@ export default async function ProductDetailPage({ params }) {
               कार्ट में जोड़ें
             </Button>
 
-            <Link href={`/checkout/${product.productId}`}>
+            <Link href={`navlinks/checkout/${product.productId}`}>
               <Button
                 variant="outline"
                 className="w-full border-orange-200 text-orange-700 hover:bg-orange-50 transition-colors h-12 text-lg"
