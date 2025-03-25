@@ -180,6 +180,58 @@ export const paymentsRelations = relations(payments, ({ one }) => ({
   }),
 }))
 
+
+// Bank details relations
+
+// Update user relations to include bank details
+export const updatedUsersRelations = relations(users, ({ many, one }) => ({
+  products: many(products),
+  reviews: many(productReviews),
+  orders: many(orders),
+  bankDetails: many(bankDetails), // Add this relation
+}))
+
+
+
+// Nominee details table
+export const nomineeDetails = pgTable("nominee_details", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
+  name: varchar("name", { length: 100 }).notNull(),
+  relation: varchar("relation", { length: 50 }).notNull(),
+  dob: varchar("dob", { length: 10 }),
+  mobile: varchar("mobile", { length: 15 }),
+  address: text("address"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+})
+
+// Document types enum
+export const documentTypeEnum = pgEnum("document_type", [
+  "profile_photo",
+  "aadhaar_front",
+  "aadhaar_back",
+  "pan_card",
+  "bank_passbook",
+  "cancelled_cheque",
+])
+
+// User documents table
+export const userDocuments = pgTable("user_documents", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
+  documentType: documentTypeEnum("document_type").notNull(),
+  documentUrl: text("document_url").notNull(),
+  isVerified: boolean("is_verified").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+})
+
+// Bank details table (existing)
 export const bankDetails = pgTable("bank_details", {
   id: serial("id").primaryKey(),
   userId: integer("user_id")
@@ -196,7 +248,23 @@ export const bankDetails = pgTable("bank_details", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
 
-// Bank details relations
+// Relations
+
+
+export const nomineeDetailsRelations = relations(nomineeDetails, ({ one }) => ({
+  user: one(users, {
+    fields: [nomineeDetails.userId],
+    references: [users.id],
+  }),
+}))
+
+export const userDocumentsRelations = relations(userDocuments, ({ one }) => ({
+  user: one(users, {
+    fields: [userDocuments.userId],
+    references: [users.id],
+  }),
+}))
+
 export const bankDetailsRelations = relations(bankDetails, ({ one }) => ({
   user: one(users, {
     fields: [bankDetails.userId],
@@ -204,10 +272,3 @@ export const bankDetailsRelations = relations(bankDetails, ({ one }) => ({
   }),
 }))
 
-// Update user relations to include bank details
-export const updatedUsersRelations = relations(users, ({ many, one }) => ({
-  products: many(products),
-  reviews: many(productReviews),
-  orders: many(orders),
-  bankDetails: many(bankDetails), // Add this relation
-}))
