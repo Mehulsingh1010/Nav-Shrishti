@@ -21,7 +21,7 @@ import {
   Clock,
   ArrowRight,
 } from "lucide-react";
-import { DashboardShell } from "../../_components/dashboard-shell";
+// import { DashboardShell } from "../../_components/dashboard-shell";
 
 function formatPrice(price: number) {
   return `₹${(price / 100).toLocaleString("en-IN")}`;
@@ -107,7 +107,7 @@ export default async function PurchaseHistoryPage() {
   );
 
   return (
-    <DashboardShell>
+    
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-orange-800">खरीद इतिहास</h1>
@@ -215,6 +215,6 @@ export default async function PurchaseHistoryPage() {
           </div>
         )}
       </div>
-    </DashboardShell>
+   
   );
 }

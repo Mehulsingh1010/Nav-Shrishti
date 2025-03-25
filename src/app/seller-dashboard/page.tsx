@@ -31,7 +31,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { SellerDashboardShell } from "./_components/seller-dashboard-shell"
+// import { SellerDashboardShell } from "./_components/seller-dashboard-shell"
 import { toast } from "../../hooks/use-toast"
 import {
   AlertDialog,
@@ -314,7 +314,7 @@ export default function SellerDashboardPage() {
   }
 
   return (
-    <SellerDashboardShell>
+    <>
       <div className="flex flex-col space-y-6">
         {/* Top Section with User Welcome */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-orange-50 to-amber-50 p-6 rounded-xl border border-amber-100">
@@ -771,7 +771,7 @@ export default function SellerDashboardPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </SellerDashboardShell>
+    </>
   )
 }
 

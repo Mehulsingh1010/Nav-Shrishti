@@ -14,11 +14,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Calendar } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DashboardShell } from "../../_components/dashboard-shell";
+// import { DashboardShell } from "../../_components/dashboard-shell";
 
 export default function ProfilePage() {
   return (
-    <DashboardShell>
+  
       <div className="container mx-auto py-6">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -311,6 +311,6 @@ export default function ProfilePage() {
           </Card>
         </div>
       </div>
-    </DashboardShell>
+  
   );
 }

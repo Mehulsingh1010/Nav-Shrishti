@@ -1,9 +1,8 @@
 import { BankDetailsForm } from "@/app/seller-dashboard/_components/bank-details-form";
-import { DashboardShell } from "../_components/dashboard-shell";
+// import { DashboardShell } from "../_components/dashboard-shell";
 
 export default function BankDetailsPage() {
   return (
-    <DashboardShell>
       <div className="w-full max-w-5xl mx-auto">
         <div className="space-y-6">
           <div className="space-y-2">
@@ -15,6 +14,5 @@ export default function BankDetailsPage() {
           <BankDetailsForm />
         </div>
       </div>
-    </DashboardShell>
   );
 }

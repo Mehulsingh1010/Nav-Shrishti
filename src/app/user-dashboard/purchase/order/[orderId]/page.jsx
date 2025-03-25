@@ -92,7 +92,7 @@ export default async function OrderDetailPage({ params }) {
   });
 
   return (
-    <DashboardShell>
+  
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Link href="/user-dashboard/purchase/history" className="inline-flex items-center text-orange-600 hover:text-orange-700 mb-8">
           <ArrowLeft className="mr-2 h-4 w-4" /> खरीद इतिहास पर वापस जाएं
@@ -133,6 +133,6 @@ export default async function OrderDetailPage({ params }) {
           </CardContent>
         </Card>
       </div>
-    </DashboardShell>
+    
   );
 }

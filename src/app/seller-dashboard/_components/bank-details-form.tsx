@@ -77,6 +77,7 @@ export function BankDetailsForm() {
           title: "Success",
           description: "Bank details saved successfully",
         })
+        alert("Bank details saved successfully!") // Popup for success
       } else {
         const error = await response.json()
         throw new Error(error.error || "Failed to save bank details")
@@ -192,4 +193,3 @@ export function BankDetailsForm() {
     </Card>
   )
 }
-

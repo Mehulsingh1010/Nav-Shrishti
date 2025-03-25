@@ -12,6 +12,8 @@ import loader from "@/components/loader"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+
+
 // Mock data - would come from API in real implementation
 const dashboardData = {
   purchaseCount: 12,
@@ -72,7 +74,7 @@ export default function DashboardPage() {
 
 
   return (
-    <DashboardShell>
+   
       <div className="flex flex-col space-y-6">
         {/* Top Section with User Welcome and Trial Info */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-orange-50 to-amber-50 p-6 rounded-xl border border-amber-100">
@@ -296,6 +298,7 @@ export default function DashboardPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </DashboardShell>
   )
 }
+
+

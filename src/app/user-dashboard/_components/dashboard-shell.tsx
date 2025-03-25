@@ -118,13 +118,10 @@ export function DashboardShell({ children }: DashboardShellProps) {
 
     {
       name: "Bank Details",
-      href: "#",
+      href: "/user-dashboard/bank",
       icon: CreditCard,
       current: pathname.startsWith("/user-dashboard/bank"),
-      children: [
-        { name: "Upload Bank Details", href: "/user-dashboard/bank/" },
-        { name: "View Bank Details", href: "/user-dashboard/bank/" },
-      ],
+      
     },
 
 

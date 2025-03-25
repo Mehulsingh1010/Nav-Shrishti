@@ -41,7 +41,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SellerDashboardShell } from "../_components/seller-dashboard-shell";
+// import { SellerDashboardShell } from "../_components/seller-dashboard-shell";
 import { 
   Package, 
   ShoppingBag, 
@@ -114,7 +114,7 @@ export default async function SellerOrdersPage() {
   // If no products, show empty state
   if (sellerProducts.length === 0) {
     return (
-      <SellerDashboardShell>
+      <>
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold text-orange-800">विक्रेता ऑर्डर डैशबोर्ड</h1>
@@ -136,7 +136,7 @@ export default async function SellerOrdersPage() {
             </CardContent>
           </Card>
         </div>
-      </SellerDashboardShell>
+      </>
     );
   }
 
@@ -155,7 +155,7 @@ const sellerOrderItems = await db.query.orderItems.findMany({
 
   if (sellerOrderItems.length === 0) {
     return (
-      <SellerDashboardShell>
+      <>
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold text-orange-800">विक्रेता ऑर्डर डैशबोर्ड</h1>
@@ -203,7 +203,7 @@ const sellerOrderItems = await db.query.orderItems.findMany({
             </CardContent>
           </Card>
         </div>
-      </SellerDashboardShell>
+      </>
     );
   }
 
@@ -333,7 +333,7 @@ const sellerOrderItems = await db.query.orderItems.findMany({
   const productStatsArray = Object.values(productStats);
 
   return (
-    <SellerDashboardShell>
+    <>
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-orange-800">विक्रेता ऑर्डर डैशबोर्ड</h1>
@@ -487,6 +487,6 @@ const sellerOrderItems = await db.query.orderItems.findMany({
           </TabsContent>
         </Tabs>
       </div>
-    </SellerDashboardShell>
+    </>
   );
 }
