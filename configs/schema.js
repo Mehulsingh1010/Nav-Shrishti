@@ -180,3 +180,34 @@ export const paymentsRelations = relations(payments, ({ one }) => ({
   }),
 }))
 
+export const bankDetails = pgTable("bank_details", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id), // Reference to user
+  bankName: varchar("bank_name", { length: 100 }).notNull(),
+  accountNumber: varchar("account_number", { length: 20 }).notNull(),
+  ifscCode: varchar("ifsc_code", { length: 11 }).notNull(),
+  branchName: varchar("branch_name", { length: 100 }).notNull(),
+  accountHolderName: varchar("account_holder_name", { length: 100 }).notNull(),
+  mobileNumber: varchar("mobile_number", { length: 15 }).notNull(),
+  isVerified: boolean("is_verified").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+})
+
+// Bank details relations
+export const bankDetailsRelations = relations(bankDetails, ({ one }) => ({
+  user: one(users, {
+    fields: [bankDetails.userId],
+    references: [users.id],
+  }),
+}))
+
+// Update user relations to include bank details
+export const updatedUsersRelations = relations(users, ({ many, one }) => ({
+  products: many(products),
+  reviews: many(productReviews),
+  orders: many(orders),
+  bankDetails: many(bankDetails), // Add this relation
+}))

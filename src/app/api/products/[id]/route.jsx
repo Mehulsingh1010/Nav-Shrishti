@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { db } from "../../../../../configs/db"
-import { products, orderItems } from "../../../../../configs/schema"
+import { products, orderItems, productReviews} from "../../../../../configs/schema"
 import { eq } from "drizzle-orm"
 import { put } from "@vercel/blob"
 import { cookies } from "next/headers"
@@ -9,7 +9,7 @@ export async function GET(request, { params }) {
   try {
     console.log("Fetching product with productId (string):", params.productId)
 
-    // First, find the product by its string productId
+    // Find the product by its string productId
     const product = await db.query.products.findFirst({
       where: eq(products.productId, params.productId),
     })
@@ -38,7 +38,7 @@ export async function PUT(request, { params }) {
     const sellerId = Number.parseInt(token)
     console.log("Updating product with productId (string):", params.productId)
 
-    // First, find the product by its string productId to get the numeric id
+    // Find the product by its string productId to get the numeric id
     const existingProduct = await db.query.products.findFirst({
       where: eq(products.productId, params.productId),
     })
@@ -64,9 +64,11 @@ export async function PUT(request, { params }) {
     const photoUrl = formData.get("photoUrl")
 
     // Handle image upload - either from file or URL
-    let finalPhotoUrl = photoUrl
+    let finalPhotoUrl = existingProduct.photoUrl // Default to existing URL
 
-    if (photoFile && photoFile instanceof File) {
+    if (photoUrl && photoUrl !== existingProduct.photoUrl) {
+      finalPhotoUrl = photoUrl
+    } else if (photoFile && photoFile instanceof File && photoFile.size > 0) {
       // Upload the file to Vercel Blob
       const blob = await put(`products/${params.productId}/${photoFile.name}`, photoFile, {
         access: "public",
@@ -77,6 +79,7 @@ export async function PUT(request, { params }) {
 
     const priceInPaise = Math.round(Number.parseFloat(price) * 100)
     const availableUnitsInt = Number.parseInt(availableUnits)
+    const status = availableUnitsInt > 0 ? "available" : "sold_out"
 
     // Use the numeric id for the update operation
     const updatedProduct = await db
@@ -87,10 +90,11 @@ export async function PUT(request, { params }) {
         category,
         price: priceInPaise,
         availableUnits: availableUnitsInt,
-        status: availableUnitsInt > 0 ? "available" : "sold_out",
+        status,
         photoUrl: finalPhotoUrl,
+        updatedAt: new Date(), // Update the timestamp
       })
-      .where(eq(products.id, existingProduct.id)) // Use numeric id here
+      .where(eq(products.id, existingProduct.id))
       .returning()
 
     return NextResponse.json(updatedProduct[0])
@@ -111,7 +115,7 @@ export async function DELETE(request, { params }) {
     const sellerId = Number.parseInt(token)
     console.log("Deleting product with productId (string):", params.productId)
 
-    // First, find the product by its string productId to get the numeric id
+    // Find the product by its string productId to get the numeric id
     const existingProduct = await db.query.products.findFirst({
       where: eq(products.productId, params.productId),
     })
@@ -126,27 +130,51 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: "Unauthorized to delete this product" }, { status: 403 })
     }
 
-    // Check if there are any order items referencing this product using the numeric id
-    const relatedOrderItems = await db.query.orderItems.findMany({
-      where: eq(orderItems.productId, existingProduct.id), // Use numeric id here
-    })
+    // Begin a transaction to handle related records and constraints
+    try {
+      await db.transaction(async (tx) => {
+        // Check if there are any order items referencing this product
+        const relatedOrderItems = await tx.query.orderItems.findMany({
+          where: eq(orderItems.productId, existingProduct.id),
+        })
 
-    console.log(`Found ${relatedOrderItems.length} related order items`)
+        console.log(`Found ${relatedOrderItems.length} related order items`)
 
-    if (relatedOrderItems.length > 0) {
-      return NextResponse.json(
-        {
-          error: "Cannot delete product because it has associated orders. Make sure no orders are in pending state.",
-          hasOrders: true,
-        },
-        { status: 409 },
-      )
+        if (relatedOrderItems.length > 0) {
+          throw new Error(
+            "Cannot delete product because it has associated orders. Consider marking it as sold out instead.",
+          )
+        }
+
+        // Check if product has reviews
+        const relatedReviews = await tx.query.productReviews.findMany({
+          where: eq(productReviews.productId, existingProduct.id),
+        })
+
+        // Delete related reviews first (if any)
+        if (relatedReviews.length > 0) {
+          await tx.delete(productReviews).where(eq(productReviews.productId, existingProduct.id))
+        }
+
+        // Finally delete the product
+        await tx.delete(products).where(eq(products.id, existingProduct.id))
+      })
+
+      return NextResponse.json({ success: true, message: "Product deleted successfully" })
+    } catch (error) {
+      // Handle specific transaction errors
+      if (error.message.includes("associated orders")) {
+        return NextResponse.json(
+          {
+            error: error.message,
+            hasOrders: true,
+            canMarkAsSoldOut: true,
+          },
+          { status: 409 },
+        )
+      }
+      throw error // Re-throw other errors
     }
-
-    // Use the numeric id for the delete operation
-    await db.delete(products).where(eq(products.id, existingProduct.id)) // Use numeric id here
-
-    return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error deleting product:", error)
 
@@ -154,8 +182,9 @@ export async function DELETE(request, { params }) {
     if (error.message && error.message.includes("foreign key constraint")) {
       return NextResponse.json(
         {
-          error: "Cannot delete product because it has associated orders. Make sure no orders are in pending state.",
+          error: "Cannot delete product because it has associated orders. Consider marking it as sold out instead.",
           constraintError: true,
+          canMarkAsSoldOut: true,
         },
         { status: 409 },
       )

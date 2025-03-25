@@ -98,6 +98,10 @@ export function DashboardShell({ children }: DashboardShellProps) {
       icon: Home,
       current: pathname === "/user-dashboard",
     },
+
+
+
+
     {
       name: "Profile",
       href: "#",
@@ -109,16 +113,22 @@ export function DashboardShell({ children }: DashboardShellProps) {
         { name: "KYC Update", href: "/dashboard/profile/kyc" },
       ],
     },
+
+
+
     {
       name: "Bank Details",
       href: "#",
       icon: CreditCard,
-      current: pathname.startsWith("/dashboard/bank"),
+      current: pathname.startsWith("/user-dashboard/bank"),
       children: [
-        { name: "Upload Bank Details", href: "/dashboard/bank/upload" },
-        { name: "View Bank Details", href: "/dashboard/bank/view" },
+        { name: "Upload Bank Details", href: "/user-dashboard/bank/" },
+        { name: "View Bank Details", href: "/user-dashboard/bank/" },
       ],
     },
+
+
+
     {
       name: "Purchase",
       href: "#",
@@ -129,6 +139,9 @@ export function DashboardShell({ children }: DashboardShellProps) {
         { name: "Generate Invoice", href: "/user-dashboard/purchase/invoice" },
       ],
     },
+
+
+
     {
       name: "Team",
       href: "#",
@@ -149,6 +162,8 @@ export function DashboardShell({ children }: DashboardShellProps) {
         { name: "Salary", href: "/user-dashboard/income/salary" },
       ],
     },
+
+
     {
       name: "Payments",
       href: "#",
@@ -164,6 +179,8 @@ export function DashboardShell({ children }: DashboardShellProps) {
         },
       ],
     },
+
+
     {
       name: "Support",
       href: "/user-dashboard/support",
@@ -171,6 +188,8 @@ export function DashboardShell({ children }: DashboardShellProps) {
       current: pathname === "/user-dashboard/support",
     },
   ];
+
+
 
   return (
     <div className="flex min-h-screen bg-orange-50">
@@ -241,12 +260,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      {/* <p className="text-base font-medium text-orange-900">
-                        Mehul Singh
-                      </p>
-                      <p className="text-sm text-orange-700 bg-orange-100 px-2 py-0.5 rounded-full inline-block">
-                        REF123
-                      </p> */}
+                    
                       <UserProfile />
                     </div>
                   </div>
