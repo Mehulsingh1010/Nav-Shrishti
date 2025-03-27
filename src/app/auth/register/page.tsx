@@ -45,8 +45,13 @@ type RegisterFormData = z.infer<typeof registerSchema>
 export default function RegisterPage() {
   const router = useRouter()
   const { toast } = useToast()
-  const [formData, setFormData] = useState<Partial<RegisterFormData>>({
-    referralCode: new URLSearchParams(window.location.search).get("ref") || "", // Get referral code from URL if present
+  const [formData, setFormData] = useState<Partial<RegisterFormData>>(() => {
+    if (typeof window !== "undefined") {
+      return {
+        referralCode: new URLSearchParams(window.location.search).get("ref") || "", // Get referral code from URL if present
+      }
+    }
+    return {}
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [showPassword, setShowPassword] = useState(false)
