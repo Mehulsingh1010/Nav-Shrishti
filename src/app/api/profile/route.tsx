@@ -1,8 +1,9 @@
+// Update the profile API to include referral information
+import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 import { db } from "../../../../configs/db"
 import { users, nomineeDetails, userDocuments } from "../../../../configs/schema"
-import { eq } from "drizzle-orm"
-import { cookies } from "next/headers"
+import { eq, sql } from "drizzle-orm"
 
 export async function GET() {
   try {
@@ -25,6 +26,22 @@ export async function GET() {
 
     const user = existingUser[0]
 
+    // Fetch referrer details if user was referred
+    let referrer = null
+    if (user.referredBy) {
+      const referrerData = await db
+        .select({
+          referenceId: users.referenceId,
+          name: sql`concat(${users.firstName}, ' ', ${users.surname})`,
+        })
+        .from(users)
+        .where(eq(users.referenceId, user.referredBy))
+
+      if (referrerData.length > 0) {
+        referrer = referrerData[0]
+      }
+    }
+
     // Fetch nominee details
     const nomineeData = await db
       .select()
@@ -39,10 +56,22 @@ export async function GET() {
       .where(eq(userDocuments.userId, Number(token)))
 
     // Format documents by type for easier frontend consumption
-    const formattedDocuments = documents.reduce((acc: Record<"profile_photo" | "aadhaar_front" | "aadhaar_back" | "pan_card" | "bank_passbook" | "cancelled_cheque", string>, doc) => {
-      acc[doc.documentType] = doc.documentUrl
-      return acc
-    }, {} as Record<"profile_photo" | "aadhaar_front" | "aadhaar_back" | "pan_card" | "bank_passbook" | "cancelled_cheque", string>)
+    const formattedDocuments = documents.reduce(
+      (
+        acc: Record<
+          "profile_photo" | "aadhaar_front" | "aadhaar_back" | "pan_card" | "bank_passbook" | "cancelled_cheque",
+          string
+        >,
+        doc,
+      ) => {
+        acc[doc.documentType] = doc.documentUrl
+        return acc
+      },
+      {} as Record<
+        "profile_photo" | "aadhaar_front" | "aadhaar_back" | "pan_card" | "bank_passbook" | "cancelled_cheque",
+        string
+      >,
+    )
 
     // Return user profile data
     return NextResponse.json(
@@ -55,17 +84,15 @@ export async function GET() {
           surname: user.surname,
           email: user.email,
           mobile: user.mobile,
-        //   fatherName: user.fatherName || "",
-        //   dob: user.dob || "",
           addressLine1: user.addressLine1 || "",
           addressLine2: user.addressLine2 || "",
           city: user.city || "",
           state: user.state || "",
           pincode: user.pincode || "",
-        //   landmark: user.landmark || "",
-        //   sponsorId: user.sponsorId || "",
-        //   sponsorName: user.sponsorName || "",
           createdAt: user.createdAt,
+          referredBy: user.referredBy || "",
+          sponsorId: user.referredBy || "",
+          sponsorName: referrer ? referrer.name : "",
         },
         nominee: nominee
           ? {

@@ -109,7 +109,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
       current: pathname.startsWith("/user-dashboard/profile"),
       children: [
         { name: "View Profile", href: "/user-dashboard/profile/view-profile" },
-        { name: "Update Profile", href: "/dashboard/profile/update" },
+        { name: "Referrals", href: "/user-dashboard/profile/referrals" },
         { name: "KYC Update", href: "/dashboard/profile/kyc" },
       ],
     },

@@ -10,51 +10,52 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Calendar, Upload } from "lucide-react"
+import { Calendar, Upload, Users } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { BankDetailsForm } from "@/app/seller-dashboard/_components/bank-details-form"
 import { useToast } from "@/hooks/use-toast"
 import { format } from "date-fns"
+import { useRouter } from "next/navigation"
 
 interface ProfilePageProps {
-    profileData?: ProfileData;
-  }
+  profileData?: ProfileData
+}
 
 interface ProfileData {
   user?: {
-    firstName?: string;
-    surname?: string;
-    dob?: string;
-    fatherName?: string;
-    mobile?: string;
-    email?: string;
-    addressLine1?: string;
-    addressLine2?: string;
-    landmark?: string;
-    city?: string;
-    state?: string;
-    pincode?: string;
-    createdAt?: string;
-    referenceId?: string;
-    sponsorId?: string;
-    sponsorName?: string;
-    name?: string;
-  };
+    firstName?: string
+    surname?: string
+    dob?: string
+    fatherName?: string
+    mobile?: string
+    email?: string
+    addressLine1?: string
+    addressLine2?: string
+    landmark?: string
+    city?: string
+    state?: string
+    pincode?: string
+    createdAt?: string
+    referenceId?: string
+    sponsorId?: string
+    sponsorName?: string
+    name?: string
+  }
   nominee?: {
-    name?: string;
-    relation?: string;
-    dob?: string;
-    mobile?: string;
-    address?: string;
-  };
+    name?: string
+    relation?: string
+    dob?: string
+    mobile?: string
+    address?: string
+  }
   documents?: {
-    profile_photo?: string;
-    aadhaar_front?: string;
-    aadhaar_back?: string;
-    pan_card?: string;
-    bank_passbook?: string;
-    cancelled_cheque?: string;
-  };
+    profile_photo?: string
+    aadhaar_front?: string
+    aadhaar_back?: string
+    pan_card?: string
+    bank_passbook?: string
+    cancelled_cheque?: string
+  }
 }
 
 export default function ProfilePage({ profileData }: { profileData: ProfileData }) {
@@ -83,6 +84,8 @@ export default function ProfilePage({ profileData }: { profileData: ProfileData 
       address: profileData?.nominee?.address || "",
     },
   })
+
+  const router = useRouter()
 
   const handleInputChange = (section: "personal" | "nominee", field: string, value: string) => {
     setFormData({
@@ -174,7 +177,6 @@ export default function ProfilePage({ profileData }: { profileData: ProfileData 
         throw new Error("Failed to upload document")
       }
 
-
       toast({
         title: "Success",
         description: "Document uploaded successfully",
@@ -250,10 +252,15 @@ export default function ProfilePage({ profileData }: { profileData: ProfileData 
                 <span className="font-medium">{registrationDate}</span>
               </div>
               <Separator />
-              <div className="pt-2">
-                <Button variant="outline" className="w-full">
-                  <Calendar className="mr-2 h-4 w-4" />
-                  View Genealogy
+              <div className="pt-2 space-y-2">
+                
+                <Button
+                  variant="default"
+                  className="w-full bg-[#F05A28] hover:bg-[#D04A18]"
+                  onClick={() => router.push("/user-dashboard/profile/referrals")}
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  My Referrals
                 </Button>
               </div>
             </div>
@@ -399,7 +406,6 @@ export default function ProfilePage({ profileData }: { profileData: ProfileData 
                       value={formData.nominee.name}
                       onChange={(e) => handleInputChange("nominee", "name", e.target.value)}
                     />
-                    
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="nomineeRelation">Relation</Label>
@@ -469,7 +475,7 @@ export default function ProfilePage({ profileData }: { profileData: ProfileData 
                             accept="image/*"
                             onChange={(e) => {
                               if (e.target.files && e.target.files[0]) {
-                                handleFileUpload("profile_photo", e.target.files[0]);
+                                handleFileUpload("profile_photo", e.target.files[0])
                               }
                             }}
                           />
@@ -497,7 +503,7 @@ export default function ProfilePage({ profileData }: { profileData: ProfileData 
                             accept="image/*"
                             onChange={(e) => {
                               if (e.target.files && e.target.files[0]) {
-                                handleFileUpload("aadhaar_front", e.target.files[0]);
+                                handleFileUpload("aadhaar_front", e.target.files[0])
                               }
                             }}
                           />
@@ -525,7 +531,7 @@ export default function ProfilePage({ profileData }: { profileData: ProfileData 
                             accept="image/*"
                             onChange={(e) => {
                               if (e.target.files && e.target.files[0]) {
-                                handleFileUpload("aadhaar_back", e.target.files[0]);
+                                handleFileUpload("aadhaar_back", e.target.files[0])
                               }
                             }}
                           />
@@ -553,7 +559,7 @@ export default function ProfilePage({ profileData }: { profileData: ProfileData 
                             accept="image/*"
                             onChange={(e) => {
                               if (e.target.files && e.target.files[0]) {
-                                handleFileUpload("pan_card", e.target.files[0]);
+                                handleFileUpload("pan_card", e.target.files[0])
                               }
                             }}
                           />
@@ -581,7 +587,7 @@ export default function ProfilePage({ profileData }: { profileData: ProfileData 
                             accept="image/*"
                             onChange={(e) => {
                               if (e.target.files && e.target.files[0]) {
-                                handleFileUpload("bank_passbook", e.target.files[0]);
+                                handleFileUpload("bank_passbook", e.target.files[0])
                               }
                             }}
                           />
@@ -609,7 +615,7 @@ export default function ProfilePage({ profileData }: { profileData: ProfileData 
                             accept="image/*"
                             onChange={(e) => {
                               if (e.target.files && e.target.files[0]) {
-                                handleFileUpload("cancelled_cheque", e.target.files[0]);
+                                handleFileUpload("cancelled_cheque", e.target.files[0])
                               }
                             }}
                           />

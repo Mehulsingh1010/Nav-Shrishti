@@ -2,7 +2,7 @@
 import { pgTable, serial, varchar, boolean, timestamp, pgEnum, text, integer, jsonb } from "drizzle-orm/pg-core"
 import { relations } from "drizzle-orm"
 
-// Users table (existing schema)
+// Users table (updated with referredBy field)
 export const users = pgTable("users", {
   id: serial("id").primaryKey(), // Auto-incrementing id
   referenceId: varchar("reference_id", { length: 6 }).notNull().unique(), // 6-digit reference ID
@@ -19,15 +19,19 @@ export const users = pgTable("users", {
   pincode: varchar("pincode", { length: 10 }).notNull(),
   termsAccepted: boolean("terms_accepted").notNull().default(false),
   role: varchar("role", { length: 20 }).default("user").notNull(), // New 'role' field, default 'user'
+  referredBy: varchar("referred_by", { length: 6 }), // New field to store referrer's reference ID
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
 
-// User relations
+// User relations (updated to include referrals)
 export const usersRelations = relations(users, ({ many }) => ({
   products: many(products),
   reviews: many(productReviews),
   orders: many(orders),
+  bankDetails: many(bankDetails),
+  referralsGiven: many(referrals, { relationName: "referrer" }),
+  referralsReceived: many(referrals, { relationName: "referred" }),
 }))
 
 // Product status enum
@@ -180,19 +184,6 @@ export const paymentsRelations = relations(payments, ({ one }) => ({
   }),
 }))
 
-
-// Bank details relations
-
-// Update user relations to include bank details
-export const updatedUsersRelations = relations(users, ({ many, one }) => ({
-  products: many(products),
-  reviews: many(productReviews),
-  orders: many(orders),
-  bankDetails: many(bankDetails), // Add this relation
-}))
-
-
-
 // Nominee details table
 export const nomineeDetails = pgTable("nominee_details", {
   id: serial("id").primaryKey(),
@@ -231,7 +222,7 @@ export const userDocuments = pgTable("user_documents", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
 
-// Bank details table (existing)
+// Bank details table
 export const bankDetails = pgTable("bank_details", {
   id: serial("id").primaryKey(),
   userId: integer("user_id")
@@ -248,9 +239,36 @@ export const bankDetails = pgTable("bank_details", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
 
-// Relations
+// NEW: Referrals table for tracking referral relationships and earnings
+export const referrals = pgTable("referrals", {
+  id: serial("id").primaryKey(),
+  referrerId: integer("referrer_id")
+    .notNull()
+    .references(() => users.id), // User who referred
+  referredId: integer("referred_id")
+    .notNull()
+    .references(() => users.id), // User who was referred
+  status: varchar("status", { length: 20 }).default("active").notNull(), // Status of referral (active, inactive)
+  earnings: integer("earnings").default(0).notNull(), // Earnings from this referral (in paise/cents)
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+})
 
+// Referrals relations
+export const referralsRelations = relations(referrals, ({ one }) => ({
+  referrer: one(users, {
+    fields: [referrals.referrerId],
+    references: [users.id],
+    relationName: "referrer",
+  }),
+  referred: one(users, {
+    fields: [referrals.referredId],
+    references: [users.id],
+    relationName: "referred",
+  }),
+}))
 
+// Relations for other tables
 export const nomineeDetailsRelations = relations(nomineeDetails, ({ one }) => ({
   user: one(users, {
     fields: [nomineeDetails.userId],

@@ -92,7 +92,7 @@ export async function PUT(request, { params }) {
         availableUnits: availableUnitsInt,
         status,
         photoUrl: finalPhotoUrl,
-        updatedAt: new Date(), // Update the timestamp
+        updatedAt: new Date(), 
       })
       .where(eq(products.id, existingProduct.id))
       .returning()

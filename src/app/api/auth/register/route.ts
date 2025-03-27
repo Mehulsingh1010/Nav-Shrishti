@@ -3,7 +3,8 @@ import { z } from "zod"
 import { hash } from "bcrypt"
 import { db } from "../../../../../configs/db"
 import { users } from "../../../../../configs/schema"
-// import { eq } from "drizzle-orm"
+import { eq } from "drizzle-orm"
+import { sql } from "drizzle-orm"
 
 // Schema for validation
 const registerSchema = z.object({
@@ -21,6 +22,7 @@ const registerSchema = z.object({
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions",
   }),
+  referralCode: z.string().length(6).optional(), // Optional referral code
 })
 
 export async function POST(request: Request) {
@@ -34,10 +36,30 @@ export async function POST(request: Request) {
     // Validate request data
     const validatedData = registerSchema.parse(body)
 
-    // Check if user already exists
+    // Check if user already exists with the email
+    const existingUser = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, validatedData.email))
+    
+    if (existingUser.length > 0) {
+      return NextResponse.json({ error: "User with this email already exists" }, { status: 400 })
+    }
 
-
-   // Check if user already exists
+    // Verify referral code if provided
+    let referrerExists = false
+    if (validatedData.referralCode) {
+      const referrer = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.referenceId, validatedData.referralCode))
+      
+      referrerExists = referrer.length > 0
+      
+      if (!referrerExists) {
+        return NextResponse.json({ error: "Invalid referral code" }, { status: 400 })
+      }
+    }
 
     // Hash password
     const hashedPassword = await hash(validatedData.password, 10)
@@ -62,11 +84,30 @@ export async function POST(request: Request) {
         state: validatedData.state,
         pincode: validatedData.pincode,
         termsAccepted: validatedData.termsAccepted,
-        createdAt: new Date(), // Add creation timestamp if your schema has this field
+        referredBy: validatedData.referralCode || null, // Store referral code if provided
+        createdAt: new Date(),
+        updatedAt: new Date(),
       })
       .returning({ id: users.id, referenceId: users.referenceId })
 
     console.log("User created:", newUser[0])
+
+    // If user was referred, create a referral record
+    if (validatedData.referralCode && referrerExists) {
+      // Get referrer's ID
+      const referrer = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.referenceId, validatedData.referralCode))
+      
+      if (referrer.length > 0) {
+        // Create referral record
+        await db.execute(sql`
+          INSERT INTO referrals (referrer_id, referred_id, status, earnings, created_at, updated_at)
+          VALUES (${referrer[0].id}, ${newUser[0].id}, 'active', 0, NOW(), NOW())
+        `)
+      }
+    }
 
     return NextResponse.json({
       message: "User registered successfully",
