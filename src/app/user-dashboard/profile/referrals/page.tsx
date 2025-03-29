@@ -1,13 +1,15 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Copy, Share2, Users } from "lucide-react"
+import { Copy, Share2, Users, ChevronDown, ChevronUp } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 interface ReferralData {
   referralCode: string
@@ -20,6 +22,23 @@ interface ReferralData {
     date: string
     status: string
     earnings: number
+    degree: number
+  }[]
+  referralsByDegree: Record<
+    number,
+    {
+      id: number
+      name: string
+      date: string
+      status: string
+      earnings: number
+      referenceId: string
+    }[]
+  >
+  earningsSummary: {
+    degree: number
+    earnings: number
+    percentage: number
   }[]
 }
 
@@ -27,6 +46,7 @@ export default function ReferralsPage() {
   const { toast } = useToast()
   const [referralData, setReferralData] = useState<ReferralData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [expandedDegrees, setExpandedDegrees] = useState<Record<number, boolean>>({ 1: true })
 
   useEffect(() => {
     // Fetch referral data
@@ -54,7 +74,8 @@ export default function ReferralsPage() {
   }, [toast])
 
   const copyReferralLink = () => {
-    const referralLink = typeof window !== "undefined" ? `${window.location.origin}/auth/register?ref=${referralData?.referralCode}` : ""
+    const referralLink =
+      typeof window !== "undefined" ? `${window.location.origin}/auth/register?ref=${referralData?.referralCode}` : ""
     navigator.clipboard.writeText(referralLink)
     toast({
       title: "Copied!",
@@ -75,15 +96,18 @@ export default function ReferralsPage() {
     }
   }
 
+  const toggleDegreeExpansion = (degree: number) => {
+    setExpandedDegrees((prev) => ({
+      ...prev,
+      [degree]: !prev[degree],
+    }))
+  }
+
   if (isLoading) {
     return (
       <div className="flex items-center animate-spin-slow justify-center min-h-screen bg-orange-50 relative">
         <svg viewBox="0 0 200 200" className="absolute w-48 h-48 ">
-          <path
-            id="circlePath"
-            fill="transparent"
-            d="M 100, 100 m -90, 0 a 90,90 0 1,1 180,0 a 90,90 0 1,1 -180,0"
-          />
+          <path id="circlePath" fill="transparent" d="M 100, 100 m -90, 0 a 90,90 0 1,1 180,0 a 90,90 0 1,1 -180,0" />
           <text fill="#b45309" fontSize="14" fontWeight="bold">
             <textPath xlinkHref="#circlePath" startOffset="50%">
               ॐ नमः शिवाय • हरे कृष्ण हरे राम • श्री राम जय राम जय जय राम • ॐ गं गणपतये नमः • ॐ ह्रीं क्लीं महालक्ष्म्यै नमः •
@@ -154,28 +178,32 @@ export default function ReferralsPage() {
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
                 <Input
-                  value={typeof window !== "undefined" ? `${window.location.origin}/auth/register?ref=${referralData.referralCode}` : ""}
+                  value={
+                    typeof window !== "undefined"
+                      ? `${window.location.origin}/auth/register?ref=${referralData.referralCode}`
+                      : ""
+                  }
                   readOnly
                   className="bg-orange-50"
                 />
               </div>
-                <Button
+              <Button
                 onClick={() => {
                   copyReferralLink()
                   const button = document.getElementById("copy-button")
                   if (button) {
-                  button.textContent = "Copied!"
-                  setTimeout(() => {
-                    button.textContent = "Copy Link"
-                  }, 1000)
+                    button.textContent = "Copied!"
+                    setTimeout(() => {
+                      button.textContent = "Copy Link"
+                    }, 1000)
                   }
                 }}
                 id="copy-button"
                 className="bg-orange-700 hover:bg-orange-800"
-                >
+              >
                 <Copy className="mr-2 h-4 w-4" />
                 Copy Link
-                </Button>
+              </Button>
               <Button onClick={shareReferralLink} variant="outline" className="border-orange-700 text-orange-700">
                 <Share2 className="mr-2 h-4 w-4" />
                 Share
@@ -191,61 +219,199 @@ export default function ReferralsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Referral History</CardTitle>
-            <CardDescription>Track your referrals and earnings</CardDescription>
+            <CardTitle>Earnings by Level</CardTitle>
+            <CardDescription>Your commission earnings from each referral level</CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="all" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-4">
-                <TabsTrigger value="all">All Referrals</TabsTrigger>
-                <TabsTrigger value="active">Active</TabsTrigger>
-                <TabsTrigger value="inactive">Inactive</TabsTrigger>
-              </TabsList>
-              <TabsContent value="all">
-                <ReferralTable referrals={referralData.referrals} />
-              </TabsContent>
-              <TabsContent value="active">
-                <ReferralTable referrals={referralData.referrals.filter((r) => r.status === "active")} />
-              </TabsContent>
-              <TabsContent value="inactive">
-                <ReferralTable referrals={referralData.referrals.filter((r) => r.status === "inactive")} />
-              </TabsContent>
-            </Tabs>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Level</TableHead>
+                    <TableHead>Commission Rate</TableHead>
+                    <TableHead className="text-right">Earnings</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {referralData.earningsSummary && referralData.earningsSummary.length > 0 ? (
+                    referralData.earningsSummary.map((level) => (
+                      <TableRow key={level.degree}>
+                        <TableCell>
+                          {level.degree === 1
+                            ? "1st Degree (Direct)"
+                            : level.degree === 2
+                              ? "2nd Degree"
+                              : level.degree === 3
+                                ? "3rd Degree"
+                                : `${level.degree}th Degree`}
+                        </TableCell>
+                        <TableCell>{level.percentage}%</TableCell>
+                        <TableCell className="text-right">₹{(level.earnings / 100).toFixed(2)}</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center py-6 text-muted-foreground">
+                        No earnings yet
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  <TableRow className="bg-orange-50">
+                    <TableCell className="font-bold">Total</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell className="text-right font-bold">
+                      ₹{(referralData.totalEarnings / 100).toFixed(2)}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Your Referral Team</CardTitle>
+            <CardDescription>View your complete referral network</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {referralData.referralsByDegree && Object.keys(referralData.referralsByDegree).length > 0 ? (
+              Object.entries(referralData.referralsByDegree)
+                .sort(([a], [b]) => Number.parseInt(a) - Number.parseInt(b))
+                .map(([degree, referrals]) => (
+                  <Collapsible key={degree} open={expandedDegrees[Number.parseInt(degree)]} className="mb-4">
+                    <div className="flex items-center justify-between bg-orange-50 p-3 rounded-t-md">
+                      <div className="flex items-center gap-2">
+                        <CollapsibleTrigger
+                          onClick={() => toggleDegreeExpansion(Number.parseInt(degree))}
+                          className="flex items-center"
+                        >
+                          {expandedDegrees[Number.parseInt(degree)] ? (
+                            <ChevronUp className="h-5 w-5 text-orange-700" />
+                          ) : (
+                            <ChevronDown className="h-5 w-5 text-orange-700" />
+                          )}
+                        </CollapsibleTrigger>
+                        <h3 className="font-semibold text-orange-800">
+                          {degree === "1"
+                            ? "1st Degree (Direct Referrals)"
+                            : degree === "2"
+                              ? "2nd Degree Referrals"
+                              : degree === "3"
+                                ? "3rd Degree Referrals"
+                                : `${degree}th Degree Referrals`}
+                        </h3>
+                      </div>
+                      <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-200">
+                        {referrals.length} {referrals.length === 1 ? "member" : "members"}
+                      </Badge>
+                    </div>
+
+                    <CollapsibleContent>
+                      <div className="rounded-b-md border border-t-0">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Name</TableHead>
+                              <TableHead>Date Joined</TableHead>
+                              <TableHead>Status</TableHead>
+                              <TableHead className="text-right">Earnings Generated</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {referrals.map((referral) => (
+                              <TableRow key={referral.id}>
+                                <TableCell className="font-medium">{referral.name}</TableCell>
+                                <TableCell>{new Date(referral.date).toLocaleDateString()}</TableCell>
+                                <TableCell>
+                                  <span
+                                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                      referral.status === "active"
+                                        ? "bg-green-100 text-green-800"
+                                        : "bg-gray-100 text-gray-800"
+                                    }`}
+                                  >
+                                    {referral.status === "active" ? "Active" : "Inactive"}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-right">₹{(referral.earnings / 100).toFixed(2)}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+                ))
+            ) : (
+              <div className="text-center py-6 text-muted-foreground">
+                You don't have any referrals yet. Share your referral link to start building your team!
+              </div>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle>How It Works</CardTitle>
-            <CardDescription>Learn about our referral program</CardDescription>
+            <CardDescription>Learn about our multi-level referral program</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="flex flex-col items-center text-center p-4 bg-orange-50 rounded-lg">
-                <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mb-4">
-                  <span className="text-2xl font-bold text-orange-700">1</span>
-                </div>
-                <h3 className="font-semibold mb-2">Share Your Link</h3>
-                <p className="text-sm text-muted-foreground">Share your unique referral link with friends and family</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col p-4 bg-orange-50 rounded-lg">
+                <h3 className="font-semibold mb-2 text-orange-800">Commission Structure</h3>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <Badge className="bg-orange-200 text-orange-800 hover:bg-orange-200">7%</Badge>
+                    <span>1st Degree (Direct Referrals)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Badge className="bg-orange-200 text-orange-800 hover:bg-orange-200">5%</Badge>
+                    <span>2nd Degree Referrals</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Badge className="bg-orange-200 text-orange-800 hover:bg-orange-200">3%</Badge>
+                    <span>3rd Degree Referrals</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Badge className="bg-orange-200 text-orange-800 hover:bg-orange-200">1%</Badge>
+                    <span>4th Degree and Beyond</span>
+                  </li>
+                </ul>
               </div>
-              <div className="flex flex-col items-center text-center p-4 bg-orange-50 rounded-lg">
-                <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mb-4">
-                  <span className="text-2xl font-bold text-orange-700">2</span>
-                </div>
-                <h3 className="font-semibold mb-2">They Register</h3>
-                <p className="text-sm text-muted-foreground">
-                  When they register using your link, they become your referral
+
+              <div className="flex flex-col p-4 bg-orange-50 rounded-lg">
+                <h3 className="font-semibold mb-2 text-orange-800">How You Earn</h3>
+                <p className="text-sm mb-2">
+                  You earn commission whenever someone in your referral network makes a purchase. The commission is
+                  calculated based on the purchase amount and your relationship to the buyer:
                 </p>
+                <ul className="text-sm space-y-1">
+                  <li>• When your direct referral makes a purchase, you earn 7%</li>
+                  <li>• When your referral's referral makes a purchase, you earn 5%</li>
+                  <li>• When your referral's referral's referral makes a purchase, you earn 3%</li>
+                  <li>• For deeper levels, you earn 1% commission</li>
+                </ul>
               </div>
-              <div className="flex flex-col items-center text-center p-4 bg-orange-50 rounded-lg">
-                <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mb-4">
-                  <span className="text-2xl font-bold text-orange-700">3</span>
-                </div>
-                <h3 className="font-semibold mb-2">Earn Rewards</h3>
-                <p className="text-sm text-muted-foreground">
-                  Earn ₹500 for each successful referral who completes registration
-                </p>
-              </div>
+            </div>
+
+            <div className="mt-6 p-4 bg-orange-50 rounded-lg">
+              <h3 className="font-semibold mb-2 text-orange-800">Example Scenario</h3>
+              <p className="text-sm mb-3">If you refer User B, and User B refers User C, and User C refers User D:</p>
+              <ul className="text-sm space-y-2">
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold min-w-[120px]">User B purchases:</span>
+                  <span>You earn 7% commission</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold min-w-[120px]">User C purchases:</span>
+                  <span>You earn 5% commission, User B earns 7% commission</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-semibold min-w-[120px]">User D purchases:</span>
+                  <span>You earn 3% commission, User B earns 5% commission, User C earns 7% commission</span>
+                </li>
+              </ul>
             </div>
           </CardContent>
         </Card>
@@ -254,45 +420,3 @@ export default function ReferralsPage() {
   )
 }
 
-function ReferralTable({ referrals }: { referrals: ReferralData["referrals"] }) {
-  return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Earnings</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {referrals.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
-                No referrals found
-              </TableCell>
-            </TableRow>
-          ) : (
-            referrals.map((referral) => (
-              <TableRow key={referral.id}>
-                <TableCell className="font-medium">{referral.name}</TableCell>
-                <TableCell>{new Date(referral.date).toLocaleDateString()}</TableCell>
-                <TableCell>
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      referral.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {referral.status === "active" ? "Active" : "Inactive"}
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">₹{(referral.earnings / 100).toFixed(2)}</TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
-  )
-}

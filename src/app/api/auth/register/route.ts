@@ -2,9 +2,8 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { hash } from "bcrypt"
 import { db } from "../../../../../configs/db"
-import { users } from "../../../../../configs/schema"
+import { users, referrals} from "../../../../../configs/schema"
 import { eq } from "drizzle-orm"
-import { sql } from "drizzle-orm"
 
 // Schema for validation
 const registerSchema = z.object({
@@ -29,7 +28,7 @@ export async function POST(request: Request) {
   try {
     // Parse request body
     const body = await request.json()
-    
+
     // Log the incoming request body for debugging
     console.log("Registration request body:", body)
 
@@ -37,28 +36,29 @@ export async function POST(request: Request) {
     const validatedData = registerSchema.parse(body)
 
     // Check if user already exists with the email
-    const existingUser = await db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.email, validatedData.email))
-    
+    const existingUser = await db.select({ id: users.id }).from(users).where(eq(users.email, validatedData.email))
+
     if (existingUser.length > 0) {
       return NextResponse.json({ error: "User with this email already exists" }, { status: 400 })
     }
 
     // Verify referral code if provided
     let referrerExists = false
+    let referrerId = null
+
     if (validatedData.referralCode) {
       const referrer = await db
         .select({ id: users.id })
         .from(users)
         .where(eq(users.referenceId, validatedData.referralCode))
-      
+
       referrerExists = referrer.length > 0
-      
+
       if (!referrerExists) {
         return NextResponse.json({ error: "Invalid referral code" }, { status: 400 })
       }
+
+      referrerId = referrer[0].id
     }
 
     // Hash password
@@ -93,20 +93,21 @@ export async function POST(request: Request) {
     console.log("User created:", newUser[0])
 
     // If user was referred, create a referral record
-    if (validatedData.referralCode && referrerExists) {
-      // Get referrer's ID
-      const referrer = await db
-        .select({ id: users.id })
-        .from(users)
-        .where(eq(users.referenceId, validatedData.referralCode))
-      
-      if (referrer.length > 0) {
-        // Create referral record
-        await db.execute(sql`
-          INSERT INTO referrals (referrer_id, referred_id, status, earnings, created_at, updated_at)
-          VALUES (${referrer[0].id}, ${newUser[0].id}, 'active', 0, NOW(), NOW())
-        `)
-      }
+    if (validatedData.referralCode && referrerExists && referrerId) {
+      // Create referral record
+      await db
+        .insert(referrals)
+        .values({
+          referrerId: referrerId,
+          referredId: newUser[0].id,
+          status: "active",
+          earnings: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning({ id: referrals.id })
+
+      console.log(`Referral record created for user ${newUser[0].id} referred by ${referrerId}`)
     }
 
     return NextResponse.json({
@@ -123,3 +124,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+
