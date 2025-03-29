@@ -1,28 +1,32 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { pgTable, serial, varchar, boolean, timestamp, pgEnum, text, integer, jsonb } from "drizzle-orm/pg-core"
+import { pgTable,date, serial, varchar, boolean, timestamp, pgEnum, text, integer, jsonb } from "drizzle-orm/pg-core"
 import { relations } from "drizzle-orm"
 
 // Users table (updated with referredBy field)
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(), // Auto-incrementing id
-  referenceId: varchar("reference_id", { length: 6 }).notNull().unique(), // 6-digit reference ID
-  title: varchar("title", { length: 10 }).notNull(),
-  firstName: varchar("first_name", { length: 100 }).notNull(),
-  surname: varchar("surname", { length: 100 }).notNull(),
-  mobile: varchar("mobile", { length: 15 }).notNull(),
-  email: varchar("email", { length: 255 }).notNull().unique(),
-  password: varchar("password", { length: 255 }).notNull(),
-  addressLine1: varchar("address_line_1", { length: 255 }).notNull(),
-  addressLine2: varchar("address_line_2", { length: 255 }),
-  city: varchar("city", { length: 100 }).notNull(),
-  state: varchar("state", { length: 100 }).notNull(),
-  pincode: varchar("pincode", { length: 10 }).notNull(),
-  termsAccepted: boolean("terms_accepted").notNull().default(false),
-  role: varchar("role", { length: 20 }).default("user").notNull(), // New 'role' field, default 'user'
-  referredBy: varchar("referred_by", { length: 6 }), // New field to store referrer's reference ID
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-})
+  export const users = pgTable("users", {
+    id: serial("id").primaryKey(), // Auto-incrementing id
+    referenceId: varchar("reference_id", { length: 6 }).notNull().unique(), // 6-digit reference ID
+    title: varchar("title", { length: 10 }).notNull(),
+    firstName: varchar("first_name", { length: 100 }).notNull(),
+    surname: varchar("surname", { length: 100 }).notNull(),
+    dob: date("dob"), // Date of birth
+    fatherName: varchar("father_name", { length: 100 }), // Father's name
+    mobile: varchar("mobile", { length: 15 }).notNull(),
+    email: varchar("email", { length: 255 }).notNull().unique(),
+    password: varchar("password", { length: 255 }).notNull(),
+    addressLine1: varchar("address_line_1", { length: 255 }).notNull(),
+    addressLine2: varchar("address_line_2", { length: 255 }),
+    landmark: varchar("landmark", { length: 255 }), // Landmark
+    city: varchar("city", { length: 100 }).notNull(),
+    state: varchar("state", { length: 100 }).notNull(),
+    pincode: varchar("pincode", { length: 10 }).notNull(),
+    termsAccepted: boolean("terms_accepted").notNull().default(false),
+    role: varchar("role", { length: 20 }).default("user").notNull(), // New 'role' field, default 'user'
+    referredBy: varchar("referred_by", { length: 6 }), // New field to store referrer's reference ID
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  });
+
 
 // User relations (updated to include referrals)
 export const usersRelations = relations(users, ({ many }) => ({
