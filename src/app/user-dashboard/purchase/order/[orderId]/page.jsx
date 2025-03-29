@@ -8,7 +8,6 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
-import { DashboardShell } from "@/app/user-dashboard/profile/view-profile/dashboard-shell";
 
 function formatPrice(price) {
   return `₹${(price / 100).toLocaleString("en-IN")}`;
