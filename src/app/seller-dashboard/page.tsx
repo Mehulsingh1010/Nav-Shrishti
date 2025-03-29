@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-unescaped-entities */
@@ -7,6 +5,7 @@
 "use client";
 
 import type React from "react";
+
 import { useEffect, useState, useRef } from "react";
 import {
   BarChart3,
@@ -65,7 +64,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 // Define the product type
@@ -110,7 +109,6 @@ export default function SellerDashboardPage() {
   const [redirecting, setRedirecting] = useState(false);
   const [redirectCountdown, setRedirectCountdown] = useState(5);
   const router = useRouter();
-  const pathname = usePathname();
   useEffect(() => {
     async function fetchUser() {
       try {
@@ -120,61 +118,7 @@ export default function SellerDashboardPage() {
         if (!res.ok) {
           throw new Error(data.error);
         }
-        useEffect(() => {
-          async function fetchUser() {
-            try {
-              const res = await fetch("/api/auth/profile");
-              const data = await res.json();
 
-              if (!res.ok) {
-                throw new Error(data.error);
-              }
-
-              if (data.role) {
-                setUserRole(data.role);
-                localStorage.setItem("userRole", data.role);
-              }
-            } catch (err) {
-              if (err instanceof Error) setError(err.message);
-            } finally {
-              setIsLoading(false);
-            }
-          }
-
-          fetchUser();
-        }, []);
-
-        useEffect(() => {
-          // Get role from localStorage if not yet set
-          if (!userRole) {
-            const role = localStorage.getItem("userRole");
-            if (role) {
-              setUserRole(role);
-            }
-          }
-
-          // Restrict access if user is not a seller and is on /seller-dashboard or its subpaths
-          if (
-            userRole &&
-            userRole !== "seller" &&
-            pathname.startsWith("/seller-dashboard") &&
-            !redirecting
-          ) {
-            setRedirecting(true);
-          }
-        }, [userRole, redirecting, pathname]);
-
-        useEffect(() => {
-          if (redirecting && redirectCountdown > 0) {
-            const timer = setTimeout(() => {
-              setRedirectCountdown((prev) => prev - 1);
-            }, 1000);
-
-            return () => clearTimeout(timer);
-          } else if (redirecting && redirectCountdown === 0) {
-            router.push("/user-dashboard");
-          }
-        }, [redirecting, redirectCountdown, router]);
         setUser(data);
 
         // If the API returns a role, set it
@@ -230,10 +174,9 @@ export default function SellerDashboardPage() {
   const [imageUploadMethod, setImageUploadMethod] = useState<"url" | "file">(
     "url"
   );
-
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);  
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const refreshProducts = async () => {
@@ -479,6 +422,8 @@ export default function SellerDashboardPage() {
     }
   };
 
+
+
   if (redirecting) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -511,6 +456,9 @@ export default function SellerDashboardPage() {
       </div>
     );
   }
+
+
+
 
   // Show loading state
   if (isLoading) {
