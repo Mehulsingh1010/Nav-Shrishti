@@ -195,7 +195,7 @@ export default function CheckoutPage({ params }) {
       <div className="container mx-auto px-4 py-12 max-w-md text-center">
         <div className="bg-red-50 p-6 rounded-lg border border-red-200">
           <p className="text-red-700">{error}</p>
-          <Link href="/products" className="mt-4 inline-block text-orange-600 hover:text-orange-700">
+          <Link href="/navlinks/products" className="mt-4 inline-block text-orange-600 hover:text-orange-700">
             <ArrowLeft className="inline mr-2 h-4 w-4" />
             सभी उत्पादों पर वापस जाएं
           </Link>

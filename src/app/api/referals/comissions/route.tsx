@@ -1,176 +1,160 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
 import { db } from "../../../../../configs/db"
-import { users, referrals, orders } from "../../../../../configs/schema"
-import { eq, and } from "drizzle-orm"
+import { referrals, users } from "../../../../../configs/schema"
+import { eq, sql } from "drizzle-orm"
 
-// Commission rates by degree (index 0 = 1st degree, etc.)
-const COMMISSION_RATES = [0.07, 0.05, 0.03, 0.01, 0.01, 0.01]
+// Define promotional rankings with 5 levels
+const PROMOTIONAL_RANKINGS = [
+  { level: 1, threshold: 0, monthlyBonus: 0 },
+  { level: 2, threshold: 1000000, monthlyBonus: 50000 },
+  { level: 3, threshold: 5000000, monthlyBonus: 250000 },
+  { level: 4, threshold: 10000000, monthlyBonus: 500000 },
+  { level: 5, threshold: 20000000, monthlyBonus: 1000000 },
+]
 
-// This function will be called when an order is completed
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { orderId } = await request.json()
+    const { userId, orderAmount } = await req.json()
 
-    if (!orderId) {
-      return NextResponse.json({ error: "Order ID is required" }, { status: 400 })
+    if (!userId || !orderAmount) {
+      return NextResponse.json({ error: "Missing userId or orderAmount" }, { status: 400 })
     }
 
-    // Get the order details
-    const order = await db
-      .select({
-        id: orders.id,
-        userId: orders.userId,
-        totalAmount: orders.totalAmount,
-        status: orders.status,
-      })
-      .from(orders)
-      .where(eq(orders.id, orderId))
-      .limit(1)
+    // Find the user's referrer chain
+    const referralChain = await getReferralChain(userId)
 
-    if (order.length === 0) {
-      return NextResponse.json({ error: "Order not found" }, { status: 404 })
-    }
+    // Update promotional rankings for all users in the chain
+    await updatePromotionalRankings(referralChain, orderAmount)
 
-    // Only process if order is completed
-    if (order[0].status !== "completed") {
-      return NextResponse.json({
-        message: "Order is not completed, no commission processed",
-      })
-    }
-
-    const purchaserUserId = order[0].userId
-    const orderAmount = order[0].totalAmount
-
-    // Find the referral chain for this user
-    const referralChain = await findReferralChain(purchaserUserId)
-
-    // Calculate and distribute commissions
-    const commissionResults = await distributeCommissions(referralChain, orderAmount, orderId)
-
-    return NextResponse.json({
-      message: "Commissions processed successfully",
-      commissions: commissionResults,
-    })
+    return NextResponse.json({ message: "Commission processed successfully" }, { status: 200 })
   } catch (error) {
-    console.error("Error processing commissions:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("[COMMISSION_POST]", error)
+    return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
 }
 
-// Function to find the referral chain (upline) for a user
-async function findReferralChain(userId: number) {
-  const chain = []
-  let currentUserId = userId
-  let depth = 0
+// Function to get the referral chain
+async function getReferralChain(userId: string) {
+  const referralChain = []
+  let currentUserId: string | null = userId
+  let degree = 0
 
-  // Maximum depth to prevent infinite loops and match our commission structure
-  const MAX_DEPTH = 6
-
-  while (depth < MAX_DEPTH) {
-    // Find who referred this user
-    const referrer = await db
+  while (currentUserId && degree < 5) {
+    const referral: { referrerId: number | null }[] = await db
       .select({
-        id: users.id,
-        referenceId: users.referenceId,
+        referrerId: referrals.referrerId,
       })
-      .from(users)
-      .where(eq(users.id, currentUserId))
+      .from(referrals)
+      .where(eq(referrals.referredId, Number(currentUserId)))
       .limit(1)
 
-    if (referrer.length === 0 || !referrer[0].referenceId) {
-      break
+    if (referral.length > 0 && referral[0].referrerId) {
+      const referrerId = referral[0].referrerId
+      referralChain.push({ userId: referrerId, degree: degree + 1 })
+      currentUserId = referrerId.toString()
+      degree++
+    } else {
+      currentUserId = null // End the chain
     }
-
-    // Find the user with this reference ID
-    const referrerUser = await db
-      .select({
-        id: users.id,
-        referredBy: users.referredBy,
-      })
-      .from(users)
-      .where(eq(users.id, currentUserId))
-      .limit(1)
-
-    if (referrerUser.length === 0 || !referrerUser[0].referredBy) {
-      break
-    }
-
-    // Find the actual user who referred
-    const uplineUser = await db
-      .select({
-        id: users.id,
-      })
-      .from(users)
-      .where(eq(users.referenceId, referrerUser[0].referredBy))
-      .limit(1)
-
-    if (uplineUser.length === 0) {
-      break
-    }
-
-    // Add to chain and continue up
-    chain.push({
-      userId: uplineUser[0].id,
-      degree: depth + 1,
-    })
-
-    currentUserId = uplineUser[0].id
-    depth++
   }
 
-  return chain
+  return referralChain
 }
 
-// Function to calculate and distribute commissions
-async function distributeCommissions(referralChain: any[], orderAmount: number, orderId: number) {
-  const results = []
-
+// Function to update promotional rankings for all users in the chain
+async function updatePromotionalRankings(referralChain: any[], orderAmount: number) {
   for (const referrer of referralChain) {
-    const { userId, degree } = referrer
+    const { userId } = referrer
 
-    // Get commission rate based on degree
-    const commissionRate =
-      degree <= COMMISSION_RATES.length ? COMMISSION_RATES[degree - 1] : COMMISSION_RATES[COMMISSION_RATES.length - 1]
+    // Get current user data
+    const userData = await db
+      .select({
+        totalNetworkSales: users.totalNetworkSales,
+        promotionalRank: users.promotionalRank,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1)
 
-    // Calculate commission amount
-    const commissionAmount = Math.floor(orderAmount * commissionRate)
+    if (userData.length === 0) continue
 
-    if (commissionAmount > 0) {
-      // Find the referral record
-      const referralRecord = await db
-        .select({
-          id: referrals.id,
-          earnings: referrals.earnings,
-        })
-        .from(referrals)
-        .where(and(eq(referrals.referrerId, userId), eq(referrals.status, "active")))
-        .limit(1)
+    // Fetch earnings by degree - using the same query as in the referrals API
+    const earningsByDegree = await db.execute(sql`
+      WITH RECURSIVE referral_chain AS (
+        SELECT 
+          referred_id,
+          referrer_id,
+          1 as degree
+        FROM 
+          referrals
+        WHERE 
+          referrer_id = ${userId}
+        UNION ALL
+        SELECT 
+          r.referred_id,
+          r.referrer_id,
+          rc.degree + 1
+        FROM 
+          referrals r
+        JOIN 
+          referral_chain rc ON r.referrer_id = rc.referred_id
+        WHERE 
+          rc.degree < 5
+      )
+      SELECT 
+        rc.degree,
+        SUM(CASE 
+          WHEN rc.degree = 1 THEN o.total_amount * 0.07
+          WHEN rc.degree = 2 THEN o.total_amount * 0.05
+          WHEN rc.degree = 3 THEN o.total_amount * 0.03
+          ELSE o.total_amount * 0.01
+        END) as earnings
+      FROM 
+        referral_chain rc
+      JOIN 
+        orders o ON o.user_id = rc.referred_id
+      WHERE 
+        o.status = 'completed'
+      GROUP BY 
+        rc.degree
+      ORDER BY 
+        rc.degree
+    `)
 
-      if (referralRecord.length > 0) {
-        // Update the earnings in the referral record
-        const newEarnings = Number(referralRecord[0].earnings) + commissionAmount
+    // Calculate total earnings the same way as in the referrals API
+    const totalEarnings = earningsByDegree.rows.reduce((sum: number, row: any) => sum + Number(row.earnings || 0), 0)
 
-        await db
-          .update(referrals)
-          .set({
-            earnings: newEarnings,
-            updatedAt: new Date(),
-          })
-          .where(eq(referrals.id, referralRecord[0].id))
+    // Update total network sales
+    const currentNetworkSales = userData[0].totalNetworkSales || 0
 
-        results.push({
-          userId,
-          degree,
-          commissionRate,
-          commissionAmount,
-          newTotalEarnings: newEarnings,
-        })
+    // If we have no network sales but have earnings, use earnings as the base
+    let newNetworkSales = currentNetworkSales
+    if (currentNetworkSales === 0 && totalEarnings > 0) {
+      newNetworkSales = totalEarnings + orderAmount
+    } else {
+      newNetworkSales = currentNetworkSales + orderAmount
+    }
+
+    const currentRank = userData[0].promotionalRank || 1
+
+    // Check if user qualifies for a rank upgrade
+    let newRank = currentRank
+    for (const ranking of PROMOTIONAL_RANKINGS) {
+      if (newNetworkSales >= ranking.threshold && ranking.level > newRank) {
+        newRank = ranking.level
       }
     }
-  }
 
-  return results
+    // Update user record
+    await db
+      .update(users)
+      .set({
+        totalNetworkSales: newNetworkSales,
+        promotionalRank: newRank,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId))
+  }
 }
 

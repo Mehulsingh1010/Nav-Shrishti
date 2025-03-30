@@ -23,6 +23,9 @@ import { relations } from "drizzle-orm"
     termsAccepted: boolean("terms_accepted").notNull().default(false),
     role: varchar("role", { length: 20 }).default("user").notNull(), // New 'role' field, default 'user'
     referredBy: varchar("referred_by", { length: 6 }), // New field to store referrer's reference ID
+    promotionalRank: integer("promotional_rank").default(1),
+  totalNetworkSales: integer("total_network_sales").default(0),
+  lastMonthlyBonusPaid: timestamp("last_monthly_bonus_paid"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
   });
