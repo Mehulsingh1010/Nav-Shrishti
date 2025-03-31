@@ -133,7 +133,7 @@ export default function TeamPage() {
               क्षेत्रों में योग्य और समर्पित व्यक्तियों की तलाश में हैं।
             </p>
             <a
-              href="/contact"
+              href="/navlinks/contact"
               className="inline-flex items-center justify-center rounded-md bg-orange-600 px-6 py-3 text-white font-medium hover:bg-orange-700 transition-colors"
             >
               अभी आवेदन करें

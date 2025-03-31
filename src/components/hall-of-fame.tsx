@@ -161,7 +161,7 @@ export default function HallOfFamePage() {
               लिए नामांकित करें।
             </p>
             <a
-              href="/contact"
+              href="/navlinks/contact"
               className="inline-flex items-center justify-center rounded-md bg-white px-6 py-3 text-orange-600 font-medium hover:bg-orange-50 transition-colors"
             >
               नामांकन फॉर्म
