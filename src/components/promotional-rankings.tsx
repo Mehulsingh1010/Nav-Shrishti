@@ -86,7 +86,7 @@ export default function PromotionalRankings() {
     const amountInRupees = amount / 100
 
     // Convert to lakhs
-    const amountInLakhs = amountInRupees / 100000
+    const amountInLakhs = amountInRupees / 1000
 
     return `₹${amountInLakhs.toFixed(2)} ${amountInLakhs === 1 ? "Lakh" : "Lakhs"}`
   }
@@ -156,7 +156,7 @@ export default function PromotionalRankings() {
                 <div className="text-2xl">=</div>
                 <div>
                   <p className="text-sm text-muted-foreground">Total</p>
-                  <p className="font-bold text-orange-800">₹25.00 Lakhs</p>
+                  <p className="font-bold text-orange-800">₹{25000 + rankingData.monthlyBonus}</p>
                 </div>
               </div>
               <div className="flex items-center text-sm text-green-600">
