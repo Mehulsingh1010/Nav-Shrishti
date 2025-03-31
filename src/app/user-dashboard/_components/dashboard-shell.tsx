@@ -122,7 +122,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
       icon: CreditCard,
       current: pathname.startsWith("/user-dashboard/bank"),
       
-    },
+    },  
 
 
 
@@ -133,7 +133,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
       current: pathname.startsWith("/user-dashboard/purchase"),
       children: [
         { name: "Order History", href: "/user-dashboard/purchase/history" },
-        { name: "Generate Invoice", href: "/user-dashboard/purchase/invoice" },
+       
       ],
     },
 

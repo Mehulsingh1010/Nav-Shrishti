@@ -11,8 +11,10 @@ const COMMISSION_RATES = [0.07, 0.05, 0.03, 0.01, 0.01, 0.01]
 // Promotional ranking thresholds and bonuses
 const PROMOTIONAL_RANKINGS = [
   { level: 1, threshold: 0, monthlyBonus: 0 }, // Default level
-  { level: 2, threshold: 50000000, monthlyBonus: 25000000 }, // 5 lakh threshold, 2.5 lakh bonus
-  { level: 3, threshold: 150000000, monthlyBonus: 75000000 }, // 15 lakh threshold, 7.5 lakh bonus
+  { level: 2, threshold: 500000, monthlyBonus: 250000 }, // 5 lakh threshold, 2.5 lakh bonus
+  { level: 3, threshold: 1500000, monthlyBonus: 750000 }, // 15 lakh threshold, 7.5 lakh bonus
+  { level: 4, threshold: 3000000, monthlyBonus: 1500000 }, // 30 lakh threshold, 15 lakh bonus
+  { level: 5, threshold: 5000000, monthlyBonus: 2500000 }, // 50 lakh threshold, 25 lakh bonus
 ]
 
 export async function GET() {

@@ -1,33 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/no-unescaped-entities */
 "use client"
 
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trophy, TrendingUp, Award, ChevronRight, Star, Zap } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
+import { Badge } from "@/components/ui/badge"
+import { Award, TrendingUp } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
-import { cn } from "@/lib/utils"
 
-interface Rank {
-  level: number
-  name: string
-  threshold: number
-  monthlyBonus: number
-}
-
-interface RankingData {
+interface PromotionalRankingData {
   currentRank: number
   totalNetworkSales: number
   monthlyBonus: number
   nextRankThreshold: number | null
   remainingAmount: number
   progressPercentage: number
-  allRanks: Rank[]
+  allRanks: {
+    level: number
+    name: string
+    threshold: number
+    monthlyBonus: number
+  }[]
 }
 
 export default function PromotionalRankings() {
   const { toast } = useToast()
-  const [rankingData, setRankingData] = useState<RankingData | null>(null)
+  const [rankingData, setRankingData] = useState<PromotionalRankingData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -57,8 +55,8 @@ export default function PromotionalRankings() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <div className="animate-spin h-8 w-8 border-4 border-orange-500 rounded-full border-t-transparent"></div>
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin-slow w-12 h-12 border-4 border-orange-200 border-t-orange-600 rounded-full"></div>
       </div>
     )
   }
@@ -67,301 +65,205 @@ export default function PromotionalRankings() {
     return null
   }
 
-  // Format currency values
-  const formatCurrency = (amount: number) => {
-    return `₹${(amount / 100).toLocaleString("en-IN")}`
+  // Format currency in Indian format (with lakhs and crores)
+  const formatIndianCurrency = (amount: number) => {
+    // Convert paise to rupees
+    const amountInRupees = amount / 100
+
+    // Format in Indian number system (with commas)
+    const formatter = new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    })
+
+    return formatter.format(amountInRupees)
   }
 
-  // Get rank icon based on level
-  const getRankIcon = (level: number) => {
-    switch (level) {
-      case 1:
-        return <Trophy className="h-6 w-6 text-zinc-500" />
-      case 2:
-        return <Trophy className="h-6 w-6 text-gray-400" />
-      case 3:
-        return <Trophy className="h-6 w-6 text-yellow-500" />
-      case 4:
-        return <Trophy className="h-6 w-6 text-blue-500" />
-      case 5:
-        return <Trophy className="h-6 w-6 text-purple-500" />
-      default:
-        return <Trophy className="h-6 w-6 text-orange-500" />
-    }
-  }
+  // Format in lakhs for display
+  const formatInLakhs = (amount: number) => {
+    // Convert paise to rupees
+    const amountInRupees = amount / 100
 
-  // Get rank color based on level
-  const getRankColor = (level: number) => {
-    switch (level) {
-      case 1:
-        return "bg-zinc-100 text-zinc-800"
-      case 2:
-        return "bg-gray-200 text-gray-800"
-      case 3:
-        return "bg-yellow-100 text-yellow-800"
-      case 4:
-        return "bg-blue-100 text-blue-800"
-      case 5:
-        return "bg-purple-100 text-purple-800"
-      default:
-        return "bg-orange-100 text-orange-800"
-    }
-  }
+    // Convert to lakhs
+    const amountInLakhs = amountInRupees / 100000
 
-  
-  // Get progress bar color based on level
-  const getProgressColor = (level: number) => {
-    switch (level) {
-      case 1:
-        return "bg-zinc-500"
-      case 2:
-        return "bg-gray-400"
-      case 3:
-        return "bg-yellow-500"
-      case 4:
-        return "bg-blue-500"
-      case 5:
-        return "bg-purple-500"
-      default:
-        return "bg-orange-500"
-    }
+    return `₹${amountInLakhs.toFixed(2)} ${amountInLakhs === 1 ? "Lakh" : "Lakhs"}`
   }
-
-  const currentRankDetails = rankingData.allRanks.find((r) => r.level === rankingData.currentRank)
-  const nextRankDetails = rankingData.allRanks.find((r) => r.level === rankingData.currentRank + 1)
 
   return (
     <div className="space-y-6">
-      {/* Current Rank Card */}
-      <Card className="overflow-hidden border-0 shadow-lg">
-        <div className={cn("p-6", getRankColor(rankingData.currentRank))}>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-semibold">Current Rank</h3>
-              <p className="text-sm opacity-80">Your promotional status</p>
-            </div>
-            <div className="flex items-center gap-2">
-              {getRankIcon(rankingData.currentRank)}
-              <span className="text-3xl font-bold">Level {rankingData.currentRank}</span>
-            </div>
-          </div>
-
-          <div className="grid gap-2">
-            <div className="flex justify-between text-sm">
-              <span>Total Network Sales</span>
-              <span className="font-medium">{formatCurrency(rankingData.totalNetworkSales)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Monthly Bonus</span>
-              <span className="font-medium">
-                {rankingData.monthlyBonus > 0
-                  ? `+${formatCurrency(rankingData.monthlyBonus)}`
-                  : formatCurrency(rankingData.monthlyBonus)}
-              </span>
-            </div>
-          </div>
-        </div>
-      </Card>
-
-      {/* Next Rank Progress */}
-      {nextRankDetails && (
-        <Card className="overflow-hidden border-0 shadow-lg">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-orange-600" />
-              Progress to Next Level
-            </CardTitle>
-            <CardDescription>You're on your way to Level {rankingData.currentRank + 1}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-6">
-              <div className="flex justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  {getRankIcon(rankingData.currentRank)}
-                  <span>Level {rankingData.currentRank}</span>
-                </div>
-                <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                <div className="flex items-center gap-2">
-                  {getRankIcon(rankingData.currentRank + 1)}
-                  <span>Level {rankingData.currentRank + 1}</span>
-                </div>
-              </div>
-
-              <div className="relative pt-1">
-                <div className="flex mb-2 items-center justify-between">
-                  <div>
-                    <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-orange-600 bg-orange-200">
-                      {Math.round(rankingData.progressPercentage)}% Complete
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs font-semibold inline-block text-orange-600">
-                      {formatCurrency(rankingData.totalNetworkSales)} / {formatCurrency(nextRankDetails.threshold)}
-                    </span>
-                  </div>
-                </div>
-                <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-orange-200">
-                  <div
-                    style={{ width: `${rankingData.progressPercentage}%` }}
-                    className={cn(
-                      "shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center transition-all duration-500",
-                      getProgressColor(rankingData.currentRank + 1),
-                    )}
-                  ></div>
-                </div>
-              </div>
-
-              <div className="bg-orange-50 p-4 rounded-md border border-orange-100">
-                <div className="flex items-start gap-3">
-                  <Zap className="h-5 w-5 text-orange-600 mt-0.5" />
-                  <div>
-                    <p className="text-sm">
-                      You need <span className="font-semibold">{formatCurrency(rankingData.remainingAmount)}</span> more
-                      in network sales to reach Level {rankingData.currentRank + 1} and earn a monthly bonus of{" "}
-                      <span className="font-semibold text-green-600">
-                        +{formatCurrency(nextRankDetails.monthlyBonus)}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Milestone markers */}
-            <div className="relative mt-8 mb-4 pt-6">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gray-200 rounded"></div>
-
-              {rankingData.allRanks.map((rank, index) => (
-                <div
-                  key={rank.level}
-                  className="absolute top-0 transform -translate-y-1/2"
-                  style={{
-                    left: `${(rank.threshold / rankingData.allRanks[rankingData.allRanks.length - 1].threshold) * 100}%`,
-                    display: index === 0 ? "none" : "block", // Hide the first milestone (Level 1) as it's at 0%
-                  }}
-                >
-                  <div
-                    className={cn(
-                      "w-3 h-3 rounded-full border-2 border-white",
-                      rankingData.totalNetworkSales >= rank.threshold ? getProgressColor(rank.level) : "bg-gray-300",
-                    )}
-                  ></div>
-                  <div className="absolute -left-4 mt-2 text-xs font-medium">L{rank.level}</div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Ranking Levels Table */}
-      <Card className="overflow-hidden border-0 shadow-lg">
+      <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-orange-600" />
-            Promotional Rankings
-          </CardTitle>
-          <CardDescription>Earn monthly bonuses as your network grows</CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Your Promotional Rank</CardTitle>
+              <CardDescription>Current level and progress</CardDescription>
+            </div>
+            <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm">
+              <Award className="h-5 w-5 text-orange-700" />
+              <span className="font-bold text-orange-800">Level {rankingData.currentRank}</span>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-muted">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Rank Level</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Required Network Sales</th>
-                  <th className="px-4 py-3 text-left text-sm font-medium">Monthly Bonus</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rankingData.allRanks.map((rank) => (
-                  <tr
-                    key={rank.level}
-                    className={cn("border-t", rankingData.currentRank === rank.level ? getRankColor(rank.level) : "")}
-                  >
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center gap-2">
-                        {rankingData.currentRank === rank.level && (
-                          <span className="inline-block w-2 h-2 bg-orange-500 rounded-full"></span>
-                        )}
-                        <div className="flex items-center gap-2">
-                          {getRankIcon(rank.level)}
-                          <span className="font-medium">Level {rank.level}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm">{formatCurrency(rank.threshold)}</td>
-                    <td className="px-4 py-3 text-sm">
-                      {rank.monthlyBonus > 0 ? (
-                        <span className="text-green-600 font-medium">+{formatCurrency(rank.monthlyBonus)}</span>
-                      ) : (
-                        formatCurrency(rank.monthlyBonus)
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <div className="mb-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-medium text-orange-800">
+                    {rankingData.currentRank < 5 ? "Progress to Next Level" : "Maximum Level Achieved"}
+                  </span>
+                  <span className="text-sm font-medium text-orange-800">
+                    {rankingData.progressPercentage.toFixed(0)}%
+                  </span>
+                </div>
+                <Progress value={rankingData.progressPercentage} className="h-2" />
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Total Network Sales</span>
+                  <span className="font-medium">{formatInLakhs(rankingData.totalNetworkSales)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Monthly Bonus</span>
+                  <span className="font-medium text-green-600">{formatInLakhs(rankingData.monthlyBonus)}</span>
+                </div>
+                {rankingData.nextRankThreshold && (
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Remaining to Next Level</span>
+                    <span className="font-medium">{formatInLakhs(rankingData.remainingAmount)}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <h3 className="font-semibold mb-3 text-orange-800">Bonus Added to Base Salary</h3>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Base Salary</p>
+                  <p className="font-medium">₹25,000</p>
+                </div>
+                <div className="text-2xl">+</div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Monthly Bonus</p>
+                  <p className="font-medium text-green-600">
+                    {rankingData.monthlyBonus === 0 ? "₹0" : formatInLakhs(rankingData.monthlyBonus)}
+                  </p>
+                </div>
+                <div className="text-2xl">=</div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Total</p>
+                  <p className="font-bold text-orange-800">₹25.00 Lakhs</p>
+                </div>
+              </div>
+              <div className="flex items-center text-sm text-green-600">
+                <TrendingUp className="h-4 w-4 mr-1" />
+                <span>Bonus increases with your promotional rank</span>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* How It Works */}
-      <Card className="overflow-hidden border-0 shadow-lg">
-        <CardHeader className="bg-orange-50">
-          <CardTitle className="text-orange-800">How Promotional Rankings Work</CardTitle>
+      <Card>
+        <CardHeader>
+          <CardTitle>Promotional Ranking System</CardTitle>
+          <CardDescription>Achieve higher ranks to earn more bonuses</CardDescription>
         </CardHeader>
-        <CardContent className="p-6">
-          <ul className="space-y-4">
-            <li className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center text-sm font-bold">
-                1
-              </div>
-              <span>Everyone starts at Level 1 by default</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center text-sm font-bold">
-                2
-              </div>
-              <span>
-                When your network generates ₹10,00,000 in sales, you'll be promoted to Level 2 and receive a monthly
-                bonus of <strong className="text-green-600">+₹50,000</strong>
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center text-sm font-bold">
-                3
-              </div>
-              <span>
-                When your network generates ₹50,00,000 in sales, you'll be promoted to Level 3 and receive a monthly
-                bonus of <strong className="text-green-600">+₹2,50,000</strong>
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center text-sm font-bold">
-                4
-              </div>
-              <span>
-                When your network generates ₹1,00,00,000 in sales, you'll be promoted to Level 4 and receive a monthly
-                bonus of <strong className="text-green-600">+₹5,00,000</strong>
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center text-sm font-bold">
-                5
-              </div>
-              <span>
-                When your network generates ₹2,00,00,000 in sales, you'll be promoted to Level 5 and receive a monthly
-                bonus of <strong className="text-green-600">+₹10,00,000</strong>
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center text-sm font-bold">
-                <Star className="h-3 w-3" />
-              </div>
-              <span>Monthly bonuses are paid automatically at the beginning of each month</span>
-            </li>
-          </ul>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {rankingData.allRanks.map((rank) => (
+              <Card
+                key={rank.level}
+                className={`overflow-hidden ${rankingData.currentRank === rank.level ? "border-orange-500 ring-2 ring-orange-200" : ""}`}
+              >
+                <div
+                  className={`h-2 ${
+                    rank.level === 1
+                      ? "bg-zinc-400"
+                      : rank.level === 2
+                        ? "bg-gray-300"
+                        : rank.level === 3
+                          ? "bg-yellow-400"
+                          : rank.level === 4
+                            ? "bg-blue-400"
+                            : "bg-orange-500"
+                  }`}
+                ></div>
+                <CardContent className="pt-4">
+                  <div className="flex justify-between items-start mb-3">
+                    <Badge
+                      className={`${
+                        rank.level === 1
+                          ? "bg-zinc-100 text-zinc-800"
+                          : rank.level === 2
+                            ? "bg-gray-100 text-gray-800"
+                            : rank.level === 3
+                              ? "bg-yellow-100 text-yellow-800"
+                              : rank.level === 4
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-orange-100 text-orange-800"
+                      }`}
+                    >
+                      Level {rank.level}
+                    </Badge>
+                    {rankingData.currentRank === rank.level && (
+                      <Badge className="bg-green-100 text-green-800">Current</Badge>
+                    )}
+                  </div>
+                  <h3 className="font-bold text-lg mb-1">{rank.name}</h3>
+                  <div className="space-y-2 mt-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Threshold</p>
+                      <p className="font-medium">{rank.threshold === 0 ? "₹0" : formatInLakhs(rank.threshold)}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Monthly Bonus</p>
+                      <p className="font-medium text-green-600">
+                        {rank.monthlyBonus === 0 ? "₹0" : formatInLakhs(rank.monthlyBonus)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="mt-6 p-4 bg-orange-50 rounded-lg">
+            <h3 className="font-semibold mb-2 text-orange-800">How to Increase Your Rank</h3>
+            <ul className="space-y-2 text-sm">
+              <li className="flex items-start gap-2">
+                <div className="rounded-full bg-orange-200 text-orange-800 w-5 h-5 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  1
+                </div>
+                <div>
+                  <p className="font-medium">Grow Your Network</p>
+                  <p className="text-muted-foreground">Invite more people to join using your referral link</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="rounded-full bg-orange-200 text-orange-800 w-5 h-5 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  2
+                </div>
+                <div>
+                  <p className="font-medium">Encourage Purchases</p>
+                  <p className="text-muted-foreground">Help your network members make purchases on the platform</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="rounded-full bg-orange-200 text-orange-800 w-5 h-5 flex items-center justify-center mt-0.5 flex-shrink-0">
+                  3
+                </div>
+                <div>
+                  <p className="font-medium">Expand Your Reach</p>
+                  <p className="text-muted-foreground">Build a deeper network with multiple levels of referrals</p>
+                </div>
+              </li>
+            </ul>
+          </div>
         </CardContent>
       </Card>
     </div>

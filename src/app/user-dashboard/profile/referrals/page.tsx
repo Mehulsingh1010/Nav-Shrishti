@@ -133,9 +133,19 @@ export default function ReferralsPage() {
     return null
   }
 
-  // Format currency values
-  const formatCurrency = (amount: number) => {
-    return `₹${(amount / 100).toLocaleString("en-IN")}`
+  // Format currency values in Indian format (with lakhs and crores)
+  const formatIndianCurrency = (amount: number) => {
+    // Convert paise to rupees
+    const amountInRupees = amount / 100
+
+    // Format in Indian number system (with commas)
+    const formatter = new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    })
+
+    return formatter.format(amountInRupees)
   }
 
   return (
@@ -151,7 +161,7 @@ export default function ReferralsPage() {
             <span className="font-medium text-orange-800">Level {referralData.promotionalRanking.currentRank}</span>
             {referralData.promotionalRanking.monthlyBonus > 0 && (
               <span className="text-green-700 font-medium">
-                +{formatCurrency(referralData.promotionalRanking.monthlyBonus)}
+                +{formatIndianCurrency(referralData.promotionalRanking.monthlyBonus)}
               </span>
             )}
           </div>
@@ -196,10 +206,10 @@ export default function ReferralsPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <span className="text-3xl font-bold">{formatCurrency(referralData.totalEarnings)}</span>
+                  <span className="text-3xl font-bold">{formatIndianCurrency(referralData.totalEarnings)}</span>
                   {referralData.promotionalRanking && referralData.promotionalRanking.monthlyBonus > 0 && (
                     <span className="ml-2 text-green-700 font-medium">
-                      +{formatCurrency(referralData.promotionalRanking.monthlyBonus)}
+                      +{formatIndianCurrency(referralData.promotionalRanking.monthlyBonus)}
                     </span>
                   )}
                 </div>
@@ -285,7 +295,7 @@ export default function ReferralsPage() {
                                     : `${level.degree}th Degree`}
                             </TableCell>
                             <TableCell>{level.percentage}%</TableCell>
-                            <TableCell className="text-right">{formatCurrency(level.earnings)}</TableCell>
+                            <TableCell className="text-right">{formatIndianCurrency(level.earnings)}</TableCell>
                           </TableRow>
                         ))
                       ) : (
@@ -299,10 +309,10 @@ export default function ReferralsPage() {
                         <TableCell className="font-bold">Total</TableCell>
                         <TableCell></TableCell>
                         <TableCell className="text-right font-bold">
-                          {formatCurrency(referralData.totalEarnings)}
+                          {formatIndianCurrency(referralData.totalEarnings)}
                           {referralData.promotionalRanking && referralData.promotionalRanking.monthlyBonus > 0 && (
                             <span className="ml-2 text-green-700">
-                              +{formatCurrency(referralData.promotionalRanking.monthlyBonus)}
+                              +{formatIndianCurrency(referralData.promotionalRanking.monthlyBonus)}
                             </span>
                           )}
                         </TableCell>
@@ -378,7 +388,9 @@ export default function ReferralsPage() {
                                         {referral.status === "active" ? "Active" : "Inactive"}
                                       </span>
                                     </TableCell>
-                                    <TableCell className="text-right">{formatCurrency(referral.earnings)}</TableCell>
+                                    <TableCell className="text-right">
+                                      {formatIndianCurrency(referral.earnings)}
+                                    </TableCell>
                                   </TableRow>
                                 ))}
                               </TableBody>

@@ -137,6 +137,8 @@ export default function DashboardPage() {
           totalTeam: data.totalReferrals, // Set total team to total referrals
           activeTeam: data.activeReferrals, // Set active team to active referrals
           referralIncome: data.totalEarnings, // Keep referral income same as total income
+          promotionalIncome: data.promotionalRanking?.monthlyBonus || 0, // Set promotional income to monthly bonus
+          salary: 2500000 + (data.promotionalRanking?.monthlyBonus || 0), // Add monthly bonus to base salary
           purchaseCount: calculateTotalPurchases(data), // Calculate total purchases from referral network
           mainTeam: data.referralsByDegree && data.referralsByDegree["1"] ? data.referralsByDegree["1"].length : 0, // Direct referrals
         })
@@ -156,7 +158,7 @@ export default function DashboardPage() {
         // Loop through all degrees
         Object.values(data.referralsByDegree).forEach((referrals) => {
           // Count active referrals as they have purchased at least one product
-          (referrals as { status: string }[]).forEach((referral) => {
+          ;(referrals as { status: string }[]).forEach((referral) => {
             if (referral.status === "active") {
               totalPurchases++
             }
@@ -252,7 +254,6 @@ export default function DashboardPage() {
             <div className="text-3xl font-bold text-orange-900">
               ₹{(dashboardData.totalIncome / 100).toLocaleString()}
             </div>
-            
           </CardContent>
         </Card>
 
@@ -331,7 +332,6 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{dashboardData.purchaseCount}</div>
-               
               </CardContent>
             </Card>
 
@@ -347,7 +347,6 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">₹{(dashboardData.referralIncome / 100).toLocaleString()}</div>
-               
               </CardContent>
             </Card>
 
@@ -355,7 +354,7 @@ export default function DashboardPage() {
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div>
                   <CardTitle className="text-sm font-medium">Salary</CardTitle>
-                  <CardDescription>Base compensation</CardDescription>
+                  <CardDescription>Base + Promotional Bonus</CardDescription>
                 </div>
                 <div className="rounded-full p-2 bg-orange-100">
                   <Wallet className="h-4 w-4 text-orange-600" />
@@ -363,7 +362,7 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">₹{(dashboardData.salary / 100).toLocaleString()}</div>
-                {/* <p className="text-xs text-muted-foreground">Same as last month</p> */}
+                <p className="text-xs text-green-600">Includes promotional bonus</p>
               </CardContent>
             </Card>
 
@@ -379,7 +378,6 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">₹{(dashboardData.promotionalIncome / 100).toLocaleString()}</div>
-               
               </CardContent>
             </Card>
           </div>

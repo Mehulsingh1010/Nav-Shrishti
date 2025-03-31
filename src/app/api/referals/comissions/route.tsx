@@ -7,10 +7,10 @@ import { eq, sql } from "drizzle-orm"
 // Define promotional rankings with 5 levels
 const PROMOTIONAL_RANKINGS = [
   { level: 1, threshold: 0, monthlyBonus: 0 },
-  { level: 2, threshold: 1000000, monthlyBonus: 50000 },
-  { level: 3, threshold: 5000000, monthlyBonus: 250000 },
-  { level: 4, threshold: 10000000, monthlyBonus: 500000 },
-  { level: 5, threshold: 20000000, monthlyBonus: 1000000 },
+  { level: 2, threshold: 500000, monthlyBonus: 250000 }, // 5 lakh threshold, 2.5 lakh bonus
+  { level: 3, threshold: 1500000, monthlyBonus: 750000 }, // 15 lakh threshold, 7.5 lakh bonus
+  { level: 4, threshold: 3000000, monthlyBonus: 1500000 }, // 30 lakh threshold, 15 lakh bonus
+  { level: 5, threshold: 5000000, monthlyBonus: 2500000 }, // 50 lakh threshold, 25 lakh bonus
 ]
 
 export async function POST(req: NextRequest) {
