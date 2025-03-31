@@ -4,9 +4,32 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Preloader from "./preloader";
 
 export default function HeroSection() {
+  const [showRegisterPopup, setShowRegisterPopup] = useState(false);
+
+  useEffect(() => {
+    // Check if user is visiting for the first time using localStorage
+    const hasVisited = localStorage.getItem("hasVisitedBefore");
+    
+    if (!hasVisited) {
+      // If first visit, show popup after a short delay
+      const timer = setTimeout(() => {
+        setShowRegisterPopup(true);
+        // Set flag in localStorage to prevent showing popup on subsequent visits
+        localStorage.setItem("hasVisitedBefore", "true");
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const closePopup = () => {
+    setShowRegisterPopup(false);
+  };
+
   return (
     <div className="relative min-h-screen mt-[-50px] bg-gradient-to-br from-orange-50 via-orange-100/30 to-orange-50 pt-20 overflow-hidden flex items-center justify-center">
       <Preloader/>
@@ -114,6 +137,48 @@ export default function HeroSection() {
           </motion.div>
         </div>
       </div>
+
+      {/* Registration Popup */}
+      {showRegisterPopup && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="fixed inset-0 flex items-center justify-center z-50"
+        >
+          <div className="absolute inset-0 bg-black/50" onClick={closePopup}></div>
+          <motion.div 
+            className="bg-gradient-to-br from-orange-50 to-orange-100 p-8 rounded-2xl shadow-2xl max-w-md mx-4 relative z-10 border-2 border-orange-300"
+            initial={{ y: 50 }}
+            animate={{ y: 0 }}
+          >
+            <button 
+              onClick={closePopup}
+              className="absolute top-4 right-4 text-orange-800 hover:text-orange-950"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="mx-auto w-16 h-16 bg-orange-200 rounded-full flex items-center justify-center mb-4">
+                <span className="text-2xl text-orange-800">ॐ</span>
+              </div>
+              <h3 className="text-2xl font-bold text-orange-900">वैदिक यात्रा में आपका स्वागत है</h3>
+              <p className="text-orange-800 mt-2">हमारे साथ जुड़कर प्राचीन ज्ञान से जुड़ें और संस्कृति का हिस्सा बनें</p>
+            </div>
+
+            <div className="space-y-4">
+              <Link href="/auth/register" className="block w-full bg-orange-600 hover:bg-orange-700 text-white font-medium py-3 px-4 rounded-lg text-center transition-colors">
+                पंजीकरण करें
+              </Link>
+              <button onClick={closePopup} className="block w-full bg-transparent hover:bg-orange-200 text-orange-800 font-medium py-3 px-4 rounded-lg text-center border border-orange-300 transition-colors">
+                बाद में
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }
