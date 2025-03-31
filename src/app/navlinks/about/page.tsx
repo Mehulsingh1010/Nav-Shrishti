@@ -213,13 +213,13 @@ export default function AboutUsPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               
               <a
-                href="/contact"
+                href="/navlinks/contact"
                 className="inline-flex items-center justify-center rounded-md bg-white px-6 py-3 text-orange-600 font-medium hover:bg-orange-50 transition-colors"
               >
                 संपर्क करें
               </a>
               <a
-                href="/membership"
+                href="/navlinks/contact"
                 className="inline-flex items-center justify-center rounded-md bg-transparent border border-white px-6 py-3 text-white font-medium hover:bg-orange-700 transition-colors"
               >
                 सदस्यता लें
