@@ -161,7 +161,7 @@ export default function ReferralsPage() {
             <span className="font-medium text-orange-800">Level {referralData.promotionalRanking.currentRank}</span>
             {referralData.promotionalRanking.monthlyBonus > 0 && (
               <span className="text-green-700 font-medium">
-                +{formatIndianCurrency(referralData.promotionalRanking.monthlyBonus)}
+                +{formatIndianCurrency(referralData.promotionalRanking.monthlyBonus*100)}
               </span>
             )}
           </div>
@@ -209,7 +209,7 @@ export default function ReferralsPage() {
                   <span className="text-3xl font-bold">{formatIndianCurrency(referralData.totalEarnings)}</span>
                   {referralData.promotionalRanking && referralData.promotionalRanking.monthlyBonus > 0 && (
                     <span className="ml-2 text-green-700 font-medium">
-                      +{formatIndianCurrency(referralData.promotionalRanking.monthlyBonus)}
+                      +{formatIndianCurrency(referralData.promotionalRanking.monthlyBonus * 100)}
                     </span>
                   )}
                 </div>
@@ -312,7 +312,7 @@ export default function ReferralsPage() {
                           {formatIndianCurrency(referralData.totalEarnings)}
                           {referralData.promotionalRanking && referralData.promotionalRanking.monthlyBonus > 0 && (
                             <span className="ml-2 text-green-700">
-                              +{formatIndianCurrency(referralData.promotionalRanking.monthlyBonus)}
+                              +{formatIndianCurrency(referralData.promotionalRanking.monthlyBonus*100)}
                             </span>
                           )}
                         </TableCell>

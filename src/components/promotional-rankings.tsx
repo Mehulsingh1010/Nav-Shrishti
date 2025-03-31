@@ -124,7 +124,7 @@ export default function PromotionalRankings() {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Total Network Sales</span>
-                  <span className="font-medium">{formatInLakhs(rankingData.totalNetworkSales)}</span>
+                  <span className="font-medium">{formatIndianCurrency(rankingData.totalNetworkSales)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Monthly Bonus</span>
