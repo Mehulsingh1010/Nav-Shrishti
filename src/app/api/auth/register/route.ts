@@ -21,7 +21,14 @@ const registerSchema = z.object({
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions",
   }),
-  referralCode: z.string().length(6).optional(), // Optional referral code
+  // Fixed: Make referral code truly optional by allowing it to be undefined, null, or a string
+  // If it's a string, it should be 6 characters long
+  referralCode: z.union([
+    z.string().length(6, "Referral code must be 6 characters"),
+    z.string().max(0), // Allow empty string
+    z.null(),
+    z.undefined()
+  ]).optional(),
 })
 
 export async function POST(request: Request) {
@@ -46,7 +53,8 @@ export async function POST(request: Request) {
     let referrerExists = false
     let referrerId = null
 
-    if (validatedData.referralCode) {
+    // Only check referral if it's provided and not empty
+    if (validatedData.referralCode && validatedData.referralCode.trim() !== '') {
       const referrer = await db
         .select({ id: users.id })
         .from(users)
@@ -84,7 +92,10 @@ export async function POST(request: Request) {
         state: validatedData.state,
         pincode: validatedData.pincode,
         termsAccepted: validatedData.termsAccepted,
-        referredBy: validatedData.referralCode || null, // Store referral code if provided
+        // Only store non-empty referral codes
+        referredBy: (validatedData.referralCode && validatedData.referralCode.trim() !== '') 
+          ? validatedData.referralCode 
+          : null,
         createdAt: new Date(),
         updatedAt: new Date(),
       })
@@ -93,7 +104,7 @@ export async function POST(request: Request) {
     console.log("User created:", newUser[0])
 
     // If user was referred, create a referral record
-    if (validatedData.referralCode && referrerExists && referrerId) {
+    if (validatedData.referralCode && validatedData.referralCode.trim() !== '' && referrerExists && referrerId) {
       // Create referral record
       await db
         .insert(referrals)
@@ -124,4 +135,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
-

@@ -210,7 +210,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/seller/profile">Profile</Link>
+                <Link href="/seller-dashboard/profile/view-profile">Profile</Link>
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />
@@ -414,7 +414,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <Link href="/seller/profile">Profile</Link>
+                      <Link href="/seller-dashboard/profile/view-profile">Profile</Link>
                     </DropdownMenuItem>
 
                     <DropdownMenuSeparator />
@@ -444,7 +444,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
                   <DropdownMenuLabel>Rahul Sharma</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/seller/profile">Profile</Link>
+                    <Link href="/seller-dashboard/profile/view-profile">Profile</Link>
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator />
@@ -491,7 +491,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link href="/seller/profile">Profile</Link>
+                      <Link href="/seller-dashboard/profile/view-profile">Profile</Link>
                     </DropdownMenuItem>
 
                     <DropdownMenuSeparator />

@@ -229,7 +229,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <a href="/dashboard/profile">Profile</a>
+                <a href="/user-dashboard/profile/view-profile">Profile</a>
               </DropdownMenuItem>
              
               <DropdownMenuSeparator />
@@ -466,7 +466,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <a href="/dashboard/profile">Profile</a>
+                      <a href="/user-dashboard/profile/view-profile/">Profile</a>
                     </DropdownMenuItem>
                     
                     <DropdownMenuSeparator />
@@ -496,7 +496,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
                   <DropdownMenuLabel>Mehul Singh</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <a href="/dashboard/profile">Profile</a>
+                    <a href="/user-dashboard/profile/view-profile">Profile</a>
                   </DropdownMenuItem>
                   
                   <DropdownMenuSeparator />
@@ -555,7 +555,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <a href="/dashboard/profile">Profile</a>
+                      <a href="/user-dashboard/profile/view-profile">Profile</a>
                     </DropdownMenuItem>
                    
                     <DropdownMenuSeparator />
