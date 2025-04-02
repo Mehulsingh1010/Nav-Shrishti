@@ -139,6 +139,7 @@ export default function PromotionalRankings() {
               </div>
             </div>
 
+
             <div className="bg-white p-4 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-3 text-orange-800">Bonus Added to Base Salary</h3>
               <div className="flex items-center justify-between mb-4">
