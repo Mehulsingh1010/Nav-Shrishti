@@ -23,6 +23,10 @@ const publicRoutes = [
   "/navlinks/about",
   "/navlinks/gallery",
   "/navlinks/products",
+  "/navlinks/events",
+  "/navlinks/services",
+  "/navlinks/services/aashram",
+  "/navlinks/services/product-listing",
   "/auth/login",
   "/auth/register",
 ];

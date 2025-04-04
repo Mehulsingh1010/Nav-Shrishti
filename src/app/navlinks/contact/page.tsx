@@ -207,9 +207,9 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 leading-relaxed">
-                  info@navsrishti.org
-                  <br />
-                  support@navsrishti.org
+                thepankajnamdev@gmail.com
+                  {/* <br />
+                  thepankajnamdev@gmail.com */}
                   <br />
                   <Link
                     href="https://www.navsrishti.org"
@@ -230,10 +230,12 @@ export default function ContactPage() {
                 </div>
               </CardHeader>
               <CardContent>
+              संस्थापक :-  पंकज नामदेव (Pankaj Namdev)
+
                 <p className="text-gray-700 leading-relaxed">
-                  +91 XXXXXXXXXX
+                  +91 9599052457
                   <br />
-                  +91 XXXXXXXXXX
+                 
                 </p>
               </CardContent>
             </Card>

@@ -8,6 +8,9 @@ const publicRoutes = [
   "/navlinks/about",
   "/navlinks/gallery",
   "/navlinks/products",
+  "/navlinks/services/aashram",
+  "/navlinks/services",
+  "/navlinks/services/product-listing",
   "/auth/login",
   "/auth/register",
 ]; 

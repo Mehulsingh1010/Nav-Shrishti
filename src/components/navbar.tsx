@@ -49,11 +49,7 @@ export default function Navbar() {
     { name: "कार्यक्रम", href: "/navlinks/events" },
     { name: "गैलरी", href: "/navlinks/gallery" },
     { name: "हमारे बारे में", href: "/navlinks/about" },
-  ]
-
-  const servicesItems = [
-    { name: "आश्रम", href: "/navlinks/services/aashram" },
-    { name: "उत्पाद सूची", href: "/navlinks/services/product-listing" },
+    { name: "सेवाएं", href: "/navlinks/services" }, // Added services as a direct nav item
   ]
 
   // Check if the current path matches or is a child of the given href
@@ -63,9 +59,6 @@ export default function Navbar() {
     }
     return pathname === href || pathname.startsWith(`${href}/`)
   }
-
-  // Check if any services link is active
-  const isServicesActive = servicesItems.some((item) => isActiveLink(item.href))
 
   useEffect(() => {
     async function fetchUser() {
@@ -145,34 +138,6 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {/* Services Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                className={`flex items-center gap-1 text-orange-800 hover:text-orange-600 transition-colors px-3 py-2 rounded-lg ${
-                  isServicesActive ? "bg-orange-100 font-bold text-orange-700" : ""
-                }`}
-              >
-                सेवाएं <ChevronDown className="h-4 w-4" />
-                {isServicesActive && (
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 rounded-full"></span>
-                )}
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-orange-50 border-orange-200">
-                {servicesItems.map((item) => (
-                  <DropdownMenuItem key={item.name} asChild>
-                    <Link
-                      href={item.href}
-                      className={`cursor-pointer hover:bg-orange-100 focus:bg-orange-100 w-full px-3 py-2 ${
-                        isActiveLink(item.href) ? "bg-orange-100 font-bold text-orange-700" : ""
-                      }`}
-                    >
-                      {item.name}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
             {/* Login Dropdown */}
             <div className="relative group">
               {user ? (
@@ -231,16 +196,33 @@ export default function Navbar() {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-base font-medium text-orange-900">Guest User</p>
-                        <Link
-                          href="/auth/login"
-                          className={`text-sm text-white bg-orange-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-orange-600 ${
-                            pathname.startsWith("/auth/login") ? "bg-orange-600 ring-2 ring-orange-300" : ""
-                          }`}
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          लॉगिन करें
-                        </Link>
+                        {user ? (
+                          <div>
+                            <p className="text-base font-medium text-orange-900">{user.name}</p>
+                            <button
+                              onClick={() => {
+                                handleDashboardRedirect();
+                                setMobileOpen(false);
+                              }}
+                              className="text-sm text-white bg-green-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-green-600"
+                            >
+                              dashboard <ArrowBigRight className="inline h-4 w-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div>
+                            <p className="text-base font-medium text-orange-900">Guest User</p>
+                            <Link
+                              href="/auth/login"
+                              className={`text-sm text-white bg-orange-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-orange-600 ${
+                                pathname.startsWith("/auth/login") ? "bg-orange-600 ring-2 ring-orange-300" : ""
+                              }`}
+                              onClick={() => setMobileOpen(false)}
+                            >
+                              लॉगिन करें
+                            </Link>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -264,43 +246,21 @@ export default function Navbar() {
                         </Link>
                       ))}
 
-                      {/* Services Submenu */}
-                      <div className={`px-3 py-2 rounded-lg ${isServicesActive ? "bg-orange-50" : ""}`}>
-                        <p className={`text-orange-800 font-medium mb-1 ${isServicesActive ? "font-bold" : ""}`}>
-                          सेवाएं
-                          {isServicesActive && (
-                            <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-orange-500 rounded-full"></span>
-                          )}
-                        </p>
-                        <div className="pl-3 border-l-2 border-orange-200 space-y-1">
-                          {servicesItems.map((item) => (
-                            <Link
-                              key={item.name}
-                              href={item.href}
-                              className={`block text-orange-700 hover:text-orange-600 transition-colors px-2 py-1 text-sm rounded ${
-                                isActiveLink(item.href) ? "bg-orange-100 font-bold" : ""
-                              }`}
-                              onClick={() => setMobileOpen(false)}
-                            >
-                              {item.name}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-
                       {/* Login Options */}
-                      <div className="px-2 py-3 border-t border-gray-100 mt-2">
-                        <p className="text-sm font-medium text-gray-500 mb-2 px-2">लॉगिन विकल्प</p>
-                        <Link
-                          href="/auth/login"
-                          className={`text-sm text-white bg-orange-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-orange-600 ${
-                            pathname.startsWith("/auth/login") ? "bg-orange-600 ring-2 ring-orange-300" : ""
-                          }`}
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          लॉगिन करें
-                        </Link>
-                      </div>
+                      {!user && (
+                        <div className="px-2 py-3 border-t border-gray-100 mt-2">
+                          <p className="text-sm font-medium text-gray-500 mb-2 px-2">लॉगिन विकल्प</p>
+                          <Link
+                            href="/auth/login"
+                            className={`text-sm text-white bg-orange-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-orange-600 ${
+                              pathname.startsWith("/auth/login") ? "bg-orange-600 ring-2 ring-orange-300" : ""
+                            }`}
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            लॉगिन करें
+                          </Link>
+                        </div>
+                      )}
                     </nav>
                   </div>
 
@@ -325,4 +285,3 @@ export default function Navbar() {
     </nav>
   )
 }
-
