@@ -246,7 +246,7 @@ export default function ProductsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
               {featuredProducts.map((product) => (
                 <motion.div key={product.id} whileHover={{ y: -5, scale: 1.02 }} transition={{ duration: 0.2 }}>
-                  <Link href={`/products/${product.id}`}>
+              
                     <Card className="overflow-hidden h-full shadow-md hover:shadow-lg transition-shadow bg-white">
                       <div className="relative h-48 bg-orange-50 flex items-center justify-center">
                         <ProductSvgIllustration svgType={product.svgType} className="w-full h-full p-2" />
@@ -258,7 +258,7 @@ export default function ProductsPage() {
                         <p className="mt-2 text-orange-700 text-sm">{product.description}</p>
                       </CardContent>
                     </Card>
-                  </Link>
+           
                 </motion.div>
               ))}
             </div>
