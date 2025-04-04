@@ -311,7 +311,7 @@ export default function ProductsPage() {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 className="h-full"
               >
-                <Link href={`/products/${product.id}`}>
+                
                   <Card className="overflow-hidden h-full hover:shadow-lg transition-shadow bg-white">
                     <div className="h-48 relative bg-orange-50 flex items-center justify-center">
                       <ProductSvgIllustration svgType={product.svgType} className="w-full h-full p-2" />
@@ -324,7 +324,7 @@ export default function ProductsPage() {
                       <p className="text-gray-500 text-xs">{product.englishDescription}</p>
                     </CardContent>
                   </Card>
-                </Link>
+             
               </motion.div>
             ))}
           </div>
