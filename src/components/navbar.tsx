@@ -40,6 +40,8 @@ export default function Navbar() {
       router.push("/seller-dashboard")
     } else if (userRole === "user") {
       router.push("/user-dashboard")
+    } else if(userRole === "admin") {
+      router.push("/admin")
     }
   }
 

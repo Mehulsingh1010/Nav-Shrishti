@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+// Public routes that don't require authentication
 const publicRoutes = [
   "/",
   "/navlinks",
@@ -13,29 +15,75 @@ const publicRoutes = [
   "/navlinks/services/product-listing",
   "/auth/login",
   "/auth/register",
-]; 
+];
 
-export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+// Admin UI routes that require admin verification
+const adminRoutes = [
+  "/admin",
+  "/admin/users",
+  "/admin/products",
+  "/admin/orders",
+  "/admin/referrals",
+];
+
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const token = req.cookies.get("token")?.value;
 
   console.log("Middleware - Path:", pathname);
   console.log("Middleware - Token:", token);
 
-  // Skip authentication check for public routes
+  // Allow public routes without auth
   if (publicRoutes.includes(pathname)) {
     return NextResponse.next();
   }
 
-  // Redirect to login if token is missing
-  if (!token) {
-    return NextResponse.redirect(new URL("/auth/login", req.url));
+  // Check for admin route
+  if (adminRoutes.some((route) => pathname.startsWith(route))) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/auth/login", req.url));
+    }
+
+    // API admin routes are verified in their handlers
+    if (pathname.startsWith("/api/admin")) {
+      return NextResponse.next();
+    }
+
+    try {
+      // Verify admin token for UI admin pages
+      const verifyRes = await fetch(new URL("/api/admin/verify", req.url), {
+        headers: {
+          Cookie: `token=${token}`,
+        },
+      });
+
+      if (!verifyRes.ok) {
+        const res = NextResponse.redirect(new URL("/auth/login", req.url));
+        res.cookies.set("token", "", { maxAge: 0 });
+        return res;
+      }
+
+      return NextResponse.next();
+    } catch (err) {
+      return NextResponse.redirect(new URL("/auth/login", req.url));
+    }
+  }
+
+  // Handle protected routes like /dashboard
+  if (pathname.startsWith("/dashboard")) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/auth/login", req.url));
+    }
   }
 
   return NextResponse.next();
 }
 
-// Adjust matcher to avoid applying middleware to public routes
+// Match all relevant protected routes
 export const config = {
-  matcher: ["/dashboard/:path*"], // Apply middleware only to protected routes
+  matcher: [
+    "/dashboard/:path*",
+    "/admin/:path*",
+    "/api/admin/:path*",
+  ],
 };

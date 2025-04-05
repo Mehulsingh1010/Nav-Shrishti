@@ -49,7 +49,7 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
   const hideNavAndFooter =
     pathname.startsWith("/seller-dashboard") ||
     pathname.startsWith("/user-dashboard") ||
-    pathname.startsWith("/auth");
+    pathname.startsWith("/auth") || pathname.startsWith("/admin");;
 
   return (
     <>
