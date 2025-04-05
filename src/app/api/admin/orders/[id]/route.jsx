@@ -1,18 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { db } from "../../../../../../configs/db"
 import { users, orders, orderItems, products, payments } from "../../../../../../configs/schema"
 import { eq } from "drizzle-orm"
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request, { params }) {
   try {
     // Get the token cookie
     const cookieStore = cookies()
-    const tokenCookie = (await cookieStore).get("token")
+    const tokenCookie = cookieStore.get("token")
 
     if (!tokenCookie) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -43,7 +40,7 @@ export async function GET(
 
     // Get product details for each item
     const itemsWithProducts = await Promise.all(
-      items.map(async (item: { productId: any }) => {
+      items.map(async (item) => {
         const product = await db.select().from(products).where(eq(products.id, item.productId))
         return {
           ...item,
@@ -87,14 +84,11 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request, { params }) {
   try {
     // Get the token cookie
     const cookieStore = cookies()
-    const tokenCookie = (await cookieStore).get("token")
+    const tokenCookie = cookieStore.get("token")
 
     if (!tokenCookie) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -118,7 +112,7 @@ export async function PATCH(
 
     // Only allow updating specific fields
     const allowedFields = ["status"]
-    const updateData: Record<string, any> = {}
+    const updateData = {}
 
     for (const field of allowedFields) {
       if (data[field] !== undefined) {
