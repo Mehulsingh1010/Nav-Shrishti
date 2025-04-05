@@ -5,7 +5,7 @@ import { db } from "../../../../../../configs/db"
 import { users, orders, orderItems, products, payments } from "../../../../../../configs/schema"
 import { eq } from "drizzle-orm"
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   try {
     // Get the token cookie
     const cookieStore = cookies()
