@@ -96,12 +96,12 @@ export default function AdminOrderDetailPage() {
   }
 
   // Helper function to format price
-  function formatPrice(price: number) {
+  function formatPrice(price) {
     return `₹${(price / 100).toLocaleString("en-IN")}`
   }
 
   // Helper function to format date
-  function formatDate(date: string) {
+  function formatDate(date) {
     return new Date(date).toLocaleDateString("hi-IN", {
       year: "numeric",
       month: "long",
@@ -135,7 +135,7 @@ export default function AdminOrderDetailPage() {
   }
 
   // Calculate order total
-  const orderTotal = order.items.reduce((sum: number, item: any) => {
+  const orderTotal = order.items.reduce((sum, item) => {
     return sum + item.quantity * item.pricePerUnit
   }, 0)
 
@@ -328,7 +328,7 @@ export default function AdminOrderDetailPage() {
                     <h3 className="text-lg font-medium mb-4">ऑर्डर आइटम</h3>
 
                     <div className="space-y-4">
-                      {order.items.map((item: any, index: number) => (
+                      {order.items.map((item, index) => (
                         <div key={index} className="flex items-start border-b pb-4">
                           <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center mr-4">
                             {item.product?.photoUrl ? (
