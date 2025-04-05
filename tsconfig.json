@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "configs/schema.js", "configs/db.js", "src/app/api/products/[id]/route.jsx", "src/app/api/products/route.jsx", "src/app/navlinks/products/[productId]/page.jsx", "src/app/navlinks/products/category/[categoryId]/page.jsx", "src/app/navlinks/products/page.jsx", "src/app/api/payment/products/[productId]/route.jsx", "src/app/user-dashboard/purchase/order/[orderId]/page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "configs/schema.js", "configs/db.js", "src/app/api/products/[id]/route.jsx", "src/app/api/products/route.jsx", "src/app/navlinks/products/[productId]/page.jsx", "src/app/navlinks/products/category/[categoryId]/page.jsx", "src/app/navlinks/products/page.jsx", "src/app/api/payment/products/[productId]/route.jsx", "src/app/user-dashboard/purchase/order/[orderId]/page.jsx", "src/app/api/admin/orders/[id]/route.tsx"],
   "exclude": ["node_modules"]
 }

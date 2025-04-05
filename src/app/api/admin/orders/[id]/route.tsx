@@ -5,7 +5,10 @@ import { db } from "../../../../../../configs/db"
 import { users, orders, orderItems, products, payments } from "../../../../../../configs/schema"
 import { eq } from "drizzle-orm"
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     // Get the token cookie
     const cookieStore = cookies()
@@ -84,7 +87,10 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     // Get the token cookie
     const cookieStore = cookies()
@@ -142,4 +148,3 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
   }
 }
-
