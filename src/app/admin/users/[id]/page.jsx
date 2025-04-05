@@ -270,7 +270,7 @@ export default function AdminUserDetailPage() {
                       <h3 className="text-lg font-medium mb-4">बैंक विवरण</h3>
                       {user.bankDetails && user.bankDetails.length > 0 ? (
                         <div className="space-y-4">
-                          {user.bankDetails.map((bank: any, index: number) => (
+                          {user.bankDetails.map((bank, index) => (
                             <div key={index} className="border rounded-md p-4">
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>

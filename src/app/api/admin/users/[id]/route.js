@@ -6,7 +6,7 @@ import { db } from "../../../../../../configs/db";
 import { users } from "../../../../../../configs/schema";
 import { eq } from "drizzle-orm";
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(_, { params }) {
   try {
     const tokenCookie = (await cookies()).get("token");
     if (!tokenCookie) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -29,7 +29,7 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request, { params }) {
   try {
     const tokenCookie = (await cookies()).get("token");
     if (!tokenCookie) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -46,7 +46,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     const updateData = allowedFields.reduce((acc, field) => {
       if (data[field] !== undefined) acc[field] = data[field];
       return acc;
-    }, {} as Record<string, any>);
+    }, {});
 
     await db.update(users).set({ ...updateData, updatedAt: new Date() }).where(eq(users.id, userId));
 
