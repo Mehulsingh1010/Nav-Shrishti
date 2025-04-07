@@ -2,8 +2,9 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { hash } from "bcrypt"
 import { db } from "../../../../../configs/db"
-import { users, referrals} from "../../../../../configs/schema"
+import { users, referrals } from "../../../../../configs/schema"
 import { eq } from "drizzle-orm"
+import { cookies } from "next/headers"
 
 // Schema for validation
 const registerSchema = z.object({
@@ -23,12 +24,16 @@ const registerSchema = z.object({
   }),
   // Fixed: Make referral code truly optional by allowing it to be undefined, null, or a string
   // If it's a string, it should be 6 characters long
-  referralCode: z.union([
-    z.string().length(6, "Referral code must be 6 characters"),
-    z.string().max(0), // Allow empty string
-    z.null(),
-    z.undefined()
-  ]).optional(),
+  referralCode: z
+    .union([
+      z.string().length(6, "Referral code must be 6 characters"),
+      z
+        .string()
+        .max(0), // Allow empty string
+      z.null(),
+      z.undefined(),
+    ])
+    .optional(),
 })
 
 export async function POST(request: Request) {
@@ -54,7 +59,7 @@ export async function POST(request: Request) {
     let referrerId = null
 
     // Only check referral if it's provided and not empty
-    if (validatedData.referralCode && validatedData.referralCode.trim() !== '') {
+    if (validatedData.referralCode && validatedData.referralCode.trim() !== "") {
       const referrer = await db
         .select({ id: users.id })
         .from(users)
@@ -93,18 +98,18 @@ export async function POST(request: Request) {
         pincode: validatedData.pincode,
         termsAccepted: validatedData.termsAccepted,
         // Only store non-empty referral codes
-        referredBy: (validatedData.referralCode && validatedData.referralCode.trim() !== '') 
-          ? validatedData.referralCode 
-          : null,
+        referredBy:
+          validatedData.referralCode && validatedData.referralCode.trim() !== "" ? validatedData.referralCode : null,
         createdAt: new Date(),
         updatedAt: new Date(),
+        role: "user", // Set default role to "user"
       })
       .returning({ id: users.id, referenceId: users.referenceId })
 
     console.log("User created:", newUser[0])
 
     // If user was referred, create a referral record
-    if (validatedData.referralCode && validatedData.referralCode.trim() !== '' && referrerExists && referrerId) {
+    if (validatedData.referralCode && validatedData.referralCode.trim() !== "" && referrerExists && referrerId) {
       // Create referral record
       await db
         .insert(referrals)
@@ -121,9 +126,20 @@ export async function POST(request: Request) {
       console.log(`Referral record created for user ${newUser[0].id} referred by ${referrerId}`)
     }
 
+    // Set authentication token (auto-login)
+    // Make sure to convert the ID to a string
+    const cookieStore = await cookies()
+    cookieStore.set("token", String(newUser[0].id), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+    })
+
     return NextResponse.json({
       message: "User registered successfully",
       referenceId: newUser[0].referenceId,
+      role: "user", // Default role
     })
   } catch (error) {
     console.error("Registration error:", error)
@@ -135,3 +151,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
+

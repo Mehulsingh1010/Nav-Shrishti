@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
             <div className="flex items-center mb-4">
               <div className="mr-3">
                 <Image
-                  src="/logo.png"
+                  src="/logo1.png"
                   alt="Nav Srishti Srijan Logo"
                   width={60}
                   height={60}

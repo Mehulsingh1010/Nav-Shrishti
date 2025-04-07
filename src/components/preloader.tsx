@@ -48,7 +48,7 @@ const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
               }}
             >
               <Image 
-                src="/logo.png" 
+                src="/logo1.png" 
                 alt='Vaidik Bharat Logo' 
                 width={250} 
                 height={250} 

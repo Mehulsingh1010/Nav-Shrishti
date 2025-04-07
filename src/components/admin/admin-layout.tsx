@@ -86,14 +86,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }`}
       >
         <div className="flex flex-col h-full">
-          <div className="p-4 border-b">
-            <h1 className="text-xl font-bold text-orange-800">प्रशासन पैनल</h1>
+            <div className="p-4 border-b">
+            <Link href="/" className="text-orange-800 hover:underline">
+              Home
+            </Link>
+            <h1 className="text-xl font-bold text-orange-800 mt-2">प्रशासन पैनल</h1>
             {user && (
               <p className="text-sm text-gray-600 mt-1">
-                {user.firstName} {user.surname}
+              {user.firstName} {user.surname}
               </p>
             )}
-          </div>
+            </div>
 
           <nav className="flex-1 p-4 space-y-1">
             {navItems.map((item) => {

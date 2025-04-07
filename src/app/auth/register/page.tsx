@@ -138,9 +138,12 @@ export default function RegisterPage() {
         description: `Your reference ID is ${data.referenceId}. Please keep it safe for future reference.`,
       })
 
-      // Redirect to login page after successful registration
+      // Store user role in localStorage
+      localStorage.setItem("userRole", data.role || "user")
+
+      // Redirect to home page after successful registration (auto-login)
       setTimeout(() => {
-        router.push("/auth/login")
+        router.push("/")
       }, 2000)
     } catch (error) {
       if (error instanceof z.ZodError) {

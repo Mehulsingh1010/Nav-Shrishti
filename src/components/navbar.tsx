@@ -102,14 +102,14 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="fixed w-full z-50 bg-orange-50/80 backdrop-blur-sm">
+    <nav className="fixed w-full z-50 bg-orange-50/80 border border-bottom-[2px] border-orange-500  backdrop-blur-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo and Title */}
           <Link href="/" className="flex items-center gap-4 group">
             <div className="relative h-12 w-12 md:h-14 md:w-14">
               <Image
-                src="/logo.png"
+                src="/logo1.png"
                 alt="संस्थान लोगो"
                 fill
                 className="rounded-full object-cover shadow-md group-hover:shadow-lg transition-shadow"

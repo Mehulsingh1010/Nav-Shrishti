@@ -195,7 +195,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
         <Link href="/">
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-9 w-9 rounded-md flex items-center justify-center">
-              <Image src="/logo.png" alt="Logo" width={36} height={36} />
+              <Image src="/logo1.png" alt="Logo" width={36} height={36} />
             </div>
             <span className="font-semibold text-lg text-orange-900">
               नव सृष्टि सृजन
@@ -359,7 +359,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
                 {" "}
                 <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-9 w-9 rounded-md flex items-center justify-center shrink-0">
                   {/* <span className="text-white font-bold text-lg">न</span> */}
-                  <Image src="/logo.png" alt="Logo" width={36} height={36} />
+                  <Image src="/logo1.png" alt="Logo" width={36} height={36} />
                 </div>
                 <span className="font-semibold text-lg text-orange-900 truncate">
                   नव सृष्टि सृजन

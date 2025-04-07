@@ -175,7 +175,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
         <Link href="/">
           <div className="flex items-center gap-3">
             <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-9 w-9 rounded-md flex items-center justify-center">
-              <Image src="/logo.png" alt="Logo" width={36} height={36} />
+              <Image src="/logo1.png" alt="Logo" width={36} height={36} />
             </div>
             <span className="font-semibold text-lg text-orange-900">
               Seller Portal
@@ -315,7 +315,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
             <Link href="/">
               <div className="flex items-center gap-3 w-full overflow-hidden">
                 <div className="bg-gradient-to-r from-orange-500 to-amber-500 h-9 w-9 rounded-md flex items-center justify-center shrink-0">
-                  <Image src="/logo.png" alt="Logo" width={36} height={36} />
+                  <Image src="/logo1.png" alt="Logo" width={36} height={36} />
                 </div>
                 <span className="font-semibold text-lg text-orange-900 truncate">
                   Seller Portal

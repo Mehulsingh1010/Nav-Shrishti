@@ -4,7 +4,6 @@ import { users } from "../../../../../configs/schema";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 
-
 export async function GET() {
   try {
     // Get the token (user ID) from cookies
@@ -14,8 +13,16 @@ export async function GET() {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
+    // Parse the token to ensure it's a valid number
+    const userId = parseInt(token, 10);
+    
+    // Check if userId is a valid number
+    if (isNaN(userId)) {
+      return NextResponse.json({ error: "Invalid authentication token" }, { status: 401 });
+    }
+
     // Fetch user details from DB
-    const existingUser = await db.select().from(users).where(eq(users.id, Number(token)));
+    const existingUser = await db.select().from(users).where(eq(users.id, userId));
 
     if (existingUser.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -28,6 +35,7 @@ export async function GET() {
       id: user.id,
       name: user.firstName + " " + user.surname,
       email: user.email,
+      role: user.role || "user",
     }, { status: 200 });
 
   } catch (error) {

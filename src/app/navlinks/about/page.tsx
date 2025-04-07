@@ -6,36 +6,36 @@ import { Card, CardContent } from "@/components/ui/card"
 export default function AboutUsPage() {
   const certificates = [
     {
-      id: 1,
-      name: "आयुष मंत्रालय की मान्यता",
-      issuer: "भारत सरकार",
+      id: 5,
+      name: "PAN पंजीकरण",
+      issuer: "आयकर विभाग",
+      year: "2017",
+      icon: "/placeholder.svg?height=100&width=100",
+      description: "स्थायी खाता संख्या (PAN) का पंजीकरण जो आयकर से संबंधित पहचान का प्रमाण है।",
+    },
+    {
+      id: 6,
+      name: "TAN प्रमाणन",
+      issuer: "आयकर विभाग",
+      year: "2017",
+      icon: "/placeholder.svg?height=100&width=100",
+      description: "कर कटौती खाता संख्या (TAN) की पंजीकरण जो TDS से संबंधित है।",
+    },
+    {
+      id: 7,
+      name: "GST पंजीकरण",
+      issuer: "जीएसटी विभाग, भारत सरकार",
       year: "2018",
       icon: "/placeholder.svg?height=100&width=100",
-      description: "आयुर्वेदिक और वैदिक शिक्षा प्रदान करने के लिए आयुष मंत्रालय द्वारा प्रदान की गई आधिकारिक मान्यता।",
+      description: "वस्तु एवं सेवा कर (GST) पंजीकरण जो व्यापार में टैक्स अनुपालन को दर्शाता है।",
     },
     {
-      id: 2,
-      name: "ISO 9001:2015 प्रमाणन",
-      issuer: "अंतरराष्ट्रीय मानक संगठन",
-      year: "2019",
+      id: 8,
+      name: "Terms and Conditions प्रमाणन",
+      issuer: "आंतरिक नीति दस्तावेज़",
+      year: "2022",
       icon: "/placeholder.svg?height=100&width=100",
-      description: "गुणवत्ता प्रबंधन प्रणालियों के लिए अंतरराष्ट्रीय मानक प्रमाणन।",
-    },
-    {
-      id: 3,
-      name: "NGO दर्पण पंजीकरण",
-      issuer: "नीति आयोग",
-      year: "2020",
-      icon: "/placeholder.svg?height=100&width=100",
-      description: "भारत सरकार के नीति आयोग द्वारा NGO दर्पण पोर्टल पर आधिकारिक पंजीकरण।",
-    },
-    {
-      id: 4,
-      name: "FCRA पंजीकरण",
-      issuer: "गृह मंत्रालय",
-      year: "2021",
-      icon: "/placeholder.svg?height=100&width=100",
-      description: "विदेशी योगदान नियमन अधिनियम के तहत विदेशी धन प्राप्त करने की मान्यता।",
+      description: "सेवा की शर्तों और संचालन की नीतियों को दर्शाने वाला प्रमाणन।",
     },
   ]
 
@@ -140,7 +140,7 @@ export default function AboutUsPage() {
                 />
               </div>
               <div className="text-center mt-4">
-                <h3 className="text-xl font-bold text-orange-800">डॉ. आनंद प्रकाश शास्त्री</h3>
+                <h3 className="text-xl font-bold text-orange-800">पंकज नामदेव</h3>
                 <p className="text-orange-600">संस्थापक एवं अध्यक्ष</p>
               </div>
             </div>
