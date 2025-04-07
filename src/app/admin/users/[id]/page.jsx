@@ -16,11 +16,12 @@ export default function AdminUserDetailPage() {
   const router = useRouter()
   const userId = params.id
 
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true)
-  const [selectedRole, setSelectedRole] = useState<string>("")
-  const [saving, setSaving] = useState(false)
-  const [saveSuccess, setSaveSuccess] = useState(false)
+  const [selectedRole, setSelectedRole] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
 
   useEffect(() => {
     async function fetchUserData() {
@@ -102,6 +103,9 @@ export default function AdminUserDetailPage() {
       </AdminLayout>
     )
   }
+
+
+
 
   return (
     <AdminLayout>
@@ -192,7 +196,7 @@ export default function AdminUserDetailPage() {
                       <SelectContent>
                         <SelectItem value="user">उपयोगकर्ता</SelectItem>
                         <SelectItem value="seller">विक्रेता</SelectItem>
-                        <SelectItem value="admin">प्रशासक</SelectItem>
+                        {/* <SelectItem value="admin">प्रशासक</SelectItem> */}
                       </SelectContent>
                     </Select>
                   </div>
