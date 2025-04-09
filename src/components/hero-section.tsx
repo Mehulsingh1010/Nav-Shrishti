@@ -80,8 +80,9 @@ export default function HeroSection() {
               transition={{ duration: 0.7, delay: 0.5 }}
               className="text-5xl lg:text-7xl font-extrabold text-orange-900 leading-tight mt-4 text-center lg:text-left relative"
             >
-              वैदिक भारत के{" "}
-              <span className="block text-orange-700">निर्माण के लिये</span>
+              संस्कृति की जड़ें{" "}
+              <span className="block text-orange-700">और भविष्य की उड़ान
+              </span>
             </motion.h1>
 
             <motion.p
@@ -182,3 +183,9 @@ export default function HeroSection() {
     </div>
   );
 }
+
+
+
+
+
+

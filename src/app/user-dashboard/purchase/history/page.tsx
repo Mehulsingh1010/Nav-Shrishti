@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 // Modified PurchaseHistoryPage component
 import { cookies } from "next/headers";
 import { db } from "../../../../../configs/db";
@@ -112,7 +113,7 @@ export default async function PurchaseHistoryPage() {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-orange-800">खरीद इतिहास</h1>
-        <Link href="/products">
+        <Link href="/navlinks/products">
           <Button
             variant="outline"
             className="border-orange-200 text-orange-700"
@@ -131,7 +132,7 @@ export default async function PurchaseHistoryPage() {
             <p className="text-gray-500 mb-6">
               आपने अभी तक कोई उत्पाद नहीं खरीदा है।
             </p>
-            <Link href="/products">
+            <Link href="/navlinks/products">
               <Button className="bg-orange-600 hover:bg-orange-700">
                 उत्पाद ब्राउज़ करें
               </Button>

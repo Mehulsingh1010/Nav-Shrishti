@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
@@ -110,7 +111,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
       children: [
         { name: "View Profile", href: "/user-dashboard/profile/view-profile" },
         { name: "Referrals", href: "/user-dashboard/profile/referrals" },
-        { name: "KYC Update", href: "/dashboard/profile/kyc" },
+        { name: "KYC Update", href: "/user-dashboard/profile/kyc" },
       ],
     },
 
@@ -139,51 +140,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
 
 
 
-    {
-      name: "Team",
-      href: "#",
-      icon: Users,
-      current: pathname.startsWith("/user-dashboard/team"),
-      children: [
-        { name: "Team View", href: "/user-dashboard/team/view" },
-        { name: "My Referrals", href: "/user-dashboard/team/referrals" },
-      ],
-    },
-    {
-      name: "Income",
-      href: "#",
-      icon: Wallet,
-      current: pathname.startsWith("/user-dashboard/income"),
-      children: [
-        { name: "Referral Income", href: "/user-dashboard/income/referral" },
-        { name: "Salary", href: "/user-dashboard/income/salary" },
-      ],
-    },
-
-
-    {
-      name: "Payments",
-      href: "#",
-      icon: CreditCard,
-      current: pathname.startsWith("/user-dashboard/payments"),
-      children: [
-        { name: "Available Balance", href: "/user-dashboard/payments/balance" },
-        { name: "Withdraw Request", href: "/user-dashboard/payments/withdraw" },
-        { name: "Withdraw History", href: "/user-dashboard/payments/history" },
-        {
-          name: "Promotional Material",
-          href: "/user-dashboard/payments/promotional",
-        },
-      ],
-    },
-
-
-    {
-      name: "Support",
-      href: "/user-dashboard/support",
-      icon: LifeBuoy,
-      current: pathname === "/user-dashboard/support",
-    },
+    
   ];
 
 

@@ -18,6 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent } from "@/components/ui/card"
+import WelcomeModal from "@/components/welcome-modal"
 
 const registerSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -57,6 +58,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showTermsModal, setShowTermsModal] = useState(false)
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -151,10 +153,16 @@ export default function RegisterPage() {
       // Store user role in localStorage
       localStorage.setItem("userRole", data.role || "user")
 
-      // Redirect to home page after successful registration (auto-login)
-      setTimeout(() => {
-        router.push("/")
-      }, 2000)
+      // Show welcome modal for first-time users
+      setShowWelcomeModal(true)
+
+      // Store a flag in localStorage to track that user has seen the welcome modal
+      localStorage.setItem("hasSeenWelcomeModal", "true")
+
+      // Comment out or remove the immediate redirect:
+      // setTimeout(() => {
+      //   router.push("/user-dashboard")
+      // }, 2000)
     } catch (error) {
       if (error instanceof z.ZodError) {
         const newErrors: Record<string, string> = {}
@@ -532,11 +540,7 @@ export default function RegisterPage() {
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
                         I have read and agree to the{" "}
-                        <a 
-                          href="#" 
-                          onClick={openTermsModal} 
-                          className="text-orange-700 hover:underline"
-                        >
+                        <a href="#" onClick={openTermsModal} className="text-orange-700 hover:underline">
                           Terms and Conditions
                         </a>
                       </label>
@@ -588,53 +592,83 @@ export default function RegisterPage() {
           <div className="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center p-4 border-b border-gray-200">
               <h2 className="text-xl font-bold text-orange-800">Terms and Conditions</h2>
-              <button 
-                onClick={closeTermsModal}
-                className="text-gray-500 hover:text-gray-700 focus:outline-none"
-              >
+              <button onClick={closeTermsModal} className="text-gray-500 hover:text-gray-700 focus:outline-none">
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="p-4 md:p-6">
               <div className="prose prose-sm max-w-none">
                 <h3 className="text-lg font-medium text-orange-700">1. Acceptance of Terms</h3>
-                <p>By accessing and using the services offered by वैदिक भारत, you accept and agree to be bound by the terms and provisions of this agreement.</p>
-                
+                <p>
+                  By accessing and using the services offered by वैदिक भारत, you accept and agree to be bound by the
+                  terms and provisions of this agreement.
+                </p>
+
                 <h3 className="text-lg font-medium text-orange-700 mt-4">2. Registration and User Account</h3>
-                <p>Users must provide accurate and complete information when registering. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
-                
+                <p>
+                  Users must provide accurate and complete information when registering. You are responsible for
+                  maintaining the confidentiality of your account credentials and for all activities that occur under
+                  your account.
+                </p>
+
                 <h3 className="text-lg font-medium text-orange-700 mt-4">3. User Conduct</h3>
-                <p>Users agree to use the services only for purposes that are permitted by these Terms and any applicable laws. Users shall not engage in any behavior that is harmful, threatening, abusive, or disrespectful to other users or the community.</p>
-                
+                <p>
+                  Users agree to use the services only for purposes that are permitted by these Terms and any applicable
+                  laws. Users shall not engage in any behavior that is harmful, threatening, abusive, or disrespectful
+                  to other users or the community.
+                </p>
+
                 <h3 className="text-lg font-medium text-orange-700 mt-4">4. Privacy Policy</h3>
-                <p>Your use of our service is also subject to our Privacy Policy, which outlines how we collect, use, and protect your personal information. By using our services, you consent to the collection and use of information as described in our Privacy Policy.</p>
-                
+                <p>
+                  Your use of our service is also subject to our Privacy Policy, which outlines how we collect, use, and
+                  protect your personal information. By using our services, you consent to the collection and use of
+                  information as described in our Privacy Policy.
+                </p>
+
                 <h3 className="text-lg font-medium text-orange-700 mt-4">5. Intellectual Property</h3>
-                <p>All content, designs, graphics, and other materials on our platform are protected under applicable copyrights, trademarks, and other proprietary laws. Users may not copy, distribute, or create derivative works from this content without explicit permission.</p>
-                
+                <p>
+                  All content, designs, graphics, and other materials on our platform are protected under applicable
+                  copyrights, trademarks, and other proprietary laws. Users may not copy, distribute, or create
+                  derivative works from this content without explicit permission.
+                </p>
+
                 <h3 className="text-lg font-medium text-orange-700 mt-4">6. Termination</h3>
-                <p>We reserve the right to terminate or suspend access to our services at our sole discretion, without prior notice, for any reason, including if we believe you have violated these Terms.</p>
-                
+                <p>
+                  We reserve the right to terminate or suspend access to our services at our sole discretion, without
+                  prior notice, for any reason, including if we believe you have violated these Terms.
+                </p>
+
                 <h3 className="text-lg font-medium text-orange-700 mt-4">7. Limitation of Liability</h3>
-                <p>To the maximum extent permitted by law, वैदिक भारत shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to your use of our services.</p>
-                
+                <p>
+                  To the maximum extent permitted by law, वैदिक भारत shall not be liable for any indirect, incidental,
+                  special, consequential, or punitive damages arising out of or relating to your use of our services.
+                </p>
+
                 <h3 className="text-lg font-medium text-orange-700 mt-4">8. Changes to Terms</h3>
-                <p>We may modify these Terms at any time. Your continued use of our services after any changes indicates your acceptance of the modified Terms.</p>
+                <p>
+                  We may modify these Terms at any time. Your continued use of our services after any changes indicates
+                  your acceptance of the modified Terms.
+                </p>
               </div>
             </div>
-            
+
             <div className="p-4 border-t border-gray-200 flex justify-end">
-              <Button 
-                onClick={closeTermsModal}
-                className="bg-orange-700 hover:bg-orange-800 text-white"
-              >
+              <Button onClick={closeTermsModal} className="bg-orange-700 hover:bg-orange-800 text-white">
                 Close
               </Button>
             </div>
           </div>
         </div>
       )}
+      {/* Welcome Modal for first-time users */}
+      <WelcomeModal
+        isOpen={showWelcomeModal}
+        onCloseAction={() => {
+          setShowWelcomeModal(false);
+          router.push("/user-dashboard");
+        }}
+      />
     </div>
   )
 }

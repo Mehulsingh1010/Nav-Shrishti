@@ -1,10 +1,25 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Mail, Phone, MapPin, User, Users, Building, Briefcase, Handshake } from "lucide-react"
-import { ContactForm } from "@/components/contact-form"
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  User,
+  Users,
+  Building,
+  Briefcase,
+  Handshake,
+} from "lucide-react";
+import { ContactForm } from "@/components/contact-form";
 
 export default function ContactPage() {
   return (
@@ -13,9 +28,12 @@ export default function ContactPage() {
       <section className="bg-gradient-to-r from-orange-100 to-orange-50 py-16">
         <div className="container px-4 md:px-6 mx-auto">
           <div className="flex flex-col items-center justify-center space-y-6 text-center">
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-orange-800">संपर्क करें</h1>
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl text-orange-800">
+              संपर्क करें
+            </h1>
             <p className="max-w-[700px] text-gray-700 md:text-xl leading-relaxed">
-              नव सृष्टि सृजन से जुड़ें और हमारे साथ वैदिक भारत के निर्माण में सहयोग करें
+              नव सृष्टि सृजन से जुड़ें और हमारे साथ वैदिक भारत के निर्माण में
+              सहयोग करें
             </p>
           </div>
         </div>
@@ -26,8 +44,13 @@ export default function ContactPage() {
       <section className="py-12 md:py-16 lg:py-20 bg-gradient-to-b from-orange-50 to-white">
         <div className="container px-4 sm:px-6 mx-auto max-w-7xl">
           <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-bold text-orange-800 mb-4">हमसे जुड़ें</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">नव सृष्टि सृजन के माध्यम से वैदिक संस्कृति के प्रचार में अपना योगदान दें</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-orange-800 mb-4">
+              हमसे जुड़ें
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              नव सृष्टि सृजन के माध्यम से वैदिक संस्कृति के प्रचार में अपना
+              योगदान दें
+            </p>
           </div>
 
           <Tabs defaultValue="member" className="w-full">
@@ -75,9 +98,12 @@ export default function ContactPage() {
               <TabsContent value="member">
                 <Card className="border-orange-200 shadow-lg rounded-xl overflow-hidden">
                   <CardHeader className="bg-gradient-to-r from-orange-100 to-orange-50 border-b border-orange-100">
-                    <CardTitle className="text-2xl font-bold text-orange-800">सदस्य बनें</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-orange-800">
+                      सदस्य बनें
+                    </CardTitle>
                     <CardDescription className="text-gray-600">
-                      नव सृष्टि सृजन के सदस्य बनकर वैदिक संस्कृति के प्रचार में सहयोग करें
+                      नव सृष्टि सृजन के सदस्य बनकर वैदिक संस्कृति के प्रचार में
+                      सहयोग करें
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="pt-6">
@@ -95,9 +121,12 @@ export default function ContactPage() {
               <TabsContent value="promoter">
                 <Card className="border-orange-200 shadow-lg rounded-xl overflow-hidden">
                   <CardHeader className="bg-gradient-to-r from-orange-100 to-orange-50 border-b border-orange-100">
-                    <CardTitle className="text-2xl font-bold text-orange-800">प्रमोटर बनें</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-orange-800">
+                      प्रमोटर बनें
+                    </CardTitle>
                     <CardDescription className="text-gray-600">
-                      नव सृष्टि सृजन के प्रमोटर बनकर वैदिक संस्कृति का प्रचार करें
+                      नव सृष्टि सृजन के प्रमोटर बनकर वैदिक संस्कृति का प्रचार
+                      करें
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="pt-6">
@@ -115,8 +144,12 @@ export default function ContactPage() {
               <TabsContent value="distributor">
                 <Card className="border-orange-200 shadow-lg rounded-xl overflow-hidden">
                   <CardHeader className="bg-gradient-to-r from-orange-100 to-orange-50 border-b border-orange-100">
-                    <CardTitle className="text-2xl font-bold text-orange-800">वितरक बनें</CardTitle>
-                    <CardDescription className="text-gray-600">नव सृष्टि सृजन के उत्पादों के वितरक बनें</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-orange-800">
+                      वितरक बनें
+                    </CardTitle>
+                    <CardDescription className="text-gray-600">
+                      नव सृष्टि सृजन के उत्पादों के वितरक बनें
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="pt-6">
                     <ContactForm
@@ -133,7 +166,9 @@ export default function ContactPage() {
               <TabsContent value="udyami">
                 <Card className="border-orange-200 shadow-lg rounded-xl overflow-hidden">
                   <CardHeader className="bg-gradient-to-r from-orange-100 to-orange-50 border-b border-orange-100">
-                    <CardTitle className="text-2xl font-bold text-orange-800">उद्यमी बनें</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-orange-800">
+                      उद्यमी बनें
+                    </CardTitle>
                     <CardDescription className="text-gray-600">
                       नव सृष्टि सृजन के साथ मिलकर स्वदेशी उत्पाद बनाएं
                     </CardDescription>
@@ -153,8 +188,12 @@ export default function ContactPage() {
               <TabsContent value="partner">
                 <Card className="border-orange-200 shadow-lg rounded-xl overflow-hidden">
                   <CardHeader className="bg-gradient-to-r from-orange-100 to-orange-50 border-b border-orange-100">
-                    <CardTitle className="text-2xl font-bold text-orange-800">पार्टनर बनें</CardTitle>
-                    <CardDescription className="text-gray-600">नव सृष्टि सृजन के साथ रणनीतिक साझेदारी करें</CardDescription>
+                    <CardTitle className="text-2xl font-bold text-orange-800">
+                      पार्टनर बनें
+                    </CardTitle>
+                    <CardDescription className="text-gray-600">
+                      नव सृष्टि सृजन के साथ रणनीतिक साझेदारी करें
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="pt-6">
                     <ContactForm
@@ -181,7 +220,9 @@ export default function ContactPage() {
                   <div className="p-2 bg-orange-100 rounded-full">
                     <MapPin className="h-5 w-5 text-orange-600" />
                   </div>
-                  <CardTitle className="text-xl font-bold text-orange-800">हमारा पता</CardTitle>
+                  <CardTitle className="text-xl font-bold text-orange-800">
+                    हमारा पता
+                  </CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
@@ -202,12 +243,14 @@ export default function ContactPage() {
                   <div className="p-2 bg-orange-100 rounded-full">
                     <Mail className="h-5 w-5 text-orange-600" />
                   </div>
-                  <CardTitle className="text-xl font-bold text-orange-800">ईमेल</CardTitle>
+                  <CardTitle className="text-xl font-bold text-orange-800">
+                    ईमेल
+                  </CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 leading-relaxed">
-                thepankajnamdev@gmail.com
+                  thepankajnamdev@gmail.com
                   {/* <br />
                   thepankajnamdev@gmail.com */}
                   <br />
@@ -226,16 +269,16 @@ export default function ContactPage() {
                   <div className="p-2 bg-orange-100 rounded-full">
                     <Phone className="h-5 w-5 text-orange-600" />
                   </div>
-                  <CardTitle className="text-xl font-bold text-orange-800">फोन</CardTitle>
+                  <CardTitle className="text-xl font-bold text-orange-800">
+                    फोन
+                  </CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
-              संस्थापक :-  पंकज नामदेव (Pankaj Namdev)
-
+                संस्थापक :- पंकज नामदेव (Pankaj Namdev)
                 <p className="text-gray-700 leading-relaxed">
                   +91 9599052457
                   <br />
-                 
                 </p>
               </CardContent>
             </Card>
@@ -243,18 +286,23 @@ export default function ContactPage() {
           <div className="mt-10">
             <Card className="border-orange-200 shadow-md overflow-hidden">
               <CardHeader className="pb-2">
-                <CardTitle className="text-xl font-bold text-orange-800">हमारा स्थान</CardTitle>
+                <CardTitle className="text-xl font-bold text-orange-800">
+                  हमारा स्थान
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <div className="aspect-video w-full">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3504.2536900776364!2d77.20659841508096!3d28.56325198244407!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce26f903969d7%3A0x8f66310952faaa!2sNew%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1647834159777!5m2!1sen!2sin"
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d14626.07534608583!2d78.7957783!3d23.8520876!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1712648439876!5m2!1sen!2sin"
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
                     allowFullScreen
                     loading="lazy"
-                  ></iframe>
+                    referrerPolicy="no-referrer-when-downgrade"
+                  >
+                    
+                  </iframe>
                 </div>
               </CardContent>
             </Card>
@@ -262,6 +310,5 @@ export default function ContactPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }
-
