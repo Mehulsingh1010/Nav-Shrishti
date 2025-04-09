@@ -5,8 +5,9 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, ShoppingBag, ShoppingCart, Network, LogOut, Menu, X } from "lucide-react"
+import { LayoutDashboard, Users, ShoppingBag, ShoppingCart, Network, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import LogoutButton from "../logout"
 
 interface AdminUser {
   id: number
@@ -43,16 +44,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     fetchAdminUser()
   }, [])
 
-  const handleLogout = async () => {
-    try {
-      // Clear the token cookie
-      document.cookie = "token=; max-age=0; path=/;"
-      // Redirect to login
-      window.location.href = "/auth/login"
-    } catch (error) {
-      console.error("Error logging out:", error)
-    }
-  }
+  
 
   const navItems = [
     { href: "/admin", label: "डैशबोर्ड", icon: LayoutDashboard },
@@ -120,14 +112,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
 
           <div className="p-4 border-t">
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-gray-700 hover:bg-orange-50 hover:text-orange-700"
-              onClick={handleLogout}
-            >
-              <LogOut className="mr-3 h-5 w-5" />
-              लॉग आउट
-            </Button>
+           <LogoutButton/>
           </div>
         </div>
       </aside>
