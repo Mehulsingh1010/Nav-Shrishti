@@ -1,54 +1,68 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useState, useEffect } from "react"
+import Image from "next/image"
 // import { motion } from "framer-motion";
-import Link from "next/link";
-import { Menu, Bell, User, ArrowBigRight, ChevronDown } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import Link from "next/link"
+import { Menu, Bell, User, ArrowBigRight, Globe } from "lucide-react"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { usePathname } from "next/navigation"
+import { useRouter } from "next/navigation"
+
+// Add this after the imports
+declare global {
+  interface Window {
+    googleTranslateElementInit: () => void
+    google: {
+      translate: {
+        TranslateElement: {
+          InlineLayout: {
+            SIMPLE: string
+            HORIZONTAL: string
+            VERTICAL: string
+          }
+          new (options: any, element: string): any
+        }
+      }
+    }
+  }
+}
 
 export default function Navbar() {
-  const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false);
-  const [language, setLanguage] = useState("en");
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLoginMenuOpen, setIsLoginMenuOpen] = useState(false)
+  const [language, setLanguage] = useState("en")
+  const [mobileOpen, setMobileOpen] = useState(false)
   const [user, setUser] = useState<{
-    id: string;
-    name: string;
-    email: string;
-  } | null>(null);
-  const [error, setError] = useState("");
-  const [userRole, setUserRole] = useState<string | null>(null);
-  const router = useRouter();
-  const pathname = usePathname();
+    id: string
+    name: string
+    email: string
+  } | null>(null)
+  const [error, setError] = useState("")
+  const [userRole, setUserRole] = useState<string | null>(null)
+  const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
-    const role = localStorage.getItem("userRole");
+    const role = localStorage.getItem("userRole")
     if (role) {
-      setUserRole(role);
+      setUserRole(role)
     }
-  }, []);
+  }, [])
 
   const handleDashboardRedirect = () => {
     if (userRole === "seller") {
-      router.push("/seller-dashboard");
+      router.push("/seller-dashboard")
     } else if (userRole === "user") {
-      router.push("/user-dashboard");
+      router.push("/user-dashboard")
     } else if (userRole === "admin") {
-      router.push("/admin");
+      router.push("/admin")
     }
-  };
+  }
 
   const navItems = [
     { name: "हमारे बारे में", href: "/navlinks/about" },
@@ -59,57 +73,85 @@ export default function Navbar() {
     { name: "संपर्क", href: "/navlinks/contact" },
 
     // Added services as a direct nav item
-  ];
+  ]
 
   // Check if the current path matches or is a child of the given href
   const isActiveLink = (href: string) => {
     if (href === "/") {
-      return pathname === "/";
+      return pathname === "/"
     }
-    return pathname === href || pathname.startsWith(`${href}/`);
-  };
+    return pathname === href || pathname.startsWith(`${href}/`)
+  }
 
   useEffect(() => {
     async function fetchUser() {
       try {
-        const res = await fetch("/api/auth/profile");
-        const data = await res.json();
+        const res = await fetch("/api/auth/profile")
+        const data = await res.json()
 
         if (!res.ok) {
-          throw new Error(data.error);
+          throw new Error(data.error)
         }
 
-        setUser(data);
+        setUser(data)
       } catch (err: unknown) {
-        if (err instanceof Error) setError(err.message);
+        if (err instanceof Error) setError(err.message)
       }
     }
 
-    fetchUser();
-  }, []);
+    fetchUser()
+  }, [])
 
-  const toggleLanguage = async () => {
-    const targetLang = language === "en" ? "hi" : "en";
-    setLanguage(targetLang);
-
-    try {
-      const res = await fetch(
-        `https://translation.googleapis.com/language/translate/v2?key=YOUR_API_KEY`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            q: document.body.innerText,
-            target: targetLang,
-          }),
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      const data = await res.json();
-      document.body.innerText = data.data.translations[0].translatedText;
-    } catch (error) {
-      console.error("Translation failed:", error);
+  // Remove the existing toggleLanguage function and replace with this:
+  useEffect(() => {
+    // Check if Google Translate script is already added
+    if (document.querySelector('script[src*="translate.google.com/translate_a"]')) {
+      return
     }
-  };
+
+    // Create and add the Google Translate script
+    const addScript = () => {
+      const script = document.createElement("script")
+      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+      script.async = true
+      document.body.appendChild(script)
+
+      // Define the global callback function
+      window.googleTranslateElementInit = () => {
+        if (window.google && window.google.translate) {
+          new window.google.translate.TranslateElement(
+            {
+              pageLanguage: "hi",
+              includedLanguages: "en,hi",
+              layout: window.google.translate.TranslateElement.InlineLayout.HORIZONTAL,
+              autoDisplay: false,
+            },
+            "google_translate_element",
+          )
+
+          // Initialize mobile version separately
+          new window.google.translate.TranslateElement(
+            {
+              pageLanguage: "hi",
+              includedLanguages: "en,hi",
+              layout: window.google.translate.TranslateElement.InlineLayout.HORIZONTAL,
+              autoDisplay: false,
+            },
+            "google_translate_element_mobile",
+          )
+        }
+      }
+    }
+
+    addScript()
+
+    return () => {
+      // Cleanup - remove script when component unmounts
+      if (typeof window !== "undefined" && "googleTranslateElementInit" in window) {
+        delete (window as any).googleTranslateElementInit
+      }
+    }
+  }, [])
 
   return (
     <nav className="fixed w-full z-50 bg-orange-50/80 border border-bottom-[2px] border-orange-500  backdrop-blur-sm">
@@ -129,9 +171,7 @@ export default function Navbar() {
               <h1 className="text-lg md:text-2xl font-bold text-orange-800 group-hover:text-orange-600 transition-colors">
                 नव सृष्टि सृजन
               </h1>
-              <span className="text-sm text-orange-600/80 hidden md:block">
-                सेवा संस्थान
-              </span>
+              <span className="text-sm text-orange-600/80 hidden md:block">सेवा संस्थान</span>
             </div>
           </Link>
 
@@ -142,9 +182,7 @@ export default function Navbar() {
                 key={item.name}
                 href={item.href}
                 className={`relative text-orange-800 hover:text-orange-600 transition-colors px-3 py-2 rounded-lg ${
-                  isActiveLink(item.href)
-                    ? "bg-orange-100 font-bold text-orange-700"
-                    : ""
+                  isActiveLink(item.href) ? "bg-orange-100 font-bold text-orange-700" : ""
                 }`}
               >
                 <span>{item.name}</span>
@@ -167,9 +205,7 @@ export default function Navbar() {
                 <Link
                   href="/auth/login"
                   className={`flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors ${
-                    pathname.startsWith("/auth/login")
-                      ? "bg-orange-600 ring-2 ring-orange-300"
-                      : ""
+                    pathname.startsWith("/auth/login") ? "bg-orange-600 ring-2 ring-orange-300" : ""
                   }`}
                 >
                   लॉगिन
@@ -177,22 +213,18 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Language Toggle Button */}
-            <button
-              onClick={toggleLanguage}
-              className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
-            >
-              {language === "en" ? "हिन्दी" : "English"}
-            </button>
+            {/* Language Toggle Button - Desktop */}
+            <div className="ml-3 flex items-center">
+              <div className="flex items-center px-3 py-2 bg-orange-100 rounded-lg border border-orange-200 hover:bg-orange-200 transition-colors">
+                <Globe className="h-5 w-5 text-orange-600 mr-2" />
+                <div id="google_translate_element" className="translate-button"></div>
+              </div>
+            </div>
           </div>
 
           {/* Mobile Actions */}
           <div className="flex md:hidden items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-orange-600 relative"
-            >
+            <Button variant="ghost" size="icon" className="text-orange-600 relative">
               <Bell className="h-5 w-5" />
               <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-orange-500">
                 2
@@ -220,31 +252,24 @@ export default function Navbar() {
                       <div>
                         {user ? (
                           <div>
-                            <p className="text-base font-medium text-orange-900">
-                              {user.name}
-                            </p>
+                            <p className="text-base font-medium text-orange-900">{user.name}</p>
                             <button
                               onClick={() => {
-                                handleDashboardRedirect();
-                                setMobileOpen(false);
+                                handleDashboardRedirect()
+                                setMobileOpen(false)
                               }}
                               className="text-sm text-white bg-green-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-green-600"
                             >
-                              dashboard{" "}
-                              <ArrowBigRight className="inline h-4 w-4" />
+                              dashboard <ArrowBigRight className="inline h-4 w-4" />
                             </button>
                           </div>
                         ) : (
                           <div>
-                            <p className="text-base font-medium text-orange-900">
-                              Guest User
-                            </p>
+                            <p className="text-base font-medium text-orange-900">Guest User</p>
                             <Link
                               href="/auth/login"
                               className={`text-sm text-white bg-orange-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-orange-600 ${
-                                pathname.startsWith("/auth/login")
-                                  ? "bg-orange-600 ring-2 ring-orange-300"
-                                  : ""
+                                pathname.startsWith("/auth/login") ? "bg-orange-600 ring-2 ring-orange-300" : ""
                               }`}
                               onClick={() => setMobileOpen(false)}
                             >
@@ -264,9 +289,7 @@ export default function Navbar() {
                           key={item.name}
                           href={item.href}
                           className={`relative text-orange-800 hover:text-orange-600 transition-colors px-3 py-2 rounded-lg ${
-                            isActiveLink(item.href)
-                              ? "bg-orange-100 font-bold text-orange-700"
-                              : ""
+                            isActiveLink(item.href) ? "bg-orange-100 font-bold text-orange-700" : ""
                           }`}
                           onClick={() => setMobileOpen(false)}
                         >
@@ -280,15 +303,11 @@ export default function Navbar() {
                       {/* Login Options */}
                       {!user && (
                         <div className="px-2 py-3 border-t border-gray-100 mt-2">
-                          <p className="text-sm font-medium text-gray-500 mb-2 px-2">
-                            लॉगिन विकल्प
-                          </p>
+                          <p className="text-sm font-medium text-gray-500 mb-2 px-2">लॉगिन विकल्प</p>
                           <Link
                             href="/auth/login"
                             className={`text-sm text-white bg-orange-500 px-3 py-1 rounded-full inline-block mt-1 hover:bg-orange-600 ${
-                              pathname.startsWith("/auth/login")
-                                ? "bg-orange-600 ring-2 ring-orange-300"
-                                : ""
+                              pathname.startsWith("/auth/login") ? "bg-orange-600 ring-2 ring-orange-300" : ""
                             }`}
                             onClick={() => setMobileOpen(false)}
                           >
@@ -296,20 +315,25 @@ export default function Navbar() {
                           </Link>
                         </div>
                       )}
+
+                      {/* Mobile Language Selection */}
+                      <div className="px-2 py-3 border-t border-gray-100 mt-2">
+                        <p className="text-sm font-medium text-gray-500 mb-2 px-2">भाषा चुनें</p>
+                        <div className="flex items-center px-3 py-2 bg-orange-100 rounded-lg border border-orange-200">
+                          <Globe className="h-5 w-5 text-orange-600 mr-2" />
+                          <div id="google_translate_element_mobile" className="translate-button-mobile w-full"></div>
+                        </div>
+                      </div>
                     </nav>
                   </div>
 
                   {/* Language Toggle Footer */}
                   <div className="border-t p-4 bg-orange-50">
-                    <button
-                      onClick={() => {
-                        toggleLanguage();
-                        setMobileOpen(false);
-                      }}
-                      className="w-full px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors text-center"
-                    >
-                      {language === "en" ? "हिन्दी" : "English"}
-                    </button>
+                    {/* Mobile Translate Button */}
+                    <div className="flex items-center px-3 py-2 bg-orange-100 rounded-lg border border-orange-200">
+                      <Globe className="h-5 w-5 text-orange-600 mr-2" />
+                      <div id="google_translate_element_mobile" className="translate-button-mobile"></div>
+                    </div>
                   </div>
                 </div>
               </SheetContent>
@@ -317,6 +341,74 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Add custom styling to fix Google Translate appearance */}
+      <style jsx global>{`
+        /* Hide Google Translate attribution and clean up appearance */
+        .goog-te-gadget {
+          font-family: inherit !important;
+          font-size: 0 !important; /* Hide all text */
+        }
+        
+        .goog-te-gadget .goog-te-combo {
+          margin: 0 !important;
+          padding: 8px 12px !important;
+          border-radius: 6px !important;
+          border: 1px solid #fdba74 !important;
+          background-color: white !important;
+          color: #9a3412 !important;
+          font-size: 16px !important;
+          font-family: inherit !important;
+          cursor: pointer !important;
+          min-width: 140px !important;
+          height: 40px !important;
+          appearance: menulist !important;
+          -webkit-appearance: menulist !important;
+        }
+        
+        /* Mobile specific styling */
+        .translate-button-mobile .goog-te-combo {
+          width: 100% !important;
+        }
+        
+        /* Hide all other elements except the dropdown */
+        .goog-te-gadget img,
+        .goog-te-gadget span {
+          display: none !important;
+        }
+        
+        /* Make sure dropdown is visible */
+        .goog-te-gadget .goog-te-combo {
+          display: inline-block !important;
+        }
+        
+        /* Improve dropdown appearance */
+        .goog-te-gadget .goog-te-combo:hover {
+          border-color: #fb923c !important;
+          box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.2) !important;
+        }
+        
+        .goog-te-gadget .goog-te-combo:focus {
+          outline: none !important;
+          border-color: #f97316 !important;
+          box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.3) !important;
+        }
+        
+        /* Improve dropdown options */
+        .goog-te-menu2 {
+          max-width: none !important;
+          overflow: visible !important;
+        }
+        
+        /* Fix for mobile dropdown */
+        @media (max-width: 768px) {
+          .goog-te-gadget .goog-te-combo {
+            font-size: 16px !important;
+            padding: 10px 12px !important;
+            height: 44px !important;
+          }
+        }
+      `}</style>
     </nav>
-  );
+  )
 }
