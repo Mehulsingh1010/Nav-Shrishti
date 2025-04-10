@@ -215,7 +215,7 @@ export default function Navbar() {
 
             {/* Language Toggle Button - Desktop */}
             <div className="ml-3 flex items-center">
-              <div className="flex items-center px-3 py-2 bg-orange-100 rounded-lg border border-orange-200 hover:bg-orange-200 transition-colors">
+              <div className="flex items-center px-1 py-1 bg-orange-100 rounded-lg border border-orange-200 hover:bg-orange-200 transition-colors">
                 <Globe className="h-5 w-5 text-orange-600 mr-2" />
                 <div id="google_translate_element" className="translate-button"></div>
               </div>
