@@ -140,7 +140,7 @@ export default function AboutUsPage() {
                 />
               </div>
               <div className="text-center mt-4">
-                <h3 className="text-xl font-bold text-orange-800">पंकज नामदेव</h3>
+                <h3 className="text-xl font-bold text-orange-800">श्री पंकज नामदेव</h3>
                 <p className="text-orange-600">संस्थापक एवं अध्यक्ष</p>
               </div>
             </div>
