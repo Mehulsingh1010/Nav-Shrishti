@@ -15,6 +15,7 @@ const publicRoutes = [
   "/navlinks/services/product-listing",
   "/auth/login",
   "/auth/register",
+  "/auth/forgot-password",
 ];
 
 // Admin UI routes that require admin verification

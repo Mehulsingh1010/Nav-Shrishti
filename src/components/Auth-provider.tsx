@@ -29,6 +29,7 @@ const publicRoutes = [
   "/navlinks/services/product-listing",
   "/auth/login",
   "/auth/register",
+  "/auth/forgot-password",
 ];
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
