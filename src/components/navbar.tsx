@@ -154,7 +154,7 @@ export default function Navbar() {
   }, [])
 
   return (
-    <nav className="fixed w-full z-50 bg-orange-50/80 border border-bottom-[2px] border-orange-500  backdrop-blur-sm">
+    <nav className="fixed w-full z-50 bg-orange-200 border border-bottom-[2px] border-orange-500  backdrop-blur-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo and Title */}

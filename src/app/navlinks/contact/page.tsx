@@ -232,7 +232,7 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 leading-relaxed">
-                  नव सृष्टि सृजन सेवा संस्थान
+                  नव सृष्टि सृजन सेवा संघ
                   <br />
                   123, वैदिक मार्ग
                   <br />

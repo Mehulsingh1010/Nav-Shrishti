@@ -17,7 +17,7 @@ const devanagari = Tiro_Devanagari_Hindi({
 });
 
 // export const metadata: Metadata = {
-//   title: "नव सृष्टि सृजन सेवा संस्थान",
+//   title: "नव सृष्टि सृजन सेवा संघ",
 //   description: "वैदिक भारत के निर्माण के लिये हम आपका स्वागत करते हैं",
 //   generator: "v0.dev",
 // }
