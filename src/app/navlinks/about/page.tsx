@@ -133,7 +133,7 @@ export default function AboutUsPage() {
             <div className="md:col-span-4">
               <div className="relative aspect-square rounded-full overflow-hidden border-4 border-orange-200 shadow-lg mx-auto max-w-[300px]">
                 <Image 
-                  src="/i2.jpg" 
+                  src="/owner.jpg" 
                   alt="संस्थापक" 
                   fill 
                   className="object-cover"

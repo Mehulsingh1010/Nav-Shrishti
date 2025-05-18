@@ -222,21 +222,27 @@ export default function DashboardPage() {
           <p className="text-orange-600 mt-1">Welcome to your dashboard. Here&#39;s an overview of your account.</p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Card className="bg-amber-50 border-amber-200 shadow-sm">
-            <CardContent className="p-4">
-              <div className="flex flex-col">
-                <div className="text-sm font-medium text-amber-800">Free Trial</div>
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-amber-600" />
-                  <span className="text-lg font-bold text-amber-800">{dashboardData.daysRemaining} days remaining</span>
-                </div>
-                <Progress value={(dashboardData.daysRemaining / 30) * 100} className="h-2 mt-2 bg-amber-200" />
-              </div>
-            </CardContent>
-          </Card>
-          <Button className="bg-orange-600 hover:bg-orange-700 shadow-md transition-all">Subscribe Now</Button>
-        </div>
+         <div className="flex flex-col sm:flex-row items-start gap-4 max-w-md">
+      <Card className="w-full bg-amber-50 border-amber-200 shadow-sm">
+        <CardContent className="p-4">
+          <div className="flex flex-col">
+            <div className="text-sm font-medium text-amber-800 mb-1">Free Trial</div>
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="h-4 w-4 text-amber-600" />
+              <span className="text-lg font-bold text-amber-800">{dashboardData.daysRemaining} days remaining</span>
+            </div>
+            <Progress value={(dashboardData.daysRemaining / 30) * 100} className="h-2 bg-amber-200" />
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Button className="w-full sm:w-auto px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg shadow-md transition-all duration-200 flex items-center justify-center">
+        <span>Subscribe Now</span>
+        <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+        </svg>
+      </Button>
+    </div>
       </div>
 
       {/* Key Metrics Summary */}

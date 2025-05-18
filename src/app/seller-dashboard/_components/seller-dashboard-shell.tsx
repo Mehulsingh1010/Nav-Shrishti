@@ -120,16 +120,11 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
       current: pathname === "/seller-dashboard/bank",
     },
 
-    {
-      name: "Office",
-      href: "/seller/office",
-      icon: Building2,
-      current: pathname === "/seller-dashboard/office",
-    },
+  
    
     {
       name: "Withdraws",
-      href: "/seller-dashboard/withdraws",
+      href: "/seller-dashboard/withdraw",
       icon: Banknote,
       current: pathname === "/seller-dashboard/withdraws",
     },
@@ -148,24 +143,7 @@ export function SellerDashboardShell({ children }: SellerDashboardShellProps) {
       ],
     },
    
-    {
-      name: "Salesperson",
-      href: "/seller-dashboard/salesperson",
-      icon: Users,
-      current: pathname === "/seller-dashboard/salesperson",
-    },
-    {
-      name: "Column 1",
-      href: "/seller-dashboard/column1",
-      icon: ShoppingCart,
-      current: pathname === "/seller-dashboard/column1",
-    },
-    {
-      name: "Column 2",
-      href: "/seller-dashboard/column2",
-      icon: Wallet,
-      current: pathname === "/seller-dashboard/column2",
-    },
+    
   ];
 
   return (
